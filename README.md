@@ -1,2 +1,2 @@
 # FXTrayIcon
-TrayIcon wrapper class for working with system tray icons using AWT
+TrayIcon wrapper library for working with system tray icons in JavaFX
