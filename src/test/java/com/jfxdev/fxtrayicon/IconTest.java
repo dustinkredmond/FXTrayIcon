@@ -12,10 +12,12 @@ public class IconTest extends Application {
         BorderPane root = new BorderPane();
         root.setCenter(new Label("This is a test."));
         stage.setScene(new Scene(root));
+        stage.setTitle("My Application");
         stage.sizeToScene();
         stage.show();
 
-        FXTrayIcon trayIcon = new FXTrayIcon(getClass().getResource("icons8-link-64.png"));
+        FXTrayIcon trayIcon = new FXTrayIcon(stage, getClass().getResource("icons8-link-64.png"));
+        trayIcon.persistIconOnLastJavaFXStageHidden(true);
         trayIcon.addExitItem(true);
         trayIcon.show();
 

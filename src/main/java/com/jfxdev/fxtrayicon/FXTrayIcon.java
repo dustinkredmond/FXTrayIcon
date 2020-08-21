@@ -1,8 +1,10 @@
 package com.jfxdev.fxtrayicon;
 
 import javafx.application.Platform;
+import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
@@ -10,20 +12,30 @@ import java.net.URL;
 public class FXTrayIcon {
 
     private final SystemTray tray = SystemTray.getSystemTray();
-    private TrayIcon trayIcon;
-    private PopupMenu popupMenu = new PopupMenu();
+    private Stage parentStage;
+    private final TrayIcon trayIcon;
+    private final PopupMenu popupMenu = new PopupMenu();
     private boolean addExitMenuItem = false;
 
 
-    public FXTrayIcon(URL iconImagePath) {
+    public FXTrayIcon(Stage parentStage, URL iconImagePath) {
         if (!SystemTray.isSupported()) {
             throw new UnsupportedOperationException("SystemTray icons are not " +
                     "supported by the current desktop environment.");
         }
+
+        // Keep the tray icon after all windows are closed
+        Platform.setImplicitExit(false);
+
         try {
-            this.trayIcon = new TrayIcon(
-                    ImageIO.read(iconImagePath)
-                            .getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException
+                | IllegalAccessException | UnsupportedLookAndFeelException ignored) {}
+        try {
+            final Image iconImage = ImageIO.read(iconImagePath)
+                    .getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+            this.parentStage = parentStage;
+            this.trayIcon = new TrayIcon(iconImage, "", popupMenu);
         } catch (IOException e) {
             // will probably get here if the resource is not found or otherwise
             // unable to be read
@@ -31,18 +43,31 @@ public class FXTrayIcon {
         }
     }
 
+
     /**
      * Adds the FXTrayIcon to the system tray.
+     * This will add the TrayIcon with the image initialized in the
+     * {@code FXTrayIcon}'s constructor. By default, an empty popup
+     * menu it shown
      */
     public void show() {
-        EventQueue.invokeLater(() -> {
+        SwingUtilities.invokeLater(() -> {
             try {
-                if (addExitMenuItem) {
-                    MenuItem miExit = new Menu("Exit program");
-                    miExit.addActionListener(e -> Platform.runLater(Platform::exit));
-                    this.trayIcon.getPopupMenu().add(miExit);
-                }
                 tray.add(this.trayIcon);
+                this.popupMenu.addSeparator();
+                String miTitle = parentStage.getTitle().isEmpty() ? "Show application" : parentStage.getTitle();
+                MenuItem miStage = new MenuItem(miTitle);
+                miStage.setFont(Font.decode(null).deriveFont(Font.BOLD));
+                miStage.addActionListener(e -> Platform.runLater(() -> parentStage.show()));
+                this.popupMenu.add(miStage);
+                if (addExitMenuItem) {
+                    MenuItem miExit = new MenuItem("Exit program");
+                    miExit.addActionListener(e -> {
+                        Platform.exit();
+                        System.exit(0);
+                    });
+                    this.popupMenu.add(miExit);
+                }
             } catch (AWTException e) {
                 throw new RuntimeException(e);
             }
@@ -67,13 +92,4 @@ public class FXTrayIcon {
         EventQueue.invokeLater(() -> tray.remove(trayIcon));
     }
 
-    /**
-     * Setting to {@code true} keeps the JVM from terminating when
-     * the last JavaFX {@code Stage} is hidden. This allows the {@code FXTrayIcon}
-     * to remain visible even after no remaining JavaFX {@code Stage}s are visible.
-     * @param enabled Set to true to persist after no JavaFX {@code Stage}s are visible.
-     */
-    public void persistIconOnLastJavaFXStageHidden(boolean enabled) {
-        Platform.setImplicitExit(!enabled);
-    }
 }
