@@ -15,7 +15,7 @@ import java.awt.MenuItem;
 public class IconTest extends Application {
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
 
         BorderPane root = new BorderPane();
         stage.setScene(new Scene(root));
@@ -40,11 +40,8 @@ public class IconTest extends Application {
         // If we're going to modify the scene graph of JavaFX, this must be done
         // on the JavaFX application thread. Thus, we must wrap this change in
         // a call to Platform.runLater
-        menuItemTest.addActionListener(e -> {
-            Platform.runLater(() -> {
-                new Alert(Alert.AlertType.INFORMATION, "We just called JavaFX from an AWT menu!").showAndWait();
-            });
-        });
+        menuItemTest.addActionListener(e -> Platform.runLater(() ->
+                new Alert(Alert.AlertType.INFORMATION, "We just called JavaFX from an AWT menu!").showAndWait()));
         trayIcon.addMenuItem(menuItemTest);
 
         VBox vBox = new VBox(5);

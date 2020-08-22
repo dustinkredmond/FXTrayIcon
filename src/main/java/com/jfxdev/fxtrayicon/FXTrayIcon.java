@@ -117,9 +117,7 @@ public class FXTrayIcon {
      * @param index Index of the MenuItem to remove
      */
     public void removeMenuItem(int index) {
-        EventQueue.invokeLater(() -> {
-            this.popupMenu.remove(index);
-        });
+        EventQueue.invokeLater(() -> this.popupMenu.remove(index));
     }
 
     /**
@@ -129,9 +127,7 @@ public class FXTrayIcon {
      *                 Menu.
      */
     public void removeMenuItem(MenuItem menuItem) {
-        EventQueue.invokeLater(() -> {
-            this.popupMenu.remove(menuItem);
-        });
+        EventQueue.invokeLater(() -> this.popupMenu.remove(menuItem));
     }
 
     /**
