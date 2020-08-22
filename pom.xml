@@ -6,7 +6,7 @@
 
     <groupId>com.jfxdev.fxtrayicon</groupId>
     <artifactId>FXTrayIcon</artifactId>
-    <version>1.0-RELEASE</version>
+    <version>1.3-RELEASE</version>
     <url>https://github.com/dustinkredmond/FXTrayIcon</url>
     <build>
         <plugins>
