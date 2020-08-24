@@ -15,6 +15,8 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
 
@@ -95,6 +97,11 @@ public class FXTrayIcon {
                 }
                 // Add a separator between user-defined MenuItems and our built-in ones
                 this.popupMenu.addSeparator();
+
+                // Show parent stage when user double-clicks the icon
+                this.trayIcon.addActionListener(e -> {
+                    Platform.runLater(this.parentStage::show);
+                });
             } catch (AWTException e) {
                 throw new RuntimeException("Unable to add TrayIcon", e);
             }
