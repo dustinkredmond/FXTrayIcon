@@ -95,8 +95,6 @@ public class FXTrayIcon {
                     });
                     this.popupMenu.add(miExit);
                 }
-                // Add a separator between user-defined MenuItems and our built-in ones
-                this.popupMenu.addSeparator();
 
                 // Show parent stage when user double-clicks the icon
                 this.trayIcon.addActionListener(e -> {
