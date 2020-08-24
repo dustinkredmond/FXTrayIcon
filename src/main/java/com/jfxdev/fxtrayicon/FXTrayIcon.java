@@ -97,9 +97,7 @@ public class FXTrayIcon {
                 }
 
                 // Show parent stage when user double-clicks the icon
-                this.trayIcon.addActionListener(e -> {
-                    Platform.runLater(this.parentStage::show);
-                });
+                this.trayIcon.addActionListener(e -> Platform.runLater(this.parentStage::show));
             } catch (AWTException e) {
                 throw new RuntimeException("Unable to add TrayIcon", e);
             }
