@@ -90,8 +90,8 @@ public class FXTrayIcon {
                 if (addExitMenuItem) {
                     MenuItem miExit = new MenuItem("Exit program");
                     miExit.addActionListener(e -> {
+                        this.tray.remove(this.trayIcon);
                         Platform.exit();
-                        System.exit(0);
                     });
                     this.popupMenu.add(miExit);
                 }
