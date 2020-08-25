@@ -15,8 +15,6 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
 
@@ -25,6 +23,7 @@ public class FXTrayIcon {
 
     private final SystemTray tray = SystemTray.getSystemTray();
     private final Stage parentStage;
+    private String appTitle;
     private final TrayIcon trayIcon;
     private final PopupMenu popupMenu = new PopupMenu();
     /**
@@ -78,7 +77,12 @@ public class FXTrayIcon {
 
                 // Add a MenuItem with the main Stage's title, this will show the
                 // main JavaFX stage when clicked.
-                String miTitle = parentStage.getTitle().isEmpty() ? "Show application" : parentStage.getTitle();
+                String miTitle;
+                if (this.appTitle != null) {
+                    miTitle = appTitle;
+                } else {
+                    miTitle = parentStage.getTitle().isEmpty() ? "Show application" : parentStage.getTitle();
+                }
                 MenuItem miStage = new MenuItem(miTitle);
                 miStage.setFont(Font.decode(null).deriveFont(Font.BOLD));
                 miStage.addActionListener(e -> Platform.runLater(parentStage::show));
@@ -176,6 +180,11 @@ public class FXTrayIcon {
     public void setTrayIconTooltip(String tooltip) {
         EventQueue.invokeLater(() -> this.trayIcon.setToolTip(tooltip));
     }
+
+    /**
+     * Sets the application's title. This is used in the FXTrayIcon where appropriate.
+     */
+    public void setAppicationTitle(String title) { this.appTitle = title; }
 
     /**
      * Removes the {@code FXTrayIcon} from the system tray.
