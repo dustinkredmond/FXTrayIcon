@@ -184,7 +184,7 @@ public class FXTrayIcon {
     /**
      * Sets the application's title. This is used in the FXTrayIcon where appropriate.
      */
-    public void setAppicationTitle(String title) { this.appTitle = title; }
+    public void setApplicationTitle(String title) { this.appTitle = title; }
 
     /**
      * Removes the {@code FXTrayIcon} from the system tray.
