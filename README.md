@@ -4,7 +4,7 @@ Library intended for use in JavaFX applications that makes adding a System Tray 
 The FXTrayIcon class translates JavaFX MenuItems into AWT MenuItems, so no need to import anything
 from the AWT package.
 
-Check out the [sample application](./src/main/test/java/com/jfxdev/fxtrayicon/IconTest.java) in the test directory for an example of how this works. 
+Check out the [sample application](./src/test/java/com/jfxdev/fxtrayicon/IconTest.java) in the test directory for an example of how this works. 
 
 ---
 
