@@ -29,14 +29,14 @@ public class IconTest extends Application {
         FXTrayIcon trayIcon = new FXTrayIcon(stage, getClass().getResource("icons8-link-64.png"));
         trayIcon.show();
 
-        // By default the FXTrayIcon's tooltip will be the parent stage that we passed in the constructor
+        // By default the FXTrayIcon's tooltip will be the parent stage's title, that we used in the constructor
         // This method can override this
         trayIcon.setTrayIconTooltip("An alternative tooltip!");
 
-        // Note, we can now add JavaFX MenuItems to the menu
+        // We can now add JavaFX MenuItems to the menu
         MenuItem menuItemTest = new MenuItem("Create some JavaFX component!");
         menuItemTest.setOnAction(e ->
-                new Alert(Alert.AlertType.INFORMATION, "We just called JavaFX from an AWT menu!").showAndWait());
+                new Alert(Alert.AlertType.INFORMATION, "We just ran some JavaFX code from an AWT MenuItem!").showAndWait());
         trayIcon.addMenuItem(menuItemTest);
 
         VBox vBox = new VBox(5);
