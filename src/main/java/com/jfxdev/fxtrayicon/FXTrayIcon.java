@@ -1,24 +1,18 @@
 package com.jfxdev.fxtrayicon;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import java.awt.AWTException;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 
-@SuppressWarnings("unused")
 public class FXTrayIcon {
 
     private final SystemTray tray = SystemTray.getSystemTray();
@@ -133,8 +127,30 @@ public class FXTrayIcon {
      *                 nothing if the item is not in the
      *                 Menu.
      */
+    @Deprecated
     public void removeMenuItem(MenuItem menuItem) {
         EventQueue.invokeLater(() -> this.popupMenu.remove(menuItem));
+    }
+
+    /**
+     * Removes the specified item from the FXTrayIcon's menu. Does nothing
+     * if the item is not in the menu.
+     * @param fxMenuItem The JavaFX MenuItem to remove from the menu.
+     */
+    public void removeMenuItem(javafx.scene.control.MenuItem fxMenuItem) {
+        EventQueue.invokeLater(() -> {
+            MenuItem toBeRemoved = null;
+            for (int i = 0; i < this.popupMenu.getItemCount(); i++) {
+                MenuItem awtItem = this.popupMenu.getItem(i);
+                if (awtItem.getLabel().equals(fxMenuItem.getText()) ||
+                        awtItem.getName().equals(fxMenuItem.getText())) {
+                    toBeRemoved = awtItem;
+                }
+            }
+            if (toBeRemoved != null) {
+                this.popupMenu.remove(toBeRemoved);
+            }
+        });
     }
 
     /**
@@ -153,15 +169,27 @@ public class FXTrayIcon {
     }
 
     /**
-     * Adds the specified MenuItem to the Menu
+     * Adds the specified MenuItem to the FXTrayIcon's menu
      * @param item Item to be added
      */
+    @Deprecated
     public void addMenuItem(MenuItem item) {
         EventQueue.invokeLater(() -> this.popupMenu.add(item));
     }
 
     /**
-     * Returns the MenuItem at the given index.
+     * Adds the specified MenuItem to the FXTrayIcon's menu
+     * @param menuItem MenuItem to be added
+     */
+    public void addMenuItem(javafx.scene.control.MenuItem menuItem) {
+        EventQueue.invokeLater(() -> this.popupMenu.add(convertFromJavaFX(menuItem)));
+    }
+
+    /**
+     * Returns the MenuItem at the given index. The MenuItem
+     * returned is the AWT MenuItem, and not the JavaFX MenuItem,
+     * thus this should only be called when extending the functionality
+     * of the AWT MenuItem.
      * <p>
      *     NOTE: This should be called via the
      *     {@code EventQueue.invokeLater()} method as well as any
@@ -197,6 +225,24 @@ public class FXTrayIcon {
             tray.remove(trayIcon);
             Platform.setImplicitExit(true);
         });
+    }
+
+    /**
+     * Converts a JavaFX MenuItem to a AWT MenuItem
+     * @param fxItem The JavaFX MenuItem
+     * @return The converted AWT MenuItem
+     */
+    private MenuItem convertFromJavaFX(javafx.scene.control.MenuItem fxItem) {
+        MenuItem awtItem = new MenuItem(fxItem.getText());
+
+        // Set the onAction event to be performed via ActionListener action
+        if (fxItem.getOnAction() != null) {
+            awtItem.addActionListener(e -> Platform.runLater(() -> fxItem.getOnAction().handle(new ActionEvent())));
+        }
+        // Disable the MenuItem if the FX item is disabled
+        awtItem.setEnabled(!fxItem.isDisable());
+
+        return awtItem;
     }
 
 }

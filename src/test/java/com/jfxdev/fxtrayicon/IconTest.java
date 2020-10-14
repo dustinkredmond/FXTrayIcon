@@ -1,16 +1,14 @@
 package com.jfxdev.fxtrayicon;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import java.awt.MenuItem;
 
 public class IconTest extends Application {
 
@@ -35,13 +33,10 @@ public class IconTest extends Application {
         // This method can override this
         trayIcon.setTrayIconTooltip("An alternative tooltip!");
 
-        // Note, we need to use the AWT MenuItem, not JavaFX's MenuItem
+        // Note, we can now add JavaFX MenuItems to the menu
         MenuItem menuItemTest = new MenuItem("Create some JavaFX component!");
-        // If we're going to modify the scene graph of JavaFX, this must be done
-        // on the JavaFX application thread. Thus, we must wrap this change in
-        // a call to Platform.runLater
-        menuItemTest.addActionListener(e -> Platform.runLater(() ->
-                new Alert(Alert.AlertType.INFORMATION, "We just called JavaFX from an AWT menu!").showAndWait()));
+        menuItemTest.setOnAction(e ->
+                new Alert(Alert.AlertType.INFORMATION, "We just called JavaFX from an AWT menu!").showAndWait());
         trayIcon.addMenuItem(menuItemTest);
 
         VBox vBox = new VBox(5);
