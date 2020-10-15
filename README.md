@@ -8,7 +8,7 @@ Check out the [sample application](./src/test/java/com/jfxdev/fxtrayicon/IconTes
 
 ---
 
-###How do I add to my project? 
+### How do I add to my project? 
 
 I'm not going to bother keeping up with compiled JARs or add the repo to Maven central.
 Since FXTrayIcon consists of one class file, simply download [FXTrayIcon.java](./src/main/java/com/jfxdev/fxtrayicon/FXTrayIcon.java).
