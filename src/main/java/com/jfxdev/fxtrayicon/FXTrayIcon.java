@@ -2,14 +2,20 @@ package com.jfxdev.fxtrayicon;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import java.awt.*;
+import java.awt.AWTException;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
 import java.io.IOException;
 import java.net.URL;
 import java.util.StringJoiner;
