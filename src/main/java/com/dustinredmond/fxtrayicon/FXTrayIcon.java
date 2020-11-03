@@ -1,4 +1,4 @@
-package com.jfxdev.fxtrayicon;
+package com.dustinredmond.fxtrayicon;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
