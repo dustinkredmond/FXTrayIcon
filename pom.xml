@@ -8,7 +8,22 @@
     <version>2.0-RELEASE</version>
 
     <name>FXTrayIcon</name>
+    <description>Easily add system tray icons to JavaFX projects</description>
     <url>https://github.com/dustinkredmond/FXTrayIcon</url>
+
+    <licenses>
+        <license>
+            <name>The MIT License</name>
+            <url>http://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Dustin Redmond</name>
+            <email>dustin@dustinredmond.com</email>
+        </developer>
+    </developers>
 
     <scm>
         <connection>scm:git:git://github.com/dustinkredmond/FXTrayIcon.git</connection>
