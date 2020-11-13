@@ -11,8 +11,15 @@ Check out the [sample application](./src/test/java/com/dustinredmond/fxtrayicon/
 
 ### How do I add to my project? 
 
-I'm not going to bother keeping up with compiled JARs or add the repo to Maven central.
-Since FXTrayIcon consists of one class file, simply download [FXTrayIcon.java](src/main/java/com/dustinredmond/fxtrayicon/FXTrayIcon.java).
+The project is available as a Maven dependency. Add the following to POM.xml
+
+```
+<dependency>
+  <groupId>com.dustinredmond.fxtrayicon</groupId>
+  <artifactId>FXTrayIcon</artifactId>
+  <version>2.1-RELEASE</version>
+</dependency>
+```
 
 ---
 
