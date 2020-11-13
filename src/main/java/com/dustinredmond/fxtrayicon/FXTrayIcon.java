@@ -218,6 +218,8 @@ public class FXTrayIcon {
 
     /**
      * Sets the application's title. This is used in the FXTrayIcon where appropriate.
+     * @param title The application's title, to be used for
+     *              the tooltip text for FXTrayIcon
      */
     public void setApplicationTitle(String title) { this.appTitle = title; }
 
