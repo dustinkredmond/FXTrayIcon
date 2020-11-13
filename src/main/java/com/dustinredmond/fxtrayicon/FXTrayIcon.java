@@ -82,7 +82,13 @@ public class FXTrayIcon {
                 if (this.appTitle != null) {
                     miTitle = appTitle;
                 } else {
-                    miTitle = parentStage.getTitle().isEmpty() ? "Show application" : parentStage.getTitle();
+                    if (parentStage == null
+                        || parentStage.getTitle() == null
+                        || parentStage.getTitle().isEmpty()) {
+                        miTitle = "Show application";
+                    } else {
+                        miTitle = parentStage.getTitle();
+                    }
                 }
                 MenuItem miStage = new MenuItem(miTitle);
                 miStage.setFont(Font.decode(null).deriveFont(Font.BOLD));
