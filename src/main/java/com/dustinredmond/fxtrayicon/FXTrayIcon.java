@@ -92,7 +92,11 @@ public class FXTrayIcon {
                 }
                 MenuItem miStage = new MenuItem(miTitle);
                 miStage.setFont(Font.decode(null).deriveFont(Font.BOLD));
-                miStage.addActionListener(e -> Platform.runLater(parentStage::show));
+                miStage.addActionListener(e -> Platform.runLater(() -> {
+                    if (parentStage != null) {
+                        parentStage.show();
+                    }
+                }));
                 this.popupMenu.add(miStage);
 
                 // If Platform.setImplicitExit(false) then the JVM will continue to run after
@@ -108,7 +112,11 @@ public class FXTrayIcon {
                 }
 
                 // Show parent stage when user double-clicks the icon
-                this.trayIcon.addActionListener(e -> Platform.runLater(this.parentStage::show));
+                this.trayIcon.addActionListener(e -> {
+                    if (this.parentStage != null) {
+                        Platform.runLater(this.parentStage::show);
+                    }
+                });
             } catch (AWTException e) {
                 throw new RuntimeException("Unable to add TrayIcon", e);
             }
