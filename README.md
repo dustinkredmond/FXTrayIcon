@@ -9,6 +9,19 @@ Check out the [sample application](./src/test/java/com/dustinredmond/fxtrayicon/
 
 ---
 
+### Usage
+
+From within your JavaFX application, adding a tray icon is as simple as two lines of code.
+Yes, really, that's it!
+
+```java
+// Pass in the app's main stage, and path to the icon image
+FXTrayIcon icon = new FXTrayIcon(stage, getClass().getResource("someImageFile.png"));
+icon.show();
+```
+
+---
+
 ### How do I add to my project? 
 
 The project is available as a Maven dependency. Add the following to POM.xml
@@ -48,7 +61,5 @@ so there's no need to use those!
 
 ### Supported operating systems
 
-So long as the operating system supports tray icons, FXTrayIcon should work.
-Call `java.awt.SystemTray.isSupported()` to figure this out for yourself.
-FXTrayIcon will also throw an `UnsupportedOperationException` if tray icons
-are unavailable on the current desktop environment.
+Any operating system that supports system tray icons.
+Call `java.awt.SystemTray.isSupported()` to determine this.
