@@ -26,6 +26,7 @@ public class FXTrayIcon {
     private final Stage parentStage;
     private String appTitle;
     private final TrayIcon trayIcon;
+    private boolean showing;
     private final PopupMenu popupMenu = new PopupMenu();
     /**
      * Assume this as {@code true} by default. Otherwise
@@ -75,6 +76,7 @@ public class FXTrayIcon {
         SwingUtilities.invokeLater(() -> {
             try {
                 tray.add(this.trayIcon);
+                this.showing = true;
 
                 // Add a MenuItem with the main Stage's title, this will show the
                 // main JavaFX stage when clicked.
@@ -246,8 +248,13 @@ public class FXTrayIcon {
     public void hide() {
         EventQueue.invokeLater(() -> {
             tray.remove(trayIcon);
+            this.showing = false;
             Platform.setImplicitExit(true);
         });
+    }
+
+    public boolean isShowing() {
+        return this.showing;
     }
 
     /**
