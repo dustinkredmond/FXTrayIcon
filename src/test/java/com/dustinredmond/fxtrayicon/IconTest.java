@@ -40,6 +40,7 @@ public class IconTest extends Application {
                 new Alert(Alert.AlertType.INFORMATION, "We just ran some JavaFX code from an AWT MenuItem!").showAndWait());
         trayIcon.addMenuItem(menuItemTest);
 
+        // We can also nest menus, below is an Options menu with sub-items
         Menu menuOptions = new Menu("Options");
         MenuItem miOn = new MenuItem("On");
         miOn.setOnAction(e -> System.out.println("Options -> On clicked"));
