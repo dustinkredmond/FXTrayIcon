@@ -212,6 +212,9 @@ public class FXTrayIcon {
      * @param menuItem MenuItem to be added
      */
     public void addMenuItem(javafx.scene.control.MenuItem menuItem) {
+        if (!isUnique(menuItem)) {
+            throw new UnsupportedOperationException("Menu Item labels must be unique.");
+        }
         EventQueue.invokeLater(() -> this.popupMenu.add(convertFromJavaFX(menuItem)));
     }
 
@@ -304,6 +307,18 @@ public class FXTrayIcon {
         awtItem.setEnabled(!fxItem.isDisable());
 
         return awtItem;
+    }
+
+    private boolean isUnique(javafx.scene.control.MenuItem fxItem) {
+        if (this.popupMenu.getItemCount() == 0) {
+            return true;
+        }
+        for (int i = 0; i < this.popupMenu.getItemCount(); i++) {
+            if (this.popupMenu.getItem(i).getName().equals(fxItem.getText())) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
