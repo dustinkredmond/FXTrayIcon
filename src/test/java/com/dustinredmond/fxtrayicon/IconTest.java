@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -38,6 +39,14 @@ public class IconTest extends Application {
         menuItemTest.setOnAction(e ->
                 new Alert(Alert.AlertType.INFORMATION, "We just ran some JavaFX code from an AWT MenuItem!").showAndWait());
         trayIcon.addMenuItem(menuItemTest);
+
+        Menu menuOptions = new Menu("Options");
+        MenuItem miOn = new MenuItem("On");
+        miOn.setOnAction(e -> System.out.println("Options -> On clicked"));
+        MenuItem miOff = new MenuItem("Off");
+        miOff.setOnAction(e -> System.out.println("Options -> Off clicked"));
+        menuOptions.getItems().addAll(miOn, miOff);
+        trayIcon.addMenuItem(menuOptions);
 
         VBox vBox = new VBox(5);
         vBox.getChildren().add(new Label("You should see a tray icon!"));

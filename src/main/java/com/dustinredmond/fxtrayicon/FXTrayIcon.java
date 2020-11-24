@@ -2,6 +2,7 @@ package com.dustinredmond.fxtrayicon;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.scene.control.Menu;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
@@ -212,10 +213,22 @@ public class FXTrayIcon {
      * @param menuItem MenuItem to be added
      */
     public void addMenuItem(javafx.scene.control.MenuItem menuItem) {
+        if (menuItem instanceof Menu) {
+            addMenu((Menu) menuItem);
+            return;
+        }
         if (!isUnique(menuItem)) {
             throw new UnsupportedOperationException("Menu Item labels must be unique.");
         }
         EventQueue.invokeLater(() -> this.popupMenu.add(convertFromJavaFX(menuItem)));
+    }
+
+    private void addMenu(Menu menu) {
+        EventQueue.invokeLater(() -> {
+            java.awt.Menu awtMenu = new java.awt.Menu(menu.getText());
+            menu.getItems().forEach(subItem -> awtMenu.add(convertFromJavaFX(subItem)));
+            this.popupMenu.add(awtMenu);
+        });
     }
 
     /**
