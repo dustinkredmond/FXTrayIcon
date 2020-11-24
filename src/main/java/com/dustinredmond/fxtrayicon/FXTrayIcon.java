@@ -20,6 +20,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.StringJoiner;
 
+/**
+ *  Class for creating a JavaFX System Tray Icon.
+ *  Uses JavaFX controls to create the icon.
+ *  Allows for a developer to create a tray icon
+ *  using JavaFX code, without having to access
+ *  the AWT API.
+ */
 public class FXTrayIcon {
 
     private final SystemTray tray = SystemTray.getSystemTray();
