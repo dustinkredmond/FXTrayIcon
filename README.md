@@ -24,7 +24,7 @@ icon.show();
 
 ### How do I add to my project? 
 
-The project is available as a Maven dependency. Add the following to POM.xml
+The project is available as a Maven dependency on Central. Add the following to POM.xml
 
 ```xml
 <dependency>
@@ -34,7 +34,7 @@ The project is available as a Maven dependency. Add the following to POM.xml
 </dependency>
 ```
 
-If using Gradle to build, add the below to your Gradle build file
+Or, if using Gradle to build, add the below to your Gradle build file
 
 ```groovy
 compile group: 'com.dustinredmond.fxtrayicon', name: 'FXTrayIcon', version: '2.3-RELEASE'
