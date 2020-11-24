@@ -25,6 +25,10 @@
         </developer>
     </developers>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <scm>
         <connection>scm:git:git://github.com/dustinkredmond/FXTrayIcon.git</connection>
         <developerConnection>scm:git:git@github.com:dustinkredmond/FXTrayIcon.git</developerConnection>
@@ -76,10 +80,10 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
