@@ -30,7 +30,7 @@ import java.util.StringJoiner;
  */
 public class FXTrayIcon {
 
-    private final SystemTray tray = SystemTray.getSystemTray();
+    private final SystemTray tray;
     private final Stage parentStage;
     private String appTitle;
     private final TrayIcon trayIcon;
@@ -48,6 +48,8 @@ public class FXTrayIcon {
         if (!SystemTray.isSupported()) {
             throw new UnsupportedOperationException("SystemTray icons are not " +
                     "supported by the current desktop environment.");
+        } else {
+            tray = SystemTray.getSystemTray();
         }
 
         // Keeps the JVM running even if there are no
