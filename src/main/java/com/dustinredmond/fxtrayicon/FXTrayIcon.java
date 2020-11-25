@@ -1,7 +1,6 @@
 package com.dustinredmond.fxtrayicon;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.scene.control.Menu;
 import javafx.stage.Stage;
 
@@ -19,7 +18,6 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.io.IOException;
 import java.net.URL;
-import java.util.StringJoiner;
 
 /**
  *  Class for creating a JavaFX System Tray Icon.
@@ -28,6 +26,7 @@ import java.util.StringJoiner;
  *  using JavaFX code, without having to access
  *  the AWT API.
  */
+@SuppressWarnings("unused")
 public class FXTrayIcon {
 
     private final SystemTray tray;
@@ -155,17 +154,6 @@ public class FXTrayIcon {
     }
 
     /**
-     * Removes the specified item from the Menu
-     * @param menuItem Item to be removed, this method does
-     *                 nothing if the item is not in the
-     *                 Menu.
-     */
-    @Deprecated
-    public void removeMenuItem(MenuItem menuItem) {
-        EventQueue.invokeLater(() -> this.popupMenu.remove(menuItem));
-    }
-
-    /**
      * Removes the specified item from the FXTrayIcon's menu. Does nothing
      * if the item is not in the menu.
      * @param fxMenuItem The JavaFX MenuItem to remove from the menu.
@@ -203,15 +191,6 @@ public class FXTrayIcon {
 
     /**
      * Adds the specified MenuItem to the FXTrayIcon's menu
-     * @param item Item to be added
-     */
-    @Deprecated
-    public void addMenuItem(MenuItem item) {
-        EventQueue.invokeLater(() -> this.popupMenu.add(item));
-    }
-
-    /**
-     * Adds the specified MenuItem to the FXTrayIcon's menu
      * @param menuItem MenuItem to be added
      */
     public void addMenuItem(javafx.scene.control.MenuItem menuItem) {
@@ -222,13 +201,13 @@ public class FXTrayIcon {
         if (!isUnique(menuItem)) {
             throw new UnsupportedOperationException("Menu Item labels must be unique.");
         }
-        EventQueue.invokeLater(() -> this.popupMenu.add(convertFromJavaFX(menuItem)));
+        EventQueue.invokeLater(() -> this.popupMenu.add(AWTUtils.convertFromJavaFX(menuItem)));
     }
 
     private void addMenu(Menu menu) {
         EventQueue.invokeLater(() -> {
             java.awt.Menu awtMenu = new java.awt.Menu(menu.getText());
-            menu.getItems().forEach(subItem -> awtMenu.add(convertFromJavaFX(subItem)));
+            menu.getItems().forEach(subItem -> awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
             this.popupMenu.add(awtMenu);
         });
     }
@@ -280,48 +259,6 @@ public class FXTrayIcon {
 
     public boolean isShowing() {
         return this.showing;
-    }
-
-    /**
-     * Converts a JavaFX MenuItem to a AWT MenuItem
-     * @param fxItem The JavaFX MenuItem
-     * @return The converted AWT MenuItem
-     */
-    private MenuItem convertFromJavaFX(javafx.scene.control.MenuItem fxItem) {
-        MenuItem awtItem = new MenuItem(fxItem.getText());
-
-        StringJoiner sj = new StringJoiner(",");
-        if (fxItem.getGraphic() != null) {
-            sj.add("setGraphic()");
-        }
-        if (fxItem.getAccelerator() != null) {
-            sj.add("setAccelerator()");
-        }
-        if (fxItem.getCssMetaData().size() > 0) {
-            sj.add("getCssMetaData().add()");
-        }
-        if (fxItem.getOnMenuValidation() != null) {
-            sj.add("setOnMenuValidation()");
-        }
-        if (fxItem.getStyle() != null) {
-            sj.add("setStyle()");
-        }
-        String errors = sj.toString();
-        if (!errors.isEmpty()) {
-            throw new RuntimeException(String.format(
-                    "The following methods were called on the " +
-                    "passed JavaFX MenuItem (%s), these methods are not" +
-                    "supported by FXTrayIcon.", errors));
-        }
-
-        // Set the onAction event to be performed via ActionListener action
-        if (fxItem.getOnAction() != null) {
-            awtItem.addActionListener(e -> Platform.runLater(() -> fxItem.getOnAction().handle(new ActionEvent())));
-        }
-        // Disable the MenuItem if the FX item is disabled
-        awtItem.setEnabled(!fxItem.isDisable());
-
-        return awtItem;
     }
 
     private boolean isUnique(javafx.scene.control.MenuItem fxItem) {
