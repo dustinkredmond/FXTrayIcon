@@ -79,7 +79,12 @@ public class FXTrayIcon {
      * Adds the FXTrayIcon to the system tray.
      * This will add the TrayIcon with the image initialized in the
      * {@code FXTrayIcon}'s constructor. By default, an empty popup
-     * menu it shown
+     * menu is shown.
+     * By default, {@code javafx.application.Platform.setImplicitExit(false)}
+     * will be called. This will allow the application to continue running
+     * and show the tray icon after no more JavaFX Stages are visible. If
+     * this is not the behavior that you intend, call {@code setImplicitExit}
+     * to true after calling {@code show()}.
      */
     public void show() {
         SwingUtilities.invokeLater(() -> {
@@ -257,6 +262,10 @@ public class FXTrayIcon {
         });
     }
 
+    /**
+     * Returns true if the SystemTray icon is visible.
+     * @return true if the SystemTray icon is visible.
+     */
     public boolean isShowing() {
         return this.showing;
     }

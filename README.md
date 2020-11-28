@@ -30,14 +30,14 @@ The project is available as a Maven dependency on Central. Add the following to 
 <dependency>
   <groupId>com.dustinredmond.fxtrayicon</groupId>
   <artifactId>FXTrayIcon</artifactId>
-  <version>2.4.0</version>
+  <version>2.4.1</version>
 </dependency>
 ```
 
 Or, if using Gradle to build, add the below to your Gradle build file
 
 ```groovy
-compile group: 'com.dustinredmond.fxtrayicon', name: 'FXTrayIcon', version: '2.4.0'
+compile group: 'com.dustinredmond.fxtrayicon', name: 'FXTrayIcon', version: '2.4.1'
 ```
 
 ---
