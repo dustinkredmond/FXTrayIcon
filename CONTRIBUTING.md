@@ -1,7 +1,8 @@
 ## Contributing Guidelines
 
 - Follow proper Java style conventions. Use a style checker if
-your IDE supports it.
+your IDE supports it. I tend to personally prefer the "Sun Checks" style 
+as it's implemented in IntelliJ IDEA's CheckStyle.
 
 - Search to see if your issue already exists.
 
