@@ -15,6 +15,9 @@ public class AWTUtils {
     protected static MenuItem convertFromJavaFX(javafx.scene.control.MenuItem fxItem) {
         MenuItem awtItem = new MenuItem(fxItem.getText());
 
+        // some JavaFX to AWT translations aren't possible/supported
+        // build list of which unsupported methods have been called on
+        // the passed JavaFX MenuItem
         StringJoiner sj = new StringJoiner(",");
         if (fxItem.getGraphic() != null) {
             sj.add("setGraphic()");
