@@ -29,24 +29,11 @@ import java.net.URL;
 @SuppressWarnings("unused")
 public class FXTrayIcon {
 
-    private final SystemTray tray;
-    private final Stage parentStage;
-    private String appTitle;
-    private final TrayIcon trayIcon;
-    private boolean showing;
-    private final PopupMenu popupMenu = new PopupMenu();
-    /**
-     * Assume this as {@code true} by default. Otherwise
-     * a user would have to implement this MenuItem themselves
-     * and thus we would need to expose AWT objects.
-     */
-    private boolean addExitMenuItem = true;
-
 
     public FXTrayIcon(Stage parentStage, URL iconImagePath) {
         if (!SystemTray.isSupported()) {
-            throw new UnsupportedOperationException("SystemTray icons are not " +
-                    "supported by the current desktop environment.");
+            throw new UnsupportedOperationException("SystemTray icons are not "
+                    + "supported by the current desktop environment.");
         } else {
             tray = SystemTray.getSystemTray();
         }
@@ -55,9 +42,7 @@ public class FXTrayIcon {
         // visible JavaFX Stages
         Platform.setImplicitExit(false);
 
-        // Set the SystemLookAndFeel, if not available, use default
-        // User could change this by calling UIManager.setLookAndFeel themselves
-        // after instantiating the FXTrayIcon
+        // Set the SystemLookAndFeel as default, let user override if needed
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException
@@ -137,6 +122,24 @@ public class FXTrayIcon {
                 throw new RuntimeException("Unable to add TrayIcon", e);
             }
         });
+    }
+
+    /**
+     * Adds the icon to the SystemTray. {@code showMinimal()} adds the icon with
+     * an empty popup menu, allowing the user to add {@code MenuItem}s from scratch.
+     */
+    public void showMinimal() {
+        try {
+            tray.add(this.trayIcon);
+            this.showing = true;
+            this.trayIcon.addActionListener(e -> {
+                if (this.parentStage != null) {
+                    Platform.runLater(this.parentStage::show);
+                }
+            });
+        } catch (AWTException e) {
+            throw new RuntimeException("Unable to add TrayIcon", e);
+        }
     }
 
     /**
@@ -270,6 +273,13 @@ public class FXTrayIcon {
         return this.showing;
     }
 
+    /**
+     * Check if a JavaFX menu item's text is unique among those
+     * previously added to the AWT PopupMenu
+     * @param fxItem A JavaFX MenuItem
+     * @return true if the item's text is unique among previously
+     *          added items.
+     */
     private boolean isUnique(javafx.scene.control.MenuItem fxItem) {
         if (this.popupMenu.getItemCount() == 0) {
             return true;
@@ -281,5 +291,18 @@ public class FXTrayIcon {
         }
         return true;
     }
+
+    private final SystemTray tray;
+    private final Stage parentStage;
+    private String appTitle;
+    private final TrayIcon trayIcon;
+    private boolean showing;
+    private final PopupMenu popupMenu = new PopupMenu();
+    /**
+     * Assume this as {@code true} by default. Otherwise
+     * a user would have to implement this MenuItem themselves
+     * and thus we would need to expose AWT objects.
+     */
+    private boolean addExitMenuItem = true;
 
 }
