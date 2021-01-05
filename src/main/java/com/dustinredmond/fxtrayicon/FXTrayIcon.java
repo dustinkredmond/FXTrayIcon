@@ -145,7 +145,7 @@ public class FXTrayIcon {
                 }
             });
         } catch (AWTException e) {
-            throw new RuntimeException("Unable to add TrayIcon", e);
+            throw new IllegalStateException("Unable to add TrayIcon", e);
         }
     }
 
