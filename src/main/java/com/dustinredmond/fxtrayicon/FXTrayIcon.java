@@ -29,6 +29,13 @@ import java.net.URL;
 @SuppressWarnings("unused")
 public class FXTrayIcon {
 
+    private final SystemTray tray;
+    private final Stage parentStage;
+    private String appTitle;
+    private final TrayIcon trayIcon;
+    private boolean showing;
+    private final PopupMenu popupMenu = new PopupMenu();
+    private boolean addExitMenuItem = true;
 
     public FXTrayIcon(Stage parentStage, URL iconImagePath) {
         if (!SystemTray.isSupported()) {
@@ -219,7 +226,6 @@ public class FXTrayIcon {
             this.popupMenu.add(awtMenu);
         });
     }
-
     /**
      * Returns the MenuItem at the given index. The MenuItem
      * returned is the AWT MenuItem, and not the JavaFX MenuItem,
@@ -235,7 +241,6 @@ public class FXTrayIcon {
     public MenuItem getMenuItem(int index) {
         return this.popupMenu.getItem(index);
     }
-
     /**
      * Sets the FXTrayIcon's tooltip that is displayed on mouse hover.
      * @param tooltip The text of the tooltip
@@ -243,14 +248,12 @@ public class FXTrayIcon {
     public void setTrayIconTooltip(String tooltip) {
         EventQueue.invokeLater(() -> this.trayIcon.setToolTip(tooltip));
     }
-
     /**
      * Sets the application's title. This is used in the FXTrayIcon where appropriate.
      * @param title The application's title, to be used for
      *              the tooltip text for FXTrayIcon
      */
     public void setApplicationTitle(String title) { this.appTitle = title; }
-
     /**
      * Removes the {@code FXTrayIcon} from the system tray.
      * Also calls {@code Platform.setImplicitExit(true)}, thereby
@@ -264,7 +267,6 @@ public class FXTrayIcon {
             Platform.setImplicitExit(true);
         });
     }
-
     /**
      * Returns true if the SystemTray icon is visible.
      * @return true if the SystemTray icon is visible.
@@ -272,7 +274,6 @@ public class FXTrayIcon {
     public boolean isShowing() {
         return this.showing;
     }
-
     /**
      * Check if a JavaFX menu item's text is unique among those
      * previously added to the AWT PopupMenu
@@ -291,18 +292,5 @@ public class FXTrayIcon {
         }
         return true;
     }
-
-    private final SystemTray tray;
-    private final Stage parentStage;
-    private String appTitle;
-    private final TrayIcon trayIcon;
-    private boolean showing;
-    private final PopupMenu popupMenu = new PopupMenu();
-    /**
-     * Assume this as {@code true} by default. Otherwise
-     * a user would have to implement this MenuItem themselves
-     * and thus we would need to expose AWT objects.
-     */
-    private boolean addExitMenuItem = true;
 
 }
