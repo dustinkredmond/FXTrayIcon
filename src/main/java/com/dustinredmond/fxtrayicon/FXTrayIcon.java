@@ -56,7 +56,7 @@ public class FXTrayIcon {
             this.parentStage = parentStage;
             this.trayIcon = new TrayIcon(iconImage, parentStage.getTitle(), popupMenu);
         } catch (IOException e) {
-            throw new RuntimeException("Unable to read the Image at the provided path.");
+            throw new IllegalStateException("Unable to read the Image at the provided path.");
         }
     }
 
@@ -119,7 +119,7 @@ public class FXTrayIcon {
                     }
                 });
             } catch (AWTException e) {
-                throw new RuntimeException("Unable to add TrayIcon", e);
+                throw new IllegalStateException("Unable to add TrayIcon", e);
             }
         });
     }

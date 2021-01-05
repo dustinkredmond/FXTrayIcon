@@ -36,7 +36,7 @@ public class AWTUtils {
         }
         String errors = sj.toString();
         if (!errors.isEmpty()) {
-            throw new RuntimeException(String.format(
+            throw new UnsupportedOperationException(String.format(
                 "The following methods were called on the " +
                     "passed JavaFX MenuItem (%s), these methods are not" +
                     "supported by FXTrayIcon.", errors));
