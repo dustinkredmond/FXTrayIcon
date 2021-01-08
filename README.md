@@ -30,14 +30,14 @@ The project is available as a Maven dependency on Central. Add the following to 
 <dependency>
   <groupId>com.dustinredmond.fxtrayicon</groupId>
   <artifactId>FXTrayIcon</artifactId>
-  <version>2.4.2</version>
+  <version>2.4.3</version>
 </dependency>
 ```
 
 Or, if using Gradle to build, add the below to your Gradle build file
 
 ```groovy
-compile group: 'com.dustinredmond.fxtrayicon', name: 'FXTrayIcon', version: '2.4.2'
+compile group: 'com.dustinredmond.fxtrayicon', name: 'FXTrayIcon', version: '2.4.3'
 ```
 
 ---
@@ -61,4 +61,6 @@ so there's no need to use those!
 ## Supported operating systems
 
 Any operating system that supports system tray icons.
-Call `java.awt.SystemTray.isSupported()` to determine this.
+
+Call `FXTrayIcon.isSupported()` to see if the current platform
+supports the system tray.
