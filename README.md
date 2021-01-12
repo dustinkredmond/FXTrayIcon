@@ -1,5 +1,7 @@
 # FXTrayIcon
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.dustinredmond.fxtrayicon/FXTrayIcon.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.dustinredmond.fxtrayicon%22%20AND%20a:%22FXTrayIcon%22)
+
 Library intended for use in JavaFX applications that makes adding a System Tray icon easier.
 The FXTrayIcon class translates JavaFX MenuItems into AWT MenuItems, so no need to import anything
 from the AWT package. This is particularly useful because JavaFX does not provide a way to add a 
@@ -40,6 +42,13 @@ Or, if using Gradle to build, add the below to your Gradle build file
 compile group: 'com.dustinredmond.fxtrayicon', name: 'FXTrayIcon', version: '2.4.3'
 ```
 
+You can even use it from a Groovy script!
+
+```groovy
+@Grapes(
+  @Grab(group='com.dustinredmond.fxtrayicon', module='FXTrayIcon', version='2.4.3')
+)
+```
 ---
 
 ## Screenshots
