@@ -32,23 +32,27 @@ The project is available as a Maven dependency on Central. Add the following to 
 <dependency>
   <groupId>com.dustinredmond.fxtrayicon</groupId>
   <artifactId>FXTrayIcon</artifactId>
-  <version>2.4.3</version>
+  <version><!--See Below --></version>
 </dependency>
 ```
 
 Or, if using Gradle to build, add the below to your Gradle build file
 
 ```groovy
-compile group: 'com.dustinredmond.fxtrayicon', name: 'FXTrayIcon', version: '2.4.3'
+compile group: 'com.dustinredmond.fxtrayicon', name: 'FXTrayIcon', version: '<see below>'
 ```
 
 You can even use it from a Groovy script!
 
 ```groovy
 @Grapes(
-  @Grab(group='com.dustinredmond.fxtrayicon', module='FXTrayIcon', version='2.4.3')
+  @Grab(group='com.dustinredmond.fxtrayicon', module='FXTrayIcon', version='<see below>')
 )
 ```
+
+*Note, for the current stable version number, use the following:*
+[![Maven Central](https://img.shields.io/maven-central/v/com.dustinredmond.fxtrayicon/FXTrayIcon.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.dustinredmond.fxtrayicon%22%20AND%20a:%22FXTrayIcon%22)
+
 ---
 
 ## Screenshots
