@@ -1,6 +1,7 @@
 # FXTrayIcon
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.dustinredmond.fxtrayicon/FXTrayIcon.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.dustinredmond.fxtrayicon%22%20AND%20a:%22FXTrayIcon%22)
+[![Travis CI Build](https://travis-ci.com/dustinkredmond/FXTrayIcon.svg?branch=main)](https://travis-ci.com/dustinkredmond/FXTrayIcon)
 
 Library intended for use in JavaFX applications that makes adding a System Tray icon easier.
 The FXTrayIcon class translates JavaFX MenuItems into AWT MenuItems, so no need to import anything
