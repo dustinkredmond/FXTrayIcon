@@ -20,6 +20,8 @@ jobs:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
+      - run: apt update
+      - run: apt install maven
       - run: mvn package
       - store_artifacts:
           path: target
