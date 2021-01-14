@@ -11,6 +11,8 @@ jobs:
       MAVEN_OPTS: -Xmx3200m
     steps:
       - checkout
+      - run: apt update
+      - run: apt install maven
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "pom.xml" }}
@@ -20,8 +22,6 @@ jobs:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-      - run: apt update
-      - run: apt install maven
       - run: mvn package
       - store_artifacts:
           path: target
