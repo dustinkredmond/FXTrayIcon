@@ -47,7 +47,8 @@ public class FXTrayIcon {
         }
 
         // Keeps the JVM running even if there are no
-        // visible JavaFX Stages
+        // visible JavaFX Stages, otherwise JVM would
+        // exit and we lose the TrayIcon
         Platform.setImplicitExit(false);
 
         // Set the SystemLookAndFeel as default, let user override if needed
