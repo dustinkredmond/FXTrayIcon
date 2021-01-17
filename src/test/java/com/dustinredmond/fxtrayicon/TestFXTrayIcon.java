@@ -1,20 +1,62 @@
 package com.dustinredmond.fxtrayicon;
 
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.awt.SystemTray;
+import java.awt.*;
+
 import static org.junit.Assert.*;
 
-public class TestFXTrayIcon {
+/**
+ * Serves as a basic smoke test for FXTrayIcon and associated
+ * helper classes.
+ */
+public class TestFXTrayIcon extends Application {
 
     @Test
+    public void runTestOnFXApplicationThread() {
+        Application.launch(TestFXTrayIcon.class, (String) null);
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        testShouldConvertSuccessful();
+        testShouldConvertFail();
+        testTrayIconSupported();
+        testNotNullTestResource();
+        testInitialization();
+        Platform.exit();;
+    }
+
+    public void testShouldConvertSuccessful() {
+        MenuItem fxItem = new MenuItem("SomeText");
+        fxItem.setDisable(true);
+        fxItem.setOnAction(e -> {/* ignored */});
+
+        java.awt.MenuItem awtItem = AWTUtils.convertFromJavaFX(fxItem);
+        assertEquals(fxItem.getText(), awtItem.getLabel());
+        assertEquals(fxItem.isDisable(), !awtItem.isEnabled());
+        assertEquals(1, awtItem.getActionListeners().length);
+    }
+
+    public void testShouldConvertFail() {
+        MenuItem fxItem = new MenuItem();
+        fxItem.setGraphic(new Label());
+        try {
+            java.awt.MenuItem awtItem = AWTUtils.convertFromJavaFX(fxItem);
+            fail("Should not be able to assign graphic in AWTUtils");
+        } catch (Exception ignored) { /* should always reach here */ }
+    }
+
     public void testTrayIconSupported() {
         assertEquals(SystemTray.isSupported(), FXTrayIcon.isSupported());
     }
 
-    @Test
     public void testNotNullTestResource() {
         try {
             assertNotNull(getClass().getResource(TEST_ICON));
@@ -23,7 +65,6 @@ public class TestFXTrayIcon {
         }
     }
 
-    @Test
     public void testInitialization() {
         if (FXTrayIcon.isSupported()) {
             FXTrayIcon icon = new FXTrayIcon(new Stage(), getClass().getResource(TEST_ICON));
@@ -31,70 +72,6 @@ public class TestFXTrayIcon {
         }
     }
 
-    @Test
-    public void testShow() {
-        if (FXTrayIcon.isSupported()) {
-            FXTrayIcon icon = new FXTrayIcon(new Stage(), getClass().getResource(TEST_ICON));
-            icon.show();
-            assertTrue(icon.isShowing());
-            icon.hide();
-        }
-    }
-
-    @Test
-    public void testPopupMenuIsEmptyOnShowMinimal() {
-        if (FXTrayIcon.isSupported()) {
-            FXTrayIcon icon = new FXTrayIcon(new Stage(), getClass().getResource(TEST_ICON));
-            icon.showMinimal();
-            assertNull(icon.getMenuItem(0));
-            icon.hide();
-        }
-    }
-
-    @Test
-    public void testIconAddIncrementsMenuItemCount() {
-        if (FXTrayIcon.isSupported()) {
-            FXTrayIcon icon = new FXTrayIcon(new Stage(), getClass().getResource(TEST_ICON));
-            icon.showMinimal();
-            int iconMenuItemCount = 0;
-            while (icon.getMenuItem(iconMenuItemCount) != null) {
-                iconMenuItemCount++;
-            }
-
-            icon.addMenuItem(new MenuItem("TestItem"));
-
-            int countWithAddedItem = 0;
-            while (icon.getMenuItem(countWithAddedItem) != null) {
-                countWithAddedItem++;
-            }
-
-            assertEquals(iconMenuItemCount + 1, countWithAddedItem);
-            icon.hide();
-        }
-    }
-
-    @Test
-    public void testIconRemoveDecrementsMenuItemCount() {
-        if (FXTrayIcon.isSupported()) {
-            FXTrayIcon icon = new FXTrayIcon(new Stage(), getClass().getResource(TEST_ICON));
-            icon.show();
-
-            int initialCount = 0;
-            while (icon.getMenuItem(initialCount) != null) {
-                initialCount++;
-            }
-
-            icon.removeMenuItem(0);
-
-            int afterRemovalCount = 0;
-            while (icon.getMenuItem(afterRemovalCount) != null) {
-                afterRemovalCount++;
-            }
-
-            assertEquals(initialCount - 1, afterRemovalCount);
-            icon.hide();
-        }
-    }
-
     private static final String TEST_ICON = "icons8-link-64.png";
+
 }
