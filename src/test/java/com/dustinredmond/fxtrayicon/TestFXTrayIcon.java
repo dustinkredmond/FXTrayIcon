@@ -20,13 +20,15 @@ public class TestFXTrayIcon extends Application {
 
     @Test
     public void runTestOnFXApplicationThread() {
-        try {
-            Application.launch(TestFXTrayIcon.class, (String) null);
-        } catch (UnsupportedOperationException e) {
-            // Gets thrown when no display,
-            // our build CD/CI system will cause this
-            // exception to be thrown.
+        if (!Desktop.isDesktopSupported()) {
+            System.err.println("Tests unable to be run on headless environment.");
+            return;
         }
+        if (System.getenv("CI").equalsIgnoreCase("true")) {
+            System.err.println("Tests unable to be run on headless CI platform.");
+            return;
+        }
+        Application.launch(TestFXTrayIcon.class, (String) null);
     }
 
     @Override
