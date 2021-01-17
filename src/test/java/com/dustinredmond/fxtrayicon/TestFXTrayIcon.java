@@ -20,7 +20,13 @@ public class TestFXTrayIcon extends Application {
 
     @Test
     public void runTestOnFXApplicationThread() {
-        Application.launch(TestFXTrayIcon.class, (String) null);
+        try {
+            Application.launch(TestFXTrayIcon.class, (String) null);
+        } catch (UnsupportedOperationException e) {
+            // Gets thrown when no display,
+            // our build CD/CI system will cause this
+            // exception to be thrown.
+        }
     }
 
     @Override
