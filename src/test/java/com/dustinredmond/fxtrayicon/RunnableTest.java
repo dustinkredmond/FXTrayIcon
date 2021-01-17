@@ -11,7 +11,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class IconTest extends Application {
+public class RunnableTest extends Application {
 
     @Override
     public void start(Stage stage) {
