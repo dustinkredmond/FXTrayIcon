@@ -24,7 +24,7 @@ public class TestFXTrayIcon extends Application {
             System.err.println("Tests unable to be run on headless environment.");
             return;
         }
-        if (System.getenv("CI").equalsIgnoreCase("true")) {
+        if (System.getenv("CI") != null) {
             System.err.println("Tests unable to be run on headless CI platform.");
             return;
         }
