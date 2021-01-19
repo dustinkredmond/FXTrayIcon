@@ -1,6 +1,8 @@
 package com.dustinredmond.fxtrayicon;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.stage.Stage;
 
@@ -17,6 +19,9 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.URL;
 
@@ -31,7 +36,7 @@ import java.net.URL;
 public class FXTrayIcon {
 
     private final SystemTray tray;
-    private final Stage parentStage;
+    private Stage parentStage;
     private String appTitle;
     private final TrayIcon trayIcon;
     private boolean showing;
@@ -93,8 +98,8 @@ public class FXTrayIcon {
                     miTitle = appTitle;
                 } else {
                     if (parentStage == null
-                        || parentStage.getTitle() == null
-                        || parentStage.getTitle().isEmpty()) {
+                            || parentStage.getTitle() == null
+                            || parentStage.getTitle().isEmpty()) {
                         miTitle = "Show application";
                     } else {
                         miTitle = parentStage.getTitle();
@@ -122,15 +127,31 @@ public class FXTrayIcon {
                 }
 
                 // Show parent stage when user double-clicks the icon
-                this.trayIcon.addActionListener(e -> {
-                    if (this.parentStage != null) {
-                        Platform.runLater(this.parentStage::show);
-                    }
-                });
+                this.trayIcon.addActionListener(stageShowListener);
             } catch (AWTException e) {
                 throw new IllegalStateException("Unable to add TrayIcon", e);
             }
         });
+    }
+
+    /**
+     * Adds an EventHandler that is called when the FXTrayIcon is double-clicked.
+     * @param e The action to be performed.
+     */
+    public void setOnAction(EventHandler<ActionEvent> e) {
+        this.trayIcon.removeActionListener(stageShowListener);
+        this.trayIcon.addActionListener(al -> Platform.runLater(() -> e.handle(new ActionEvent())));
+    }
+
+    /**
+     * Adds an EventHandler that is called when the FXTrayIcon is single-clicked.
+     * @param e The action to be performed.
+     */
+    public void setOnClick(EventHandler<ActionEvent> e) {
+        if (this.trayIcon.getMouseListeners().length >= 1) {
+            this.trayIcon.removeMouseListener(this.trayIcon.getMouseListeners()[0]);
+        }
+        this.trayIcon.addMouseListener(getPrimaryClickListener(e));
     }
 
     /**
@@ -141,11 +162,7 @@ public class FXTrayIcon {
         try {
             tray.add(this.trayIcon);
             this.showing = true;
-            this.trayIcon.addActionListener(e -> {
-                if (this.parentStage != null) {
-                    Platform.runLater(this.parentStage::show);
-                }
-            });
+            this.trayIcon.addActionListener(stageShowListener);
         } catch (AWTException e) {
             throw new IllegalStateException("Unable to add TrayIcon", e);
         }
@@ -301,6 +318,37 @@ public class FXTrayIcon {
             }
         }
         return true;
+    }
+
+    private final ActionListener stageShowListener = e -> {
+        if (this.parentStage != null) {
+            Platform.runLater(this.parentStage::show);
+        }
+    };
+
+    private MouseListener getPrimaryClickListener(EventHandler<ActionEvent> e) {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent me) {
+                Platform.runLater(() -> e.handle(new ActionEvent()));
+            }
+
+            @Override
+            public void mousePressed(MouseEvent me) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent me) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent me) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent me) {
+            }
+        };
     }
 
     /**
