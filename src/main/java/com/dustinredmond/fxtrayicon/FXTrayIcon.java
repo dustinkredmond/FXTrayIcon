@@ -7,18 +7,8 @@ import javafx.scene.control.Menu;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import java.awt.AWTException;
-import java.awt.Desktop;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -32,7 +22,6 @@ import java.net.URL;
  *  using JavaFX code, without having to access
  *  the AWT API.
  */
-@SuppressWarnings("unused")
 public class FXTrayIcon {
 
     private final SystemTray tray;
@@ -334,21 +323,90 @@ public class FXTrayIcon {
             }
 
             @Override
-            public void mousePressed(MouseEvent me) {
-            }
-
+            public void mousePressed(MouseEvent me) { }
             @Override
-            public void mouseReleased(MouseEvent me) {
-            }
-
+            public void mouseReleased(MouseEvent me) { }
             @Override
-            public void mouseEntered(MouseEvent me) {
-            }
-
+            public void mouseEntered(MouseEvent me) { }
             @Override
-            public void mouseExited(MouseEvent me) {
-            }
+            public void mouseExited(MouseEvent me) { }
         };
+    }
+
+    /**
+     * Displays an info popup message near the tray icon.
+     * <p>NOTE: Some systems do not support this.</p>
+     * @param caption The caption (header) text
+     * @param message The message content text
+     */
+    public void showInfoMessage(String caption, String message) {
+        Platform.runLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.INFO));
+    }
+
+    /**
+     * Displays an info popup message near the tray icon.
+     * <p>NOTE: Some systems do not support this.</p>
+     * @param message The message content text
+     */
+    public void showInfoMessage(String message) {
+        this.showInfoMessage(null, message);
+    }
+
+    /**
+     * Displays a warning popup message near the tray icon.
+     * <p>NOTE: Some systems do not support this.</p>
+     * @param caption The caption (header) text
+     * @param message The message content text
+     */
+    public void showWarningMessage(String caption, String message) {
+        Platform.runLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.WARNING));
+    }
+
+    /**
+     * Displays a warning popup message near the tray icon.
+     * <p>NOTE: Some systems do not support this.</p>
+     * @param message The message content text
+     */
+    public void showWarningMessage(String message) {
+        this.showWarningMessage(null, message);
+    }
+
+    /**
+     * Displays an error popup message near the tray icon.
+     * <p>NOTE: Some systems do not support this.</p>
+     * @param caption The caption (header) text
+     * @param message The message content text
+     */
+    public void showErrorMessage(String caption, String message) {
+        Platform.runLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.ERROR));
+    }
+
+    /**
+     * Displays an error popup message near the tray icon.
+     * <p>NOTE: Some systems do not support this.</p>
+     * @param message The message content text
+     */
+    public void showErrorMessage(String message) {
+        this.showErrorMessage(null, message);
+    }
+
+    /**
+     * Displays an undecorated popup message near the tray icon.
+     * <p>NOTE: Some systems do not support this.</p>
+     * @param caption The caption (header) text
+     * @param message The message content text
+     */
+    public void showDefaultMessage(String caption, String message) {
+        Platform.runLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.NONE));
+    }
+
+    /**
+     * Displays an undecorated popup message near the tray icon.
+     * <p>NOTE: Some systems do not support this.</p>
+     * @param message The message content text
+     */
+    public void showDefaultMessage(String message) {
+        this.showDefaultMessage(null, message);
     }
 
     /**
@@ -357,8 +415,8 @@ public class FXTrayIcon {
      *
      * Just because the system tray is supported, does not mean that the
      * current platform implements all of the system tray functionality.
-     * @return false if the system tray is not supported, true if some
-     *          or part of the system tray functionality is supported.
+     * @return false if the system tray is not supported, true if any
+     *          part of the system tray functionality is supported.
      */
     public static boolean isSupported() {
         return Desktop.isDesktopSupported() && SystemTray.isSupported();
