@@ -340,7 +340,7 @@ public class FXTrayIcon {
      * @param message The message content text
      */
     public void showInfoMessage(String caption, String message) {
-        Platform.runLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.INFO));
+        this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.INFO);
     }
 
     /**
@@ -359,7 +359,7 @@ public class FXTrayIcon {
      * @param message The message content text
      */
     public void showWarningMessage(String caption, String message) {
-        Platform.runLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.WARNING));
+        this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.WARNING);
     }
 
     /**
@@ -378,7 +378,7 @@ public class FXTrayIcon {
      * @param message The message content text
      */
     public void showErrorMessage(String caption, String message) {
-        Platform.runLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.ERROR));
+        this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.ERROR);
     }
 
     /**
@@ -391,22 +391,24 @@ public class FXTrayIcon {
     }
 
     /**
-     * Displays an undecorated popup message near the tray icon.
+     * Displays a popup message near the tray icon.
+     * Some systems will display FXTrayIcon's image on this popup.
      * <p>NOTE: Some systems do not support this.</p>
      * @param caption The caption (header) text
      * @param message The message content text
      */
-    public void showDefaultMessage(String caption, String message) {
-        Platform.runLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.NONE));
+    public void showMessage(String caption, String message) {
+        this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.NONE);
     }
 
     /**
-     * Displays an undecorated popup message near the tray icon.
+     * Displays a popup message near the tray icon.
+     * Some systems will display FXTrayIcon's image on this popup.
      * <p>NOTE: Some systems do not support this.</p>
      * @param message The message content text
      */
-    public void showDefaultMessage(String message) {
-        this.showDefaultMessage(null, message);
+    public void showMessage(String message) {
+        this.showMessage(null, message);
     }
 
     /**
