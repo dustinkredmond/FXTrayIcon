@@ -8,9 +8,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * A test of the FXTrayIcon functionality in the form
+ * of a runnable JavaFX application. Compile and run this
+ * class to test the features of FXTrayIcon.
+ */
 public class RunnableTest extends Application {
 
     @Override
@@ -50,13 +56,34 @@ public class RunnableTest extends Application {
         trayIcon.addMenuItem(menuOptions);
 
         VBox vBox = new VBox(5);
-        vBox.getChildren().add(new Label("You should see a tray icon!"));
+        vBox.getChildren().add(new Label("You should see a tray icon!\nTry closing this window " +
+                "and double-clicking the icon.\n" +
+                "Try single-clicking it."));
         Button buttonRemoveTrayIcon = new Button("Remove TrayIcon");
         vBox.getChildren().add(buttonRemoveTrayIcon);
 
         // Removing the FXTrayIcon, this will also cause the JVM to terminate
         // after the last JavaFX Stage is hidden
         buttonRemoveTrayIcon.setOnAction(e -> trayIcon.hide());
+
+        trayIcon.setOnClick(e -> trayIcon.showInfoMessage("An info message!", "How about that?"));
+
+        Button buttonDefaultMsg = new Button("Show a \"Default\" message");
+        // showDefaultMessage uses the FXTrayIcon image in the notification
+        buttonDefaultMsg.setOnAction(e -> trayIcon.showMessage("A caption text", "Some content text."));
+
+        Button buttonInfoMsg = new Button("Show a \"Info\" message");
+        // other showXXX methods use an icon appropriate for the message type
+        buttonInfoMsg.setOnAction(e -> trayIcon.showInfoMessage("A caption text", "Some content text"));
+
+        Button buttonWarnMsg = new Button("Show a \"Warn\" message");
+        buttonWarnMsg.setOnAction(e -> trayIcon.showWarningMessage("A caption text", "Some content text"));
+
+        Button buttonErrorMsg = new Button("Show a \"Error\" message");
+        buttonErrorMsg.setOnAction(e -> trayIcon.showErrorMessage("A caption text", "Some content text"));
+
+        HBox hBox = new HBox(5, buttonDefaultMsg, buttonInfoMsg, buttonWarnMsg, buttonErrorMsg);
+        vBox.getChildren().add(hBox);
 
         root.setCenter(vBox);
         stage.sizeToScene();
