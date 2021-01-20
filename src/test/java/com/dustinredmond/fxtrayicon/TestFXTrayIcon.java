@@ -5,7 +5,6 @@ import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.awt.*;
@@ -41,6 +40,7 @@ public class TestFXTrayIcon extends Application {
         Platform.exit();;
     }
 
+    @Test
     public void testShouldConvertSuccessful() {
         MenuItem fxItem = new MenuItem("SomeText");
         fxItem.setDisable(true);
