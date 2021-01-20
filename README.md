@@ -4,11 +4,11 @@
 [![Travis CI Build](https://travis-ci.com/dustinkredmond/FXTrayIcon.svg?branch=main)](https://travis-ci.com/dustinkredmond/FXTrayIcon)
 
 Library intended for use in JavaFX applications that makes adding a System Tray icon easier.
-The FXTrayIcon class translates JavaFX MenuItems into AWT MenuItems, so no need to import anything
-from the AWT package. This is particularly useful because JavaFX does not provide a way to add a 
-System Tray icon in their API. 
+The FXTrayIcon class handles all the messy AWT and Swing parts of constructing an icon, 
+displaying notifications, creating a context menu, etc. This means that users of FXTrayIcon can
+work solely with its public API and JavaFX classes that they are already familiar with.
 
-Check out the [sample application](./src/test/java/com/dustinredmond/fxtrayicon/IconTest.java) in the test directory for an example of how this works. 
+Check out the [runnable test application](./src/test/java/com/dustinredmond/fxtrayicon/RunnableTest.java) in the test directory for an example of how this works. 
 
 ---
 
@@ -56,19 +56,48 @@ You can even use it from a Groovy script!
 
 ---
 
-## Screenshots
+## Features & Screenshots
+
+---
+
+### FXTrayIcon on Windows 10's tray
 
 ![FXTrayIcon example](./img/fxtrayicon-1.png)
 
-An example of FXTrayIcon running on Windows 10, of course, you choose your own icon file.
+Above is an example of FXTrayIcon running on Windows 10, of course, you choose your own icon file.
 Here we used a link icon from [Icons8](https://www.icons8.com), they provide thousands of amazing
  icons for developers, both free (with an attribution) and paid.
+
+---
+
+### Context Menu - uses JavaFX MenuItem
 
 ![FXTrayIcon menu example](./img/fxtrayicon-2.png)
 
 An example of FXTrayIcon's custom context menu, built using JavaFX MenuItems.
 Surprise, surprise, JavaFX MenuItems get translated into AWT MenuItems by FXTrayIcon,
-so there's no need to use those!
+so there's no need to use those! A developer can work solely with JavaFX Menus and MenuItems.
+
+---
+
+### Tray notifications
+
+The following can be used to show notifications. Note that the `showMessage()` method
+uses the icon from FXTrayIcon in the notification, while the others use different icons
+to indicate the level of severity of the message.
+  - `showMessage(String caption, String content)`
+    - or `showMessage(String content)`
+  - `showInfoMessage(String caption, String content)`
+    - or `showInfoMessage(String content)`
+  - `showWarnMessage(String caption, String content)`
+    - or `showWarnMessage(String content)`
+  - `showErrorMessage(String caption, String content)`
+    - or `showErrorMessage(String content)`
+
+![showMessage](./img/showDefault.png)
+![showInfoMessage](./img/showInfo.png)
+![showWarnMessage](./img/showWarn.png)
+![showErrorMessage](./img/showError.png)
 
 ---
 
