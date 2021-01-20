@@ -40,7 +40,6 @@ public class TestFXTrayIcon extends Application {
         Platform.exit();;
     }
 
-    @Test
     public void testShouldConvertSuccessful() {
         MenuItem fxItem = new MenuItem("SomeText");
         fxItem.setDisable(true);
