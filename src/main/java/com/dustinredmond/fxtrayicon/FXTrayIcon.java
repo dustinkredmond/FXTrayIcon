@@ -145,7 +145,10 @@ public class FXTrayIcon {
     /**
      * Adds an EventHandler that is called when the FXTrayIcon is single-clicked.
      * @param e The action to be performed.
+     * @deprecated since 2.5.0 The behavior of setOnClick() vs setOnAction() does
+     *              not significantly differ between platforms. Prefer setOnAction()
      */
+    @Deprecated()
     public void setOnClick(EventHandler<ActionEvent> e) {
         if (this.trayIcon.getMouseListeners().length >= 1) {
             this.trayIcon.removeMouseListener(this.trayIcon.getMouseListeners()[0]);

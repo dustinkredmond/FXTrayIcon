@@ -66,8 +66,6 @@ public class RunnableTest extends Application {
         // after the last JavaFX Stage is hidden
         buttonRemoveTrayIcon.setOnAction(e -> trayIcon.hide());
 
-        trayIcon.setOnClick(e -> trayIcon.showInfoMessage("An info message!", "How about that?"));
-
         Button buttonDefaultMsg = new Button("Show a \"Default\" message");
         // showDefaultMessage uses the FXTrayIcon image in the notification
         buttonDefaultMsg.setOnAction(e -> trayIcon.showMessage("A caption text", "Some content text."));
