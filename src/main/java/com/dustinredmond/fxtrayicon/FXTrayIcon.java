@@ -7,8 +7,18 @@ import javafx.scene.control.Menu;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import java.awt.AWTException;
+import java.awt.Desktop;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -340,7 +350,7 @@ public class FXTrayIcon {
      * @param message The message content text
      */
     public void showInfoMessage(String caption, String message) {
-        this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.INFO);
+        EventQueue.invokeLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.INFO));
     }
 
     /**
@@ -359,7 +369,7 @@ public class FXTrayIcon {
      * @param message The message content text
      */
     public void showWarningMessage(String caption, String message) {
-        this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.WARNING);
+        EventQueue.invokeLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.WARNING));
     }
 
     /**
@@ -378,7 +388,7 @@ public class FXTrayIcon {
      * @param message The message content text
      */
     public void showErrorMessage(String caption, String message) {
-        this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.ERROR);
+        EventQueue.invokeLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.ERROR));
     }
 
     /**
@@ -398,7 +408,7 @@ public class FXTrayIcon {
      * @param message The message content text
      */
     public void showMessage(String caption, String message) {
-        this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.NONE);
+        EventQueue.invokeLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.NONE));
     }
 
     /**
