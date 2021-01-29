@@ -290,8 +290,10 @@ public class FXTrayIcon {
      */
     public boolean isShowing() {
         for (Iterator<TrayIcon> it = Arrays.stream(tray.getTrayIcons()).iterator(); it.hasNext(); ) {
-            TrayIcon trayIcon = it.next();
-            if(trayIcon.getPopupMenu().isEnabled()) return true;
+            TrayIcon ti = it.next();
+            if (ti.equals(trayIcon)) {
+                return ti.getPopupMenu().isEnabled();
+            }
         }
         return false;
     }
