@@ -83,6 +83,9 @@ public class RunnableTest extends Application {
         HBox hBox = new HBox(5, buttonDefaultMsg, buttonInfoMsg, buttonWarnMsg, buttonErrorMsg);
         vBox.getChildren().add(hBox);
 
+        trayIcon.setOnAction(e ->
+                new Alert(Alert.AlertType.INFORMATION, "Invoked setOnAction() method").showAndWait());
+
         root.setCenter(vBox);
         stage.sizeToScene();
         stage.show();

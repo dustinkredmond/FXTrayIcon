@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Locale;
 
 /**
  *  Class for creating a JavaFX System Tray Icon.
@@ -116,7 +117,7 @@ public class FXTrayIcon {
                     this.popupMenu.add(miExit);
                 }
 
-                // Show parent stage when user double-clicks the icon
+                // Show parent stage when user clicks the icon
                 this.trayIcon.addActionListener(stageShowListener);
             } catch (AWTException e) {
                 throw new IllegalStateException("Unable to add TrayIcon", e);
@@ -129,8 +130,10 @@ public class FXTrayIcon {
      * @param e The action to be performed.
      */
     public void setOnAction(EventHandler<ActionEvent> e) {
-        this.trayIcon.removeActionListener(stageShowListener);
-        this.trayIcon.addActionListener(al -> Platform.runLater(() -> e.handle(new ActionEvent())));
+        if (this.trayIcon.getMouseListeners().length >= 1) {
+            this.trayIcon.removeMouseListener(this.trayIcon.getMouseListeners()[0]);
+        }
+        this.trayIcon.addMouseListener(getPrimaryClickListener(e));
     }
 
     /**
