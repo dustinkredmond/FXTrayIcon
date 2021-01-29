@@ -24,6 +24,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  *  Class for creating a JavaFX System Tray Icon.
@@ -38,14 +40,13 @@ public class FXTrayIcon {
     private Stage parentStage;
     private String appTitle;
     private final TrayIcon trayIcon;
-    private boolean showing;
     private final PopupMenu popupMenu = new PopupMenu();
     private boolean addExitMenuItem = true;
 
     public FXTrayIcon(Stage parentStage, URL iconImagePath) {
         if (!SystemTray.isSupported()) {
             throw new UnsupportedOperationException("SystemTray icons are not "
-                    + "supported by the current desktop environment.");
+                                                    + "supported by the current desktop environment.");
         } else {
             tray = SystemTray.getSystemTray();
         }
@@ -88,22 +89,12 @@ public class FXTrayIcon {
         SwingUtilities.invokeLater(() -> {
             try {
                 tray.add(this.trayIcon);
-                this.showing = true;
 
                 // Add a MenuItem with the main Stage's title, this will show the
                 // main JavaFX stage when clicked.
-                String miTitle;
-                if (this.appTitle != null) {
-                    miTitle = appTitle;
-                } else {
-                    if (parentStage == null
-                            || parentStage.getTitle() == null
-                            || parentStage.getTitle().isEmpty()) {
-                        miTitle = "Show application";
-                    } else {
-                        miTitle = parentStage.getTitle();
-                    }
-                }
+                String miTitle = (this.appTitle != null) ? this.appTitle
+                                                         : (parentStage != null && parentStage.getTitle() != null && !parentStage.getTitle().isEmpty()) ? parentStage.getTitle()
+                                                                                                                                                        : "Show application";
                 MenuItem miStage = new MenuItem(miTitle);
                 miStage.setFont(Font.decode(null).deriveFont(Font.BOLD));
                 miStage.addActionListener(e -> Platform.runLater(() -> {
@@ -163,7 +154,6 @@ public class FXTrayIcon {
     public void showMinimal() {
         try {
             tray.add(this.trayIcon);
-            this.showing = true;
             this.trayIcon.addActionListener(stageShowListener);
         } catch (AWTException e) {
             throw new IllegalStateException("Unable to add TrayIcon", e);
@@ -200,7 +190,7 @@ public class FXTrayIcon {
             for (int i = 0; i < this.popupMenu.getItemCount(); i++) {
                 MenuItem awtItem = this.popupMenu.getItem(i);
                 if (awtItem.getLabel().equals(fxMenuItem.getText()) ||
-                        awtItem.getName().equals(fxMenuItem.getText())) {
+                    awtItem.getName().equals(fxMenuItem.getText())) {
                     toBeRemoved = awtItem;
                 }
             }
@@ -290,7 +280,6 @@ public class FXTrayIcon {
     public void hide() {
         EventQueue.invokeLater(() -> {
             tray.remove(trayIcon);
-            this.showing = false;
             Platform.setImplicitExit(true);
         });
     }
@@ -300,7 +289,11 @@ public class FXTrayIcon {
      * @return true if the SystemTray icon is visible.
      */
     public boolean isShowing() {
-        return this.showing;
+        for (Iterator<TrayIcon> it = Arrays.stream(tray.getTrayIcons()).iterator(); it.hasNext(); ) {
+            TrayIcon trayIcon = it.next();
+            if(trayIcon.getPopupMenu().isEnabled()) return true;
+        }
+        return false;
     }
 
     /**
@@ -311,11 +304,8 @@ public class FXTrayIcon {
      *          added items.
      */
     private boolean isUnique(javafx.scene.control.MenuItem fxItem) {
-        if (this.popupMenu.getItemCount() == 0) {
-            return true;
-        }
         for (int i = 0; i < this.popupMenu.getItemCount(); i++) {
-            if (this.popupMenu.getItem(i).getName().equals(fxItem.getText())) {
+            if (this.popupMenu.getItem(i).getLabel().equals(fxItem.getText())) {
                 return false;
             }
         }
@@ -422,6 +412,11 @@ public class FXTrayIcon {
      */
     public void showMessage(String message) {
         this.showMessage(null, message);
+    }
+
+    /** Clears the popupMenu so that it can be rebuilt easily if needed */
+    public void clear() {
+        EventQueue.invokeLater(this.popupMenu::removeAll);
     }
 
     /**
