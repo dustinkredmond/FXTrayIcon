@@ -126,7 +126,10 @@ public class FXTrayIcon {
     }
 
     /**
-     * Adds an EventHandler that is called when the FXTrayIcon is double-clicked.
+     * Adds an EventHandler that is called when the FXTrayIcon's action is called.
+     * On Microsoft's Windows 10, this is invoked by a single-click of the primary
+     * mouse button. On Apple's MacOS, this is invoked by a two-finger click on the
+     * TrayIcon, while a single click will invoke the context menu.
      * @param e The action to be performed.
      */
     public void setOnAction(EventHandler<ActionEvent> e) {
