@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
 import java.util.Locale;
 
 /**
@@ -43,6 +45,7 @@ public class FXTrayIcon {
     private final TrayIcon trayIcon;
     private final PopupMenu popupMenu = new PopupMenu();
     private boolean addExitMenuItem = true;
+    private final LinkedList<javafx.scene.control.MenuItem> newMenuItems = new LinkedList<>();
 
     public FXTrayIcon(Stage parentStage, URL iconImagePath) {
         if (!SystemTray.isSupported()) {
@@ -50,28 +53,28 @@ public class FXTrayIcon {
                                                     + "supported by the current desktop environment.");
         } else {
             tray = SystemTray.getSystemTray();
-        }
+            // Keeps the JVM running even if there are no
+            // visible JavaFX Stages, otherwise JVM would
+            // exit and we lose the TrayIcon
+            Platform.setImplicitExit(false);
 
-        // Keeps the JVM running even if there are no
-        // visible JavaFX Stages, otherwise JVM would
-        // exit and we lose the TrayIcon
-        Platform.setImplicitExit(false);
+            // Set the SystemLookAndFeel as default, let user override if needed
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (ClassNotFoundException | InstantiationException
+                    | IllegalAccessException | UnsupportedLookAndFeelException ignored) {}
 
-        // Set the SystemLookAndFeel as default, let user override if needed
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException
-                | IllegalAccessException | UnsupportedLookAndFeelException ignored) {}
-
-        try {
-            final Image iconImage = ImageIO.read(iconImagePath)
-                    // Some OSes do not behave well if the icon is larger than 16x16
-                    // Image.SCALE_SMOOTH will provide the best quality icon in most instances
-                    .getScaledInstance(16, 16, Image.SCALE_SMOOTH);
-            this.parentStage = parentStage;
-            this.trayIcon = new TrayIcon(iconImage, parentStage.getTitle(), popupMenu);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to read the Image at the provided path.");
+            try {
+                final Image iconImage = ImageIO.read(iconImagePath)
+                        // Some OSes do not behave well if the icon is larger than 16x16
+                        // Image.SCALE_SMOOTH will provide the best quality icon in most instances
+                        .getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+                this.parentStage = parentStage;
+                this.trayIcon = new TrayIcon(iconImage, parentStage.getTitle(), popupMenu);
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to read the Image at the provided path.");
+            }
+            addMenuItemsThread();
         }
     }
 
@@ -221,6 +224,29 @@ public class FXTrayIcon {
         EventQueue.invokeLater(() -> this.popupMenu.insertSeparator(index));
     }
 
+    /** Thread to add new MenuItems sequentially, allowing the invokeLater thread to
+     * finish before adding the next MenuItem */
+    private void addMenuItemsThread() {
+        new Thread(()->{
+            while(true) {
+                if (!newMenuItems.isEmpty()) {
+                    javafx.scene.control.MenuItem newMenuItem = newMenuItems.removeLast();
+                    int currentCount = popupMenu.getItemCount();
+                    if (isUnique(newMenuItem)) {
+                        EventQueue.invokeLater(() -> this.popupMenu.add(AWTUtils.convertFromJavaFX(newMenuItem)));
+                        while (popupMenu.getItemCount() == currentCount) { // Wait for invokeLater thread to finish adding the new menuItem
+                            try {TimeUnit.MILLISECONDS.sleep(1);}catch (InterruptedException e) {e.printStackTrace();}
+                        }
+                    }
+                    else {
+                        throw new UnsupportedOperationException("Menu Item labels must be unique.");
+                    }
+                }
+                try {TimeUnit.MILLISECONDS.sleep(500);}catch (InterruptedException e) {e.printStackTrace();} //Sleep Thread half second
+            }
+        }).start();
+    }
+
     /**
      * Adds the specified MenuItem to the FXTrayIcon's menu
      * @param menuItem MenuItem to be added
@@ -230,10 +256,7 @@ public class FXTrayIcon {
             addMenu((Menu) menuItem);
             return;
         }
-        if (!isUnique(menuItem)) {
-            throw new UnsupportedOperationException("Menu Item labels must be unique.");
-        }
-        EventQueue.invokeLater(() -> this.popupMenu.add(AWTUtils.convertFromJavaFX(menuItem)));
+        newMenuItems.addFirst(menuItem);
     }
 
     private void addMenu(Menu menu) {
