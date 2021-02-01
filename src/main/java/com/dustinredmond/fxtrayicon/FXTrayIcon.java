@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
+import java.util.Locale;
 
 /**
  *  Class for creating a JavaFX System Tray Icon.
@@ -119,7 +120,7 @@ public class FXTrayIcon {
                     this.popupMenu.add(miExit);
                 }
 
-                // Show parent stage when user double-clicks the icon
+                // Show parent stage when user clicks the icon
                 this.trayIcon.addActionListener(stageShowListener);
             } catch (AWTException e) {
                 throw new IllegalStateException("Unable to add TrayIcon", e);
@@ -128,12 +129,17 @@ public class FXTrayIcon {
     }
 
     /**
-     * Adds an EventHandler that is called when the FXTrayIcon is double-clicked.
+     * Adds an EventHandler that is called when the FXTrayIcon's action is called.
+     * On Microsoft's Windows 10, this is invoked by a single-click of the primary
+     * mouse button. On Apple's MacOS, this is invoked by a two-finger click on the
+     * TrayIcon, while a single click will invoke the context menu.
      * @param e The action to be performed.
      */
     public void setOnAction(EventHandler<ActionEvent> e) {
-        this.trayIcon.removeActionListener(stageShowListener);
-        this.trayIcon.addActionListener(al -> Platform.runLater(() -> e.handle(new ActionEvent())));
+        if (this.trayIcon.getMouseListeners().length >= 1) {
+            this.trayIcon.removeMouseListener(this.trayIcon.getMouseListeners()[0]);
+        }
+        this.trayIcon.addMouseListener(getPrimaryClickListener(e));
     }
 
     /**

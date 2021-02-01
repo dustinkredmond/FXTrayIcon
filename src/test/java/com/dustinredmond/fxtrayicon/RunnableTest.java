@@ -34,7 +34,7 @@ public class RunnableTest extends Application {
 
         // Instantiate the FXTrayIcon providing the parent Stage and a path to an Image file
         FXTrayIcon trayIcon = new FXTrayIcon(stage, getClass().getResource("icons8-link-64.png"));
-        trayIcon.show();
+
 
         // By default the FXTrayIcon's tooltip will be the parent stage's title, that we used in the constructor
         // This method can override this
@@ -83,7 +83,11 @@ public class RunnableTest extends Application {
         HBox hBox = new HBox(5, buttonDefaultMsg, buttonInfoMsg, buttonWarnMsg, buttonErrorMsg);
         vBox.getChildren().add(hBox);
 
+        trayIcon.setOnAction(e ->
+                new Alert(Alert.AlertType.INFORMATION, "Invoked setOnAction() method").showAndWait());
+
         root.setCenter(vBox);
+        trayIcon.show();
         stage.sizeToScene();
         stage.show();
     }
