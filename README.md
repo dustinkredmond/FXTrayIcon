@@ -107,3 +107,9 @@ Any operating system that supports system tray icons.
 
 Call `FXTrayIcon.isSupported()` to see if the current platform
 supports the system tray.
+
+---
+
+## Projects using `FXTrayIcon`
+
+If your project uses FXTrayIcon, let us know via Pull Request, and we'll feature your project on this README.
