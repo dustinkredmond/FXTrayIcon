@@ -46,12 +46,14 @@ public class FXTrayIcon {
     private final PopupMenu popupMenu = new PopupMenu();
     private boolean addExitMenuItem = true;
     private final LinkedList<javafx.scene.control.MenuItem> newMenuItems = new LinkedList<>();
+    private boolean isMac;
 
     public FXTrayIcon(Stage parentStage, URL iconImagePath) {
         if (!SystemTray.isSupported()) {
             throw new UnsupportedOperationException("SystemTray icons are not "
                                                     + "supported by the current desktop environment.");
         } else {
+            isMac = (System.getProperty("os.name").toLowerCase().contains("mac"));
             tray = SystemTray.getSystemTray();
             // Keeps the JVM running even if there are no
             // visible JavaFX Stages, otherwise JVM would
@@ -367,6 +369,17 @@ public class FXTrayIcon {
         };
     }
 
+    /** Displays a sliding info message similar to what Windows does, but without AWT */
+    private void showMacAlert(String caption, String message, String type) {
+        String execute = "display notification \"" + ((message == null) ? "" : message) + "\" with title \"" + type + "\" subtitle \"" + ((caption == null) ? "" : caption) + "\"";
+        try {
+            Runtime.getRuntime().exec(new String[] { "osascript", "-e", execute});
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Displays an info popup message near the tray icon.
      * <p>NOTE: Some systems do not support this.</p>
@@ -374,7 +387,8 @@ public class FXTrayIcon {
      * @param message The message content text
      */
     public void showInfoMessage(String caption, String message) {
-        EventQueue.invokeLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.INFO));
+        if (isMac) showMacAlert(caption, message,"Information");
+        else EventQueue.invokeLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.INFO));
     }
 
     /**
@@ -393,7 +407,8 @@ public class FXTrayIcon {
      * @param message The message content text
      */
     public void showWarningMessage(String caption, String message) {
-        EventQueue.invokeLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.WARNING));
+        if (isMac) showMacAlert(caption, message,"Warning");
+        else EventQueue.invokeLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.WARNING));
     }
 
     /**
@@ -412,7 +427,8 @@ public class FXTrayIcon {
      * @param message The message content text
      */
     public void showErrorMessage(String caption, String message) {
-        EventQueue.invokeLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.ERROR));
+        if (isMac) showMacAlert(caption, message,"Error");
+        else EventQueue.invokeLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.ERROR));
     }
 
     /**
@@ -432,7 +448,8 @@ public class FXTrayIcon {
      * @param message The message content text
      */
     public void showMessage(String caption, String message) {
-        EventQueue.invokeLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.NONE));
+        if (isMac) showMacAlert(caption, message,"Message");
+        else EventQueue.invokeLater(() -> this.trayIcon.displayMessage(caption, message, TrayIcon.MessageType.NONE));
     }
 
     /**
