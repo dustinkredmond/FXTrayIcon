@@ -444,10 +444,11 @@ public class FXTrayIcon {
      * @param type The message type
      */
     private void showMacAlert(String caption, String message, String type) {
+
         String execute = String.format(
                 "display notification \"%s\""
                 + " with title \"%s\""
-                + " with subtitle \"%s\"",
+                + " subtitle \"%s\"",
                 message != null ? message : "",
                 type != null ? type : "",
                 caption != null ? caption : ""
@@ -472,6 +473,7 @@ public class FXTrayIcon {
     public void showInfoMessage(String caption, String message) {
         if (isMac) {
             showMacAlert(caption, message,"Information");
+            System.out.println("Is Mac");
         } else {
             EventQueue.invokeLater(() ->
                     this.trayIcon.displayMessage(
