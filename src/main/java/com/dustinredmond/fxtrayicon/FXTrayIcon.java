@@ -439,19 +439,19 @@ public class FXTrayIcon {
     /**
      * Displays a sliding info message similar to what Windows
      * does, but without AWT
-     * @param caption The message caption
+     * @param subTitle The message caption
      * @param message The message text
-     * @param type The message type
+     * @param title The message title
      */
-    private void showMacAlert(String caption, String message, String type) {
+    private void showMacAlert(String subTitle, String message, String title) {
 
         String execute = String.format(
                 "display notification \"%s\""
                 + " with title \"%s\""
                 + " subtitle \"%s\"",
                 message != null ? message : "",
-                type != null ? type : "",
-                caption != null ? caption : ""
+                title != null ? title : "",
+                subTitle != null ? subTitle : ""
         );
 
         try {
@@ -466,18 +466,17 @@ public class FXTrayIcon {
     /**
      * Displays an info popup message near the tray icon.
      * <p>NOTE: Some systems do not support this.</p>
-     * @param caption The caption (header) text
+     * @param title The caption (header) text
      * @param message The message content text
      */
     @API
-    public void showInfoMessage(String caption, String message) {
+    public void showInfoMessage(String title, String message) {
         if (isMac) {
-            showMacAlert(caption, message,"Information");
-            System.out.println("Is Mac");
+            showMacAlert(title, message,"Information");
         } else {
             EventQueue.invokeLater(() ->
                     this.trayIcon.displayMessage(
-                            caption, message, TrayIcon.MessageType.INFO));
+                            title, message, TrayIcon.MessageType.INFO));
         }
     }
 
@@ -494,17 +493,17 @@ public class FXTrayIcon {
     /**
      * Displays a warning popup message near the tray icon.
      * <p>NOTE: Some systems do not support this.</p>
-     * @param caption The caption (header) text
+     * @param title The caption (header) text
      * @param message The message content text
      */
     @API
-    public void showWarningMessage(String caption, String message) {
+    public void showWarningMessage(String title, String message) {
         if (isMac) {
-            showMacAlert(caption, message,"Warning");
+            showMacAlert(title, message,"Warning");
         } else {
             EventQueue.invokeLater(() ->
                     this.trayIcon.displayMessage(
-                            caption, message, TrayIcon.MessageType.WARNING));
+                            title, message, TrayIcon.MessageType.WARNING));
         }
     }
 
@@ -521,17 +520,17 @@ public class FXTrayIcon {
     /**
      * Displays an error popup message near the tray icon.
      * <p>NOTE: Some systems do not support this.</p>
-     * @param caption The caption (header) text
+     * @param title The caption (header) text
      * @param message The message content text
      */
     @API
-    public void showErrorMessage(String caption, String message) {
+    public void showErrorMessage(String title, String message) {
         if (isMac) {
-            showMacAlert(caption, message,"Error");
+            showMacAlert(title, message,"Error");
         } else {
             EventQueue.invokeLater(() ->
                     this.trayIcon.displayMessage(
-                            caption, message, TrayIcon.MessageType.ERROR));
+                            title, message, TrayIcon.MessageType.ERROR));
         }
     }
 
@@ -549,17 +548,17 @@ public class FXTrayIcon {
      * Displays a popup message near the tray icon.
      * Some systems will display FXTrayIcon's image on this popup.
      * <p>NOTE: Some systems do not support this.</p>
-     * @param caption The caption (header) text
+     * @param title The caption (header) text
      * @param message The message content text
      */
     @API
-    public void showMessage(String caption, String message) {
+    public void showMessage(String title, String message) {
         if (isMac) {
-            showMacAlert(caption, message,"Message");
+            showMacAlert(title, message,"Message");
         } else {
             EventQueue.invokeLater(() ->
                     this.trayIcon.displayMessage(
-                            caption, message, TrayIcon.MessageType.NONE));
+                            title, message, TrayIcon.MessageType.NONE));
         }
     }
 
