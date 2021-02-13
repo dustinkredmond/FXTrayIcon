@@ -90,8 +90,11 @@ public class RunnableTest extends Application {
         stage.show();
     }
 
+    /**
+     * Test icon used for FXTrayIcon runnable tests
+     * @return URL to an example icon PNG
+     */
     public URL getIcon() {
-        //For No Task Bar test app
         return getClass().getResource("icons8-link-64.png");
     }
 }

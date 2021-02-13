@@ -17,6 +17,12 @@ import static org.junit.Assert.*;
  */
 public class TestFXTrayIcon extends Application {
 
+    /**
+     * Entry point for runnable tests.
+     * Determines if we're running the tests in a headless
+     * environment or an environment without desktop support
+     * and runs the appropriate tests.
+     */
     @Test
     public void runTestOnFXApplicationThread() {
         if (!Desktop.isDesktopSupported()) {
@@ -31,15 +37,19 @@ public class TestFXTrayIcon extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         testShouldConvertSuccessful();
         testShouldConvertFail();
         testTrayIconSupported();
         testNotNullTestResource();
         testInitialization();
-        Platform.exit();;
+        Platform.exit();
     }
 
+    /**
+     * Test for making sure that we're able to 'convert' a
+     * JavaFX MenuItem into an AWT MenuItem via AWTUtils.convertFromJavaFX()
+     */
     public void testShouldConvertSuccessful() {
         MenuItem fxItem = new MenuItem("SomeText");
         fxItem.setDisable(true);
@@ -51,19 +61,32 @@ public class TestFXTrayIcon extends Application {
         assertEquals(1, awtItem.getActionListeners().length);
     }
 
+    /**
+     * Test that an Exception is thrown when AWTUtils cannot
+     * translate and AWT MenuItem behavior over to JavaFX MenuItem
+     */
     public void testShouldConvertFail() {
         MenuItem fxItem = new MenuItem();
         fxItem.setGraphic(new Label());
         try {
+            //noinspection unused
             java.awt.MenuItem awtItem = AWTUtils.convertFromJavaFX(fxItem);
             fail("Should not be able to assign graphic in AWTUtils");
         } catch (Exception ignored) { /* should always reach here */ }
     }
 
+    /**
+     * Sanity test to make sure that FXTrayIcon.isSupported() does not
+     * give a different result than java.awt.SystemTray.isSupported()
+     */
     public void testTrayIconSupported() {
         assertEquals(SystemTray.isSupported(), FXTrayIcon.isSupported());
     }
 
+    /**
+     * Make sure that our test icon is not null. If this fails, other
+     * tests will not run successfully.
+     */
     public void testNotNullTestResource() {
         try {
             assertNotNull(getClass().getResource(TEST_ICON));
@@ -72,6 +95,9 @@ public class TestFXTrayIcon extends Application {
         }
     }
 
+    /**
+     * Stupid sanity test, if this fails for any reason, we have issues.
+     */
     public void testInitialization() {
         if (FXTrayIcon.isSupported()) {
             FXTrayIcon icon = new FXTrayIcon(new Stage(), getClass().getResource(TEST_ICON));
