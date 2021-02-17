@@ -112,7 +112,6 @@ public class FXTrayIcon {
                 throw new IllegalStateException(
                         "Unable to read the Image at the provided path.");
             }
-            addMenuItemsThread();
         }
     }
 
@@ -139,7 +138,7 @@ public class FXTrayIcon {
                         this.appTitle
                         : (parentStage != null && parentStage.getTitle() != null
                         && !parentStage.getTitle().isEmpty()) ?
-                        parentStage.getTitle() : "Show application";
+                        parentStage.getTitle() : "Show Application";
 
                 MenuItem miStage = new MenuItem(miTitle);
                 miStage.setFont(Font.decode(null).deriveFont(Font.BOLD));
@@ -148,13 +147,13 @@ public class FXTrayIcon {
                         parentStage.show();
                     }
                 }));
-                this.popupMenu.add(miStage);
+                this.popupMenu.insert(miStage,0); //Make sure it's always at the top
 
                 // If Platform.setImplicitExit(false) then the JVM will
                 // continue to run after no more Stages remain,
                 // thus we provide a way to terminate it by default.
                 if (addExitMenuItem) {
-                    MenuItem miExit = new MenuItem("Exit program");
+                    MenuItem miExit = new MenuItem("Exit Application");
                     miExit.addActionListener(e -> {
                         this.tray.remove(this.trayIcon);
                         Platform.exit();
@@ -281,60 +280,34 @@ public class FXTrayIcon {
     }
 
     /**
-     * Thread to add new MenuItems sequentially, allowing the invokeLater
-     * thread to finish before adding the next MenuItem
-     */
-    private void addMenuItemsThread() {
-        new Thread(() -> {
-            while(true) {
-                if (!newMenuItems.isEmpty()) {
-                    javafx.scene.control.MenuItem newMenuItem =
-                            newMenuItems.removeLast();
-                    int currentCount = popupMenu.getItemCount();
-                    if (isUnique(newMenuItem)) {
-                        EventQueue.invokeLater(() ->
-                                popupMenu.add(
-                                        AWTUtils.convertFromJavaFX(newMenuItem)
-                                ));
-                        while (popupMenu.getItemCount() == currentCount) {
-                            // Wait for invokeLater thread to finish adding
-                            // the new menuItem
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(1);
-                            } catch (InterruptedException ignored) {}
-                        }
-                    }
-                    else {
-                        throw new UnsupportedOperationException(
-                                "Menu Item labels must be unique.");
-                    }
-                }
-                try {
-                    TimeUnit.MILLISECONDS.sleep(500);
-                } catch (InterruptedException ignored) {}
-            }
-        }).start();
-    }
-
-    /**
      * Adds the specified MenuItem to the FXTrayIcon's menu
      * @param menuItem MenuItem to be added
      */
-    @API
     public void addMenuItem(javafx.scene.control.MenuItem menuItem) {
-        if (menuItem instanceof Menu) {
-            addMenu((Menu) menuItem);
-            return;
-        }
-        newMenuItems.addFirst(menuItem);
+        EventQueue.invokeLater(() -> {
+            if (menuItem instanceof Menu) {
+                addMenu((Menu) menuItem);
+                return;
+            }
+            if (!isUnique(menuItem)) {
+                throw new UnsupportedOperationException("Menu Item labels must be unique.");
+            }
+            this.popupMenu.add(AWTUtils.convertFromJavaFX(menuItem));
+        });
     }
 
-    private void addMenu(Menu menu) {
+    /**
+     * Inserts the specified MenuItem into the FXTrayIcon's menu
+     * at the supplied index.
+     * @param menuItem MenuItem to be inserted
+     * @param index Index to insert the MenuItem at
+     */
+    public void insertMenuItem(javafx.scene.control.MenuItem menuItem, int index) {
         EventQueue.invokeLater(() -> {
-            java.awt.Menu awtMenu = new java.awt.Menu(menu.getText());
-            menu.getItems().forEach(subItem ->
-                    awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
-            this.popupMenu.add(awtMenu);
+            if (!isUnique(menuItem)) {
+                throw new UnsupportedOperationException("Menu Item labels must be unique.");
+            }
+            this.popupMenu.insert(AWTUtils.convertFromJavaFX(menuItem),index);
         });
     }
 
@@ -418,47 +391,6 @@ public class FXTrayIcon {
     }
 
     /**
-     * Check if a JavaFX menu item's text is unique among those
-     * previously added to the AWT PopupMenu
-     * @param fxItem A JavaFX MenuItem
-     * @return true if the item's text is unique among previously
-     *          added items.
-     */
-    private boolean isUnique(javafx.scene.control.MenuItem fxItem) {
-        for (int i = 0; i < popupMenu.getItemCount(); i++) {
-            if (popupMenu.getItem(i).getLabel().equals(fxItem.getText())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private final ActionListener stageShowListener = e -> {
-        if (this.parentStage != null) {
-            Platform.runLater(this.parentStage::show);
-        }
-    };
-
-    private MouseListener getPrimaryClickListener(
-            EventHandler<ActionEvent> e) {
-        return new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent me) {
-                Platform.runLater(() -> e.handle(new ActionEvent()));
-            }
-
-            @Override
-            public void mousePressed(MouseEvent ignored) { }
-            @Override
-            public void mouseReleased(MouseEvent ignored) { }
-            @Override
-            public void mouseEntered(MouseEvent ignored) { }
-            @Override
-            public void mouseExited(MouseEvent ignored) { }
-        };
-    }
-
-    /**
      * Displays a sliding info message similar to what Windows
      * does, but without AWT
      * @param subTitle The message caption
@@ -514,7 +446,7 @@ public class FXTrayIcon {
 
     /**
      * Displays a warning popup message near the tray icon.
-     * <p>NOTE: Some systems do not support this.</p>
+     * <p>NOTE: Some systems do not suœpport this.</p>
      * @param title The caption (header) text
      * @param message The message content text
      */
@@ -615,5 +547,54 @@ public class FXTrayIcon {
     @API
     public static boolean isSupported() {
         return Desktop.isDesktopSupported() && SystemTray.isSupported();
+    }
+
+    private void addMenu(Menu menu) {
+        EventQueue.invokeLater(() -> {
+            java.awt.Menu awtMenu = new java.awt.Menu(menu.getText());
+            menu.getItems().forEach(subItem ->
+                                            awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
+            this.popupMenu.add(awtMenu);
+        });
+    }
+
+    /**
+     * Check if a JavaFX menu item's text is unique among those
+     * previously added to the AWT PopupMenu
+     * @param fxItem A JavaFX MenuItem
+     * @return true if the item's text is unique among previously
+     *          added items.
+     */
+    private boolean isUnique(javafx.scene.control.MenuItem fxItem) {
+        for (int i = 0; i < popupMenu.getItemCount(); i++) {
+            if (popupMenu.getItem(i).getLabel().equals(fxItem.getText())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private final ActionListener stageShowListener = e -> {
+        if (this.parentStage != null) {
+            Platform.runLater(this.parentStage::show);
+        }
+    };
+
+    private MouseListener getPrimaryClickListener(EventHandler<ActionEvent> e) {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent me) {
+                Platform.runLater(() -> e.handle(new ActionEvent()));
+            }
+
+            @Override
+            public void mousePressed(MouseEvent ignored) { }
+            @Override
+            public void mouseReleased(MouseEvent ignored) { }
+            @Override
+            public void mouseEntered(MouseEvent ignored) { }
+            @Override
+            public void mouseExited(MouseEvent ignored) { }
+        };
     }
 }
