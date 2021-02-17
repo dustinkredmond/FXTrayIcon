@@ -49,9 +49,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -67,8 +65,6 @@ public class FXTrayIcon {
     private final TrayIcon trayIcon;
     private final PopupMenu popupMenu = new PopupMenu();
     private boolean addExitMenuItem = true;
-    private final LinkedList<javafx.scene.control.MenuItem> newMenuItems =
-            new LinkedList<>();
     private final boolean isMac;
 
     @API
@@ -147,7 +143,8 @@ public class FXTrayIcon {
                         parentStage.show();
                     }
                 }));
-                this.popupMenu.insert(miStage,0); //Make sure it's always at the top
+                //Make sure it's always at the top
+                this.popupMenu.insert(miStage,0);
 
                 // If Platform.setImplicitExit(false) then the JVM will
                 // continue to run after no more Stages remain,
@@ -289,8 +286,9 @@ public class FXTrayIcon {
                 addMenu((Menu) menuItem);
                 return;
             }
-            if (!isUnique(menuItem)) {
-                throw new UnsupportedOperationException("Menu Item labels must be unique.");
+            if (isNotUnique(menuItem)) {
+                throw new UnsupportedOperationException(
+                        "Menu Item labels must be unique.");
             }
             this.popupMenu.add(AWTUtils.convertFromJavaFX(menuItem));
         });
@@ -302,10 +300,13 @@ public class FXTrayIcon {
      * @param menuItem MenuItem to be inserted
      * @param index Index to insert the MenuItem at
      */
-    public void insertMenuItem(javafx.scene.control.MenuItem menuItem, int index) {
+    @API
+    public void insertMenuItem(javafx.scene.control.MenuItem menuItem,
+                               int index) {
         EventQueue.invokeLater(() -> {
-            if (!isUnique(menuItem)) {
-                throw new UnsupportedOperationException("Menu Item labels must be unique.");
+            if (isNotUnique(menuItem)) {
+                throw new UnsupportedOperationException(
+                        "Menu Item labels must be unique.");
             }
             this.popupMenu.insert(AWTUtils.convertFromJavaFX(menuItem),index);
         });
@@ -391,33 +392,6 @@ public class FXTrayIcon {
     }
 
     /**
-     * Displays a sliding info message similar to what Windows
-     * does, but without AWT
-     * @param subTitle The message caption
-     * @param message The message text
-     * @param title The message title
-     */
-    private void showMacAlert(String subTitle, String message, String title) {
-
-        String execute = String.format(
-                "display notification \"%s\""
-                + " with title \"%s\""
-                + " subtitle \"%s\"",
-                message != null ? message : "",
-                title != null ? title : "",
-                subTitle != null ? subTitle : ""
-        );
-
-        try {
-            Runtime.getRuntime().exec(new String[] { "osascript", "-e", execute });
-        }
-        catch (IOException e) {
-            throw new UnsupportedOperationException(
-                    "Cannot run osascript with given parameters.");
-        }
-    }
-
-    /**
      * Displays an info popup message near the tray icon.
      * <p>NOTE: Some systems do not support this.</p>
      * @param title The caption (header) text
@@ -446,7 +420,7 @@ public class FXTrayIcon {
 
     /**
      * Displays a warning popup message near the tray icon.
-     * <p>NOTE: Some systems do not suœpport this.</p>
+     * <p>NOTE: Some systems do not support this.</p>
      * @param title The caption (header) text
      * @param message The message content text
      */
@@ -549,11 +523,38 @@ public class FXTrayIcon {
         return Desktop.isDesktopSupported() && SystemTray.isSupported();
     }
 
+    /**
+     * Displays a sliding info message similar to what Windows
+     * does, but without AWT
+     * @param subTitle The message caption
+     * @param message The message text
+     * @param title The message title
+     */
+    private void showMacAlert(String subTitle, String message, String title) {
+        String execute = String.format(
+                "display notification \"%s\""
+                        + " with title \"%s\""
+                        + " subtitle \"%s\"",
+                message != null ? message : "",
+                title != null ? title : "",
+                subTitle != null ? subTitle : ""
+        );
+
+        try {
+            Runtime.getRuntime()
+                    .exec(new String[] { "osascript", "-e", execute });
+        }
+        catch (IOException e) {
+            throw new UnsupportedOperationException(
+                    "Cannot run osascript with given parameters.");
+        }
+    }
+
     private void addMenu(Menu menu) {
         EventQueue.invokeLater(() -> {
             java.awt.Menu awtMenu = new java.awt.Menu(menu.getText());
             menu.getItems().forEach(subItem ->
-                                            awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
+                    awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
             this.popupMenu.add(awtMenu);
         });
     }
@@ -565,21 +566,34 @@ public class FXTrayIcon {
      * @return true if the item's text is unique among previously
      *          added items.
      */
-    private boolean isUnique(javafx.scene.control.MenuItem fxItem) {
+    private boolean isNotUnique(javafx.scene.control.MenuItem fxItem) {
+        boolean result = true;
         for (int i = 0; i < popupMenu.getItemCount(); i++) {
             if (popupMenu.getItem(i).getLabel().equals(fxItem.getText())) {
-                return false;
+                result = false;
+                break;
             }
         }
-        return true;
+        return !result;
     }
 
+    /**
+     * An {@code ActionListener} that when called
+     * will show the parent JavaFX stage if it is defined.
+     */
     private final ActionListener stageShowListener = e -> {
         if (this.parentStage != null) {
             Platform.runLater(this.parentStage::show);
         }
     };
 
+    /**
+     * Creates a {@code MouseListener} whose
+     * single-click action performs the passed
+     * JavaFX EventHandler
+     * @param e A JavaFX event to be performed
+     * @return A MouseListener fired by single-click
+     */
     private MouseListener getPrimaryClickListener(EventHandler<ActionEvent> e) {
         return new MouseListener() {
             @Override
