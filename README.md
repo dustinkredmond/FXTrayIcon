@@ -10,7 +10,6 @@ work solely with its public API and JavaFX classes that they are already familia
 
 Check out the [runnable test application](./src/test/java/com/dustinredmond/fxtrayicon/RunnableTest.java) in the test directory for an example of how this works. 
 
----
 
 ## Usage
 
@@ -23,7 +22,6 @@ FXTrayIcon icon = new FXTrayIcon(stage, getClass().getResource("someImageFile.pn
 icon.show();
 ```
 
----
 
 ## How do I add to my project 
 
@@ -54,11 +52,9 @@ You can even use it from a Groovy script!
 *Note, for the current stable version number, use the following:*
 [![Maven Central](https://img.shields.io/maven-central/v/com.dustinredmond.fxtrayicon/FXTrayIcon.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.dustinredmond.fxtrayicon%22%20AND%20a:%22FXTrayIcon%22)
 
----
 
 ## Features & Screenshots
 
----
 
 ### FXTrayIcon on Windows 10's tray
 
@@ -68,7 +64,6 @@ Above is an example of FXTrayIcon running on Windows 10, of course, you choose y
 Here we used a link icon from [Icons8](https://www.icons8.com), they provide thousands of amazing
  icons for developers, both free (with an attribution) and paid.
 
----
 
 ### Context Menu - uses JavaFX MenuItem
 
@@ -78,7 +73,6 @@ An example of FXTrayIcon's custom context menu, built using JavaFX MenuItems.
 Surprise, surprise, JavaFX MenuItems get translated into AWT MenuItems by FXTrayIcon,
 so there's no need to use those! A developer can work solely with JavaFX Menus and MenuItems.
 
----
 
 ### Tray notifications
 
@@ -99,7 +93,6 @@ to indicate the level of severity of the message.
 ![showWarnMessage](./img/showWarn.png)
 ![showErrorMessage](./img/showError.png)
 
----
 
 ## Supported operating systems
 
@@ -108,7 +101,6 @@ Any operating system that supports system tray icons.
 Call `FXTrayIcon.isSupported()` to see if the current platform
 supports the system tray.
 
----
 
 ## Projects using `FXTrayIcon`
 
