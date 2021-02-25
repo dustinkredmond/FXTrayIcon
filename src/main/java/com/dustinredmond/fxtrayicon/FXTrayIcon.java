@@ -59,14 +59,12 @@ import java.util.stream.Collectors;
  */
 public class FXTrayIcon {
 
-    private final SystemTray tray;
-    private Stage parentStage;
-    private String appTitle;
-    private final TrayIcon trayIcon;
-    private final PopupMenu popupMenu = new PopupMenu();
-    private boolean addExitMenuItem = true;
-    private final boolean isMac;
-
+    /**
+     * Creates an instance of FXTrayIcon with the provided
+     * icon and a provided{@code javafx.stage.Stage} as its parent.
+     * @param parentStage The parent Stage of the tray icon.
+     * @param iconImagePath A path to an icon image
+     */
     @API
     public FXTrayIcon(Stage parentStage, URL iconImagePath) {
         if (!SystemTray.isSupported()) {
@@ -550,6 +548,10 @@ public class FXTrayIcon {
         }
     }
 
+    /**
+     * Adds a JavaFX Menu to the TrayIcon's PopupMenu
+     * @param menu A JavaFX Menu
+     */
     private void addMenu(Menu menu) {
         EventQueue.invokeLater(() -> {
             java.awt.Menu awtMenu = new java.awt.Menu(menu.getText());
@@ -611,4 +613,47 @@ public class FXTrayIcon {
             public void mouseExited(MouseEvent ignored) { }
         };
     }
+
+    /**
+     * The default AWT SystemTray
+     */
+    private final SystemTray tray;
+
+    /**
+     * The parent Stage of the FXTrayIcon
+     */
+    private Stage parentStage;
+
+    /**
+     * The application's title, to be used
+     * as default tooltip text for the FXTrayIcon
+     */
+    private String appTitle;
+
+    /**
+     * The AWT TrayIcon managed by FXTrayIcon
+     */
+    private final TrayIcon trayIcon;
+
+    /**
+     * The AWT PopupMenu managed by FXTrayIcon
+     */
+    private final PopupMenu popupMenu = new PopupMenu();
+
+    /**
+     * If true, when the FXTrayIcon's {@code show()}
+     * method is called, adds a MenuItem that will allow
+     * for the JavaFX program to be terminated and the
+     * TrayIcon to be removed.
+     */
+    private boolean addExitMenuItem = true;
+
+    /**
+     * Set to true if the end-user's operating
+     * system is MacOS.
+     *
+     * This is used in determining how to handle
+     * the notifications (AWT or AppleScript)
+     */
+    private final boolean isMac;
 }

@@ -33,8 +33,12 @@ public class AWTUtils {
      * Converts a JavaFX MenuItem to a AWT MenuItem
      * @param fxItem The JavaFX MenuItem
      * @return The converted AWT MenuItem
+     * @throws UnsupportedOperationException If the user
+     * has called methods on the JavaFX MenuItem which are
+     * unable to be replicated using AWT or other means.
      */
-    protected static MenuItem convertFromJavaFX(javafx.scene.control.MenuItem fxItem) {
+    protected static MenuItem convertFromJavaFX(javafx.scene.control.MenuItem fxItem)
+            throws UnsupportedOperationException {
         MenuItem awtItem = new MenuItem(fxItem.getText());
 
         // some JavaFX to AWT translations aren't possible/supported
@@ -59,15 +63,15 @@ public class AWTUtils {
         String errors = sj.toString();
         if (!errors.isEmpty()) {
             throw new UnsupportedOperationException(String.format(
-                "The following methods were called on the " +
-                    "passed JavaFX MenuItem (%s), these methods are not" +
-                    "supported by FXTrayIcon.", errors));
+                    "The following methods were called on the " +
+                            "passed JavaFX MenuItem (%s), these methods are not" +
+                            "supported by FXTrayIcon.", errors));
         }
 
         // Set the onAction event to be performed via ActionListener action
         if (fxItem.getOnAction() != null) {
             awtItem.addActionListener(e -> Platform
-                .runLater(() -> fxItem.getOnAction().handle(new ActionEvent())));
+                    .runLater(() -> fxItem.getOnAction().handle(new ActionEvent())));
         }
         // Disable the MenuItem if the FX item is disabled
         awtItem.setEnabled(!fxItem.isDisable());
