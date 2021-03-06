@@ -96,7 +96,12 @@ to indicate the level of severity of the message.
 
 ## Supported operating systems
 
-Any operating system that supports system tray icons.
+| OS         | Support Status      | Unsupported Features                                                                          |
+|------------|---------------------|-----------------------------------------------------------------------------------------------|
+| Windows 10 | Fully supported     | N/A                                                                                           |
+| Mac OS     | Partially supported | In the `displayMessage()` methods. Custom icons are not supported in AppleScript calls.       |
+| Linux      | Partially supported | Some desktop environments that support `java.awt.SystemTray` are supported. Most are **not**. |
+
 
 Call `FXTrayIcon.isSupported()` to see if the current platform
 supports the system tray.
