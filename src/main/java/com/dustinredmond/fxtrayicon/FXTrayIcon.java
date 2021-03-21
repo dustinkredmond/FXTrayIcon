@@ -64,13 +64,36 @@ public class FXTrayIcon {
      * icon and a provided{@code javafx.stage.Stage} as its parent.
      * @param parentStage The parent Stage of the tray icon.
      * @param iconImagePath A path to an icon image
+     * @param iconWidth optional to set a different icon width
+     * @param iconHeight optional to set a different icon height
+     */
+    @API
+    public FXTrayIcon(Stage parentStage, URL iconImagePath, int iconWidth, int iconHeight) {
+        this(iconImagePath,iconWidth,iconHeight,parentStage);
+    }
+
+    /**
+     * Creates an instance of FXTrayIcon with the provided
+     * icon and a provided{@code javafx.stage.Stage} as its parent.
+     * @param parentStage The parent Stage of the tray icon.
+     * @param iconImagePath A path to an icon image
      */
     @API
     public FXTrayIcon(Stage parentStage, URL iconImagePath) {
+        this(iconImagePath,16,16,parentStage);
+    }
+
+    /**
+     * Overloaded Constructor is called by the optional constructors
+     * @param iconImagePath A path to an icon image
+     * @param iconWidth optional to set a different icon width
+     * @param iconHeight optional to set a different icon height
+     */
+    private FXTrayIcon(URL iconImagePath, int iconWidth, int iconHeight, Stage parentStage) {
         if (!SystemTray.isSupported()) {
             throw new UnsupportedOperationException(
                     "SystemTray icons are not "
-                            + "supported by the current desktop environment.");
+                    + "supported by the current desktop environment.");
         } else {
             isMac = System.getProperty("os.name")
                     .toLowerCase(Locale.ENGLISH)
@@ -96,7 +119,7 @@ public class FXTrayIcon {
                 final Image iconImage = ImageIO.read(iconImagePath)
                         // Some OSes do not behave well
                         // if the icon is larger than 16x16
-                        .getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+                        .getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
                 this.parentStage = parentStage;
                 this.trayIcon =
                         new TrayIcon(iconImage
@@ -520,6 +543,12 @@ public class FXTrayIcon {
     public static boolean isSupported() {
         return Desktop.isDesktopSupported() && SystemTray.isSupported();
     }
+
+    /**
+     * Provides the number of menuItems in the popupMenu.
+     * @return int getItemCount()
+     */
+    public int getMenuItemCount() {return this.popupMenu.getItemCount();}
 
     /**
      * Displays a sliding info message similar to what Windows
