@@ -64,13 +64,37 @@ public class FXTrayIcon {
      * icon and a provided{@code javafx.stage.Stage} as its parent.
      * @param parentStage The parent Stage of the tray icon.
      * @param iconImagePath A path to an icon image
+     * @param iconWidth optional to set a different icon width
+     * @param iconHeight optional to set a different icon height
+     */
+    @API
+    public FXTrayIcon(Stage parentStage, URL iconImagePath, int iconWidth, int iconHeight) {
+        this(iconImagePath,iconWidth,iconHeight,parentStage);
+    }
+
+    /**
+     * Creates an instance of FXTrayIcon with the provided
+     * icon and a provided{@code javafx.stage.Stage} as its parent.
+     * @param parentStage The parent Stage of the tray icon.
+     * @param iconImagePath A path to an icon image
      */
     @API
     public FXTrayIcon(Stage parentStage, URL iconImagePath) {
+        this(iconImagePath,16,16,parentStage);
+    }
+
+    /**
+     * Overloaded Constructor is called by the optional constructors
+     * @param iconImagePath A path to an icon image
+     * @param iconWidth optional to set a different icon width
+     * @param iconHeight optional to set a different icon height
+     * @param parentStage The parent Stage of the tray icon.
+     */
+    private FXTrayIcon(URL iconImagePath, int iconWidth, int iconHeight, Stage parentStage) {
         if (!SystemTray.isSupported()) {
             throw new UnsupportedOperationException(
                     "SystemTray icons are not "
-                            + "supported by the current desktop environment.");
+                    + "supported by the current desktop environment.");
         } else {
             isMac = System.getProperty("os.name")
                     .toLowerCase(Locale.ENGLISH)
@@ -96,7 +120,7 @@ public class FXTrayIcon {
                 final Image iconImage = ImageIO.read(iconImagePath)
                         // Some OSes do not behave well
                         // if the icon is larger than 16x16
-                        .getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+                        .getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
                 this.parentStage = parentStage;
                 this.trayIcon =
                         new TrayIcon(iconImage
@@ -129,10 +153,10 @@ public class FXTrayIcon {
                 // Add a MenuItem with the main Stage's title, this will
                 // show the main JavaFX stage when clicked.
                 String miTitle = (this.appTitle != null) ?
-                        this.appTitle
-                        : (parentStage != null && parentStage.getTitle() != null
-                        && !parentStage.getTitle().isEmpty()) ?
-                        parentStage.getTitle() : "Show Application";
+                                 this.appTitle
+                                                         : (parentStage != null && parentStage.getTitle() != null
+                                                            && !parentStage.getTitle().isEmpty()) ?
+                                                           parentStage.getTitle() : "Show Application";
 
                 MenuItem miStage = new MenuItem(miTitle);
                 miStage.setFont(Font.decode(null).deriveFont(Font.BOLD));
@@ -247,7 +271,7 @@ public class FXTrayIcon {
             for (int i = 0; i < this.popupMenu.getItemCount(); i++) {
                 MenuItem awtItem = this.popupMenu.getItem(i);
                 if (awtItem.getLabel().equals(fxMenuItem.getText()) ||
-                        awtItem.getName().equals(fxMenuItem.getText())) {
+                    awtItem.getName().equals(fxMenuItem.getText())) {
                     toBeRemoved = awtItem;
                 }
             }
@@ -401,8 +425,8 @@ public class FXTrayIcon {
             showMacAlert(title, message,"Information");
         } else {
             EventQueue.invokeLater(() ->
-                    this.trayIcon.displayMessage(
-                            title, message, TrayIcon.MessageType.INFO));
+                                           this.trayIcon.displayMessage(
+                                                   title, message, TrayIcon.MessageType.INFO));
         }
     }
 
@@ -428,8 +452,8 @@ public class FXTrayIcon {
             showMacAlert(title, message,"Warning");
         } else {
             EventQueue.invokeLater(() ->
-                    this.trayIcon.displayMessage(
-                            title, message, TrayIcon.MessageType.WARNING));
+                                           this.trayIcon.displayMessage(
+                                                   title, message, TrayIcon.MessageType.WARNING));
         }
     }
 
@@ -455,8 +479,8 @@ public class FXTrayIcon {
             showMacAlert(title, message,"Error");
         } else {
             EventQueue.invokeLater(() ->
-                    this.trayIcon.displayMessage(
-                            title, message, TrayIcon.MessageType.ERROR));
+                                           this.trayIcon.displayMessage(
+                                                   title, message, TrayIcon.MessageType.ERROR));
         }
     }
 
@@ -483,8 +507,8 @@ public class FXTrayIcon {
             showMacAlert(title, message,"Message");
         } else {
             EventQueue.invokeLater(() ->
-                    this.trayIcon.displayMessage(
-                            title, message, TrayIcon.MessageType.NONE));
+                                           this.trayIcon.displayMessage(
+                                                   title, message, TrayIcon.MessageType.NONE));
         }
     }
 
@@ -522,6 +546,12 @@ public class FXTrayIcon {
     }
 
     /**
+     * Provides the number of menuItems in the popupMenu.
+     * @return int getItemCount()
+     */
+    public int getMenuItemCount() {return this.popupMenu.getItemCount();}
+
+    /**
      * Displays a sliding info message similar to what Windows
      * does, but without AWT
      * @param subTitle The message caption
@@ -531,8 +561,8 @@ public class FXTrayIcon {
     private void showMacAlert(String subTitle, String message, String title) {
         String execute = String.format(
                 "display notification \"%s\""
-                        + " with title \"%s\""
-                        + " subtitle \"%s\"",
+                + " with title \"%s\""
+                + " subtitle \"%s\"",
                 message != null ? message : "",
                 title != null ? title : "",
                 subTitle != null ? subTitle : ""
@@ -556,7 +586,7 @@ public class FXTrayIcon {
         EventQueue.invokeLater(() -> {
             java.awt.Menu awtMenu = new java.awt.Menu(menu.getText());
             menu.getItems().forEach(subItem ->
-                    awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
+                                            awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
             this.popupMenu.add(awtMenu);
         });
     }
