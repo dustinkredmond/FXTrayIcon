@@ -96,11 +96,11 @@ to indicate the level of severity of the message.
 
 ## Supported operating systems
 
-| OS         | Support Status      | Unsupported Features                                                                          |
-|------------|---------------------|-----------------------------------------------------------------------------------------------|
-| Windows 10 | Fully supported     | N/A                                                                                           |
-| Mac OS     | Partially supported | In the `displayMessage()` methods. Custom icons are not supported in AppleScript calls.       |
-| Linux      | Partially supported | Some desktop environments that support `java.awt.SystemTray` are supported. Most are **not**. |
+| OS         | Support Status      | Unsupported Features                                                                                                      |
+|------------|---------------------|---------------------------------------------------------------------------------------------------------------------------|
+| Windows 10 | Fully supported     | N/A                                                                                                                       |
+| Mac OS     | Partially supported | In the `displayMessage()` methods. Custom notificationicons are not supported in AppleScript calls, but the TrayIcon is.  |
+| Linux      | Partially supported | Some desktop environments that support `java.awt.SystemTray` are supported. Many are **not**.                             |
 
 
 Call `FXTrayIcon.isSupported()` to see if the current platform
