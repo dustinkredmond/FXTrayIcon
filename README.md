@@ -79,19 +79,26 @@ so there's no need to use those! A developer can work solely with JavaFX Menus a
 The following can be used to show notifications. Note that the `showMessage()` method
 uses the icon from FXTrayIcon in the notification, while the others use different icons
 to indicate the level of severity of the message.
+
   - `showMessage(String caption, String content)`
     - or `showMessage(String content)`
+      
+      ![showMessage](./img/showDefault.png)
+
   - `showInfoMessage(String caption, String content)`
     - or `showInfoMessage(String content)`
+      
+      ![showInfoMessage](./img/showInfo.png)
+
   - `showWarnMessage(String caption, String content)`
     - or `showWarnMessage(String content)`
+      
+      ![showWarnMessage](./img/showWarn.png)
+
   - `showErrorMessage(String caption, String content)`
     - or `showErrorMessage(String content)`
-
-![showMessage](./img/showDefault.png)
-![showInfoMessage](./img/showInfo.png)
-![showWarnMessage](./img/showWarn.png)
-![showErrorMessage](./img/showError.png)
+      
+      ![showErrorMessage](./img/showError.png)
 
 
 ## Supported operating systems
