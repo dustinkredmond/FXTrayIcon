@@ -94,7 +94,7 @@ public class FXTrayIcon {
         if (!SystemTray.isSupported()) {
             throw new UnsupportedOperationException(
                     "SystemTray icons are not "
-                    + "supported by the current desktop environment.");
+                            + "supported by the current desktop environment.");
         } else {
             isMac = System.getProperty("os.name")
                     .toLowerCase(Locale.ENGLISH)
@@ -153,10 +153,10 @@ public class FXTrayIcon {
                 // Add a MenuItem with the main Stage's title, this will
                 // show the main JavaFX stage when clicked.
                 String miTitle = (this.appTitle != null) ?
-                                 this.appTitle
-                                                         : (parentStage != null && parentStage.getTitle() != null
-                                                            && !parentStage.getTitle().isEmpty()) ?
-                                                           parentStage.getTitle() : "Show Application";
+                        this.appTitle
+                        : (parentStage != null && parentStage.getTitle() != null
+                        && !parentStage.getTitle().isEmpty()) ?
+                        parentStage.getTitle() : "Show Application";
 
                 MenuItem miStage = new MenuItem(miTitle);
                 miStage.setFont(Font.decode(null).deriveFont(Font.BOLD));
@@ -271,7 +271,7 @@ public class FXTrayIcon {
             for (int i = 0; i < this.popupMenu.getItemCount(); i++) {
                 MenuItem awtItem = this.popupMenu.getItem(i);
                 if (awtItem.getLabel().equals(fxMenuItem.getText()) ||
-                    awtItem.getName().equals(fxMenuItem.getText())) {
+                        awtItem.getName().equals(fxMenuItem.getText())) {
                     toBeRemoved = awtItem;
                 }
             }
@@ -425,8 +425,8 @@ public class FXTrayIcon {
             showMacAlert(title, message,"Information");
         } else {
             EventQueue.invokeLater(() ->
-                                           this.trayIcon.displayMessage(
-                                                   title, message, TrayIcon.MessageType.INFO));
+                    this.trayIcon.displayMessage(
+                            title, message, TrayIcon.MessageType.INFO));
         }
     }
 
@@ -452,8 +452,8 @@ public class FXTrayIcon {
             showMacAlert(title, message,"Warning");
         } else {
             EventQueue.invokeLater(() ->
-                                           this.trayIcon.displayMessage(
-                                                   title, message, TrayIcon.MessageType.WARNING));
+                    this.trayIcon.displayMessage(
+                            title, message, TrayIcon.MessageType.WARNING));
         }
     }
 
@@ -479,8 +479,8 @@ public class FXTrayIcon {
             showMacAlert(title, message,"Error");
         } else {
             EventQueue.invokeLater(() ->
-                                           this.trayIcon.displayMessage(
-                                                   title, message, TrayIcon.MessageType.ERROR));
+                    this.trayIcon.displayMessage(
+                            title, message, TrayIcon.MessageType.ERROR));
         }
     }
 
@@ -507,8 +507,8 @@ public class FXTrayIcon {
             showMacAlert(title, message,"Message");
         } else {
             EventQueue.invokeLater(() ->
-                                           this.trayIcon.displayMessage(
-                                                   title, message, TrayIcon.MessageType.NONE));
+                    this.trayIcon.displayMessage(
+                            title, message, TrayIcon.MessageType.NONE));
         }
     }
 
@@ -549,7 +549,9 @@ public class FXTrayIcon {
      * Provides the number of menuItems in the popupMenu.
      * @return int getItemCount()
      */
-    public int getMenuItemCount() {return this.popupMenu.getItemCount();}
+    public int getMenuItemCount() {
+        return this.popupMenu.getItemCount();
+    }
 
     /**
      * Displays a sliding info message similar to what Windows
@@ -561,8 +563,8 @@ public class FXTrayIcon {
     private void showMacAlert(String subTitle, String message, String title) {
         String execute = String.format(
                 "display notification \"%s\""
-                + " with title \"%s\""
-                + " subtitle \"%s\"",
+                        + " with title \"%s\""
+                        + " subtitle \"%s\"",
                 message != null ? message : "",
                 title != null ? title : "",
                 subTitle != null ? subTitle : ""
@@ -571,8 +573,7 @@ public class FXTrayIcon {
         try {
             Runtime.getRuntime()
                     .exec(new String[] { "osascript", "-e", execute });
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new UnsupportedOperationException(
                     "Cannot run osascript with given parameters.");
         }
@@ -586,7 +587,7 @@ public class FXTrayIcon {
         EventQueue.invokeLater(() -> {
             java.awt.Menu awtMenu = new java.awt.Menu(menu.getText());
             menu.getItems().forEach(subItem ->
-                                            awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
+                    awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
             this.popupMenu.add(awtMenu);
         });
     }
