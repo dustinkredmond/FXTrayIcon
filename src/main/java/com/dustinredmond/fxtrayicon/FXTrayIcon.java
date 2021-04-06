@@ -226,8 +226,14 @@ public class FXTrayIcon {
      * Adds the icon to the SystemTray. {@code showMinimal()} adds the
      * icon with an empty popup menu, allowing the user to add
      * {@code MenuItem}s from scratch.
+     * @deprecated since 2.8.0 Future releases of FXTrayIcon will
+     *             provide only the show() method. It will be the
+     *             developers responsibility to add MenuItems as
+     *             to their liking, FXTrayIcon will no longer assume
+     *             default "Show" and "Exit" MenuItems.
      */
     @API
+    @Deprecated
     public void showMinimal() {
         try {
             tray.add(this.trayIcon);
