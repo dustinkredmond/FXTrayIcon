@@ -80,7 +80,7 @@ public class FXTrayIcon {
      */
     @API
     public FXTrayIcon(Stage parentStage, URL iconImagePath) {
-        this(iconImagePath,16,16,parentStage);
+        this(iconImagePath, 16, 16, parentStage);
     }
 
     /**
@@ -230,7 +230,9 @@ public class FXTrayIcon {
      *             provide only the show() method. It will be the
      *             developers responsibility to add MenuItems as
      *             to their liking, FXTrayIcon will no longer assume
-     *             default "Show" and "Exit" MenuItems.
+     *             default "Show" and "Exit" MenuItems. In a future
+     *             major version release, show() will be the only
+     *             method supported.
      */
     @API
     @Deprecated
