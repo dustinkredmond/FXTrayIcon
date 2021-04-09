@@ -115,5 +115,6 @@ supports the system tray.
 
 
 ## Projects using `FXTrayIcon`
+- [JDKMon](https://github.com/HanSolo/JDKMon)
 
 If your project uses FXTrayIcon, let us know via Pull Request, and we'll feature your project on this README.
