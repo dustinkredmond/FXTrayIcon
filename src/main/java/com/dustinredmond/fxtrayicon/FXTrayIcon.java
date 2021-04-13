@@ -152,21 +152,23 @@ public class FXTrayIcon {
 
                 // Add a MenuItem with the main Stage's title, this will
                 // show the main JavaFX stage when clicked.
-                String miTitle = (this.appTitle != null) ?
-                        this.appTitle
-                        : (parentStage != null && parentStage.getTitle() != null
-                        && !parentStage.getTitle().isEmpty()) ?
-                        parentStage.getTitle() : "Show Application";
+                if (addTitleMenuItem) {
+                    String miTitle = (this.appTitle != null) ?
+                            this.appTitle
+                            : (parentStage != null && parentStage.getTitle() != null
+                            && !parentStage.getTitle().isEmpty()) ?
+                            parentStage.getTitle() : "Show Application";
 
-                MenuItem miStage = new MenuItem(miTitle);
-                miStage.setFont(Font.decode(null).deriveFont(Font.BOLD));
-                miStage.addActionListener(e -> Platform.runLater(() -> {
-                    if (parentStage != null) {
-                        parentStage.show();
-                    }
-                }));
-                //Make sure it's always at the top
-                this.popupMenu.insert(miStage,0);
+                    MenuItem miStage = new MenuItem(miTitle);
+                    miStage.setFont(Font.decode(null).deriveFont(Font.BOLD));
+                    miStage.addActionListener(e -> Platform.runLater(() -> {
+                        if (parentStage != null) {
+                            parentStage.show();
+                        }
+                    }));
+                    //Make sure it's always at the top
+                    this.popupMenu.insert(miStage, 0);
+                }
 
                 // If Platform.setImplicitExit(false) then the JVM will
                 // continue to run after no more Stages remain,
@@ -248,7 +250,7 @@ public class FXTrayIcon {
     /**
      * Adds a MenuItem to the {@code FXTrayIcon} that will close the
      * JavaFX application and terminate the JVM. If this is not set
-     * to @{code true}, a developer will have to implement this functionality
+     * to {@code true}, a developer will have to implement this functionality
      * themselves.
      * @param addExitMenuItem If true, the FXTrayIcon's popup menu will display
      *                       an option for exiting the application entirely.
@@ -256,6 +258,19 @@ public class FXTrayIcon {
     @API
     public void addExitItem(boolean addExitMenuItem) {
         this.addExitMenuItem = addExitMenuItem;
+    }
+
+    /**
+     * Adds a MenuItem with the main Stage's title to the {@code FXTrayIcon},
+     * that will show the main JavaFX stage when clicked. If this is not set
+     * to {@code true}, a developer will have to implement this functionality
+     * themselves.
+     * @param addTitleMenuItem If true, the FXTrayIcon's popup menu will display
+     *                         the main stages title and will show the stage on click
+     */
+    @API
+    public void addTitleItem(boolean addTitleMenuItem) {
+        this.addTitleMenuItem = addTitleMenuItem;
     }
 
     /**
@@ -686,6 +701,13 @@ public class FXTrayIcon {
      * TrayIcon to be removed.
      */
     private boolean addExitMenuItem = true;
+
+    /**
+     * If true, when the FXTrayIcon's {@code show()}
+     * method is called, adds a MenuItem with the main Stage's title,
+     * that will show the main JavaFX stage when clicked.
+     */
+    private boolean addTitleMenuItem = true;
 
     /**
      * Set to true if the end-user's operating
