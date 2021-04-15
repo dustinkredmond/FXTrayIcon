@@ -207,45 +207,6 @@ public class FXTrayIcon {
         this.trayIcon.addMouseListener(getPrimaryClickListener(e));
     }
 
-    /**
-     * Adds an EventHandler that is called when the FXTrayIcon is
-     * single-clicked.
-     * @param e The action to be performed.
-     * @deprecated since 2.5.0 The behavior of setOnClick() vs setOnAction()
-     *             does not significantly differ between platforms.
-     *             Prefer setOnAction()
-     */
-    @Deprecated()
-    public void setOnClick(EventHandler<ActionEvent> e) {
-        if (this.trayIcon.getMouseListeners().length >= 1) {
-            this.trayIcon.removeMouseListener(
-                    this.trayIcon.getMouseListeners()[0]);
-        }
-        this.trayIcon.addMouseListener(getPrimaryClickListener(e));
-    }
-
-    /**
-     * Adds the icon to the SystemTray. {@code showMinimal()} adds the
-     * icon with an empty popup menu, allowing the user to add
-     * {@code MenuItem}s from scratch.
-     * @deprecated since 2.8.0 Future releases of FXTrayIcon will
-     *             provide only the show() method. It will be the
-     *             developers responsibility to add MenuItems as
-     *             to their liking, FXTrayIcon will no longer assume
-     *             default "Show" and "Exit" MenuItems. In a future
-     *             major version release, show() will be the only
-     *             method supported.
-     */
-    @API
-    @Deprecated
-    public void showMinimal() {
-        try {
-            tray.add(this.trayIcon);
-            this.trayIcon.addActionListener(stageShowListener);
-        } catch (AWTException e) {
-            throw new IllegalStateException("Unable to add TrayIcon", e);
-        }
-    }
 
     /**
      * Adds a MenuItem to the {@code FXTrayIcon} that will close the
