@@ -93,7 +93,7 @@ public class Main extends Application {
 			icon.addMenuItem(menuHideStage);
 			icon.addMenuItem(menuShowMessage);
 			icon.addMenuItem(menuExit);
-			icon.showMinimal();
+			icon.show();
 		}
 
 	}
