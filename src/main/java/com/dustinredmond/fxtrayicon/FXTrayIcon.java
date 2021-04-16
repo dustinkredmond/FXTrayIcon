@@ -213,6 +213,7 @@ public class FXTrayIcon {
      * JavaFX application and terminate the JVM. If this is not set
      * to {@code true}, a developer will have to implement this functionality
      * themselves.
+     * This must be called before fxTrayIcon.show() is called.
      * @param addExitMenuItem If true, the FXTrayIcon's popup menu will display
      *                       an option for exiting the application entirely.
      */
@@ -226,6 +227,7 @@ public class FXTrayIcon {
      * that will show the main JavaFX stage when clicked. If this is not set
      * to {@code true}, a developer will have to implement this functionality
      * themselves.
+     * This must be called before fxTrayIcon.show() is called.
      * @param addTitleMenuItem If true, the FXTrayIcon's popup menu will display
      *                         the main stages title and will show the stage on click
      */
@@ -286,6 +288,7 @@ public class FXTrayIcon {
      * Adds the specified MenuItem to the FXTrayIcon's menu
      * @param menuItem MenuItem to be added
      */
+    @API
     public void addMenuItem(javafx.scene.control.MenuItem menuItem) {
         EventQueue.invokeLater(() -> {
             if (menuItem instanceof Menu) {
@@ -533,6 +536,7 @@ public class FXTrayIcon {
      * Provides the number of menuItems in the popupMenu.
      * @return int getItemCount()
      */
+    @API
     public int getMenuItemCount() {
         return this.popupMenu.getItemCount();
     }
@@ -660,15 +664,17 @@ public class FXTrayIcon {
      * method is called, adds a MenuItem that will allow
      * for the JavaFX program to be terminated and the
      * TrayIcon to be removed.
+     * This is set to false by default.
      */
-    private boolean addExitMenuItem = true;
+    private boolean addExitMenuItem = false;
 
     /**
      * If true, when the FXTrayIcon's {@code show()}
      * method is called, adds a MenuItem with the main Stage's title,
      * that will show the main JavaFX stage when clicked.
+     * This is set to false by default.
      */
-    private boolean addTitleMenuItem = true;
+    private boolean addTitleMenuItem = false;
 
     /**
      * Set to true if the end-user's operating
