@@ -389,8 +389,7 @@ public class FXTrayIcon {
     }
 
     /**
-     * Returns true if the FXTrayIcon's show() or showMinimal()
-     * methods have been called.
+     * Returns true if the FXTrayIcon's show() method has been called.
      * @return true if the FXTrayIcon is a part of the SystemTray.
      */
     @API
