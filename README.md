@@ -106,7 +106,7 @@ to indicate the level of severity of the message.
 | OS         | Support Status      | Unsupported Features                                                                                                      |
 |------------|---------------------|---------------------------------------------------------------------------------------------------------------------------|
 | Windows 10 | Fully supported     | N/A                                                                                                                       |
-| Mac OS     | Partially supported | In the `displayMessage()` methods. Custom notificationicons are not supported in AppleScript calls, but the TrayIcon is.  |
+| Mac OS     | Partially supported | In the `displayMessage()` methods. Custom notification icons are not supported in AppleScript calls, but the TrayIcon is.  |
 | Linux      | Partially supported | Some desktop environments that support `java.awt.SystemTray` are supported. Many are **not**.                             |
 
 
