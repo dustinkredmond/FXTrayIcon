@@ -24,6 +24,7 @@ package com.dustinredmond.fxtrayicon;
 
 import com.dustinredmond.fxtrayicon.annotations.API;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
@@ -45,6 +46,7 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -538,6 +540,25 @@ public class FXTrayIcon {
     @API
     public int getMenuItemCount() {
         return this.popupMenu.getItemCount();
+    }
+
+    /**
+     * Provides a way to change the TrayIcon image at runtime.
+     * @param img JavaFX Image
+     */
+    @API
+    public void setGraphic(javafx.scene.image.Image img) {
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
+        this.trayIcon.setImage(bufferedImage);
+    }
+
+    /**
+     * Sets the FXTrayIcon's tooltip text (shown on mouse hover)
+     * @param tooltip String for tooltip
+     */
+    @API
+    public void setTooltip(String tooltip) {
+        this.trayIcon.setToolTip(tooltip);
     }
 
     /**
