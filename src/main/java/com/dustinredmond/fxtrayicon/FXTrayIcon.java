@@ -52,6 +52,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -71,7 +72,7 @@ public class FXTrayIcon {
      */
     @API
     public FXTrayIcon(Stage parentStage, URL iconImagePath, int iconWidth, int iconHeight) {
-        this(iconImagePath,iconWidth,iconHeight,parentStage);
+        this(parentStage, loadImageFromFile(iconImagePath, iconWidth, iconHeight));
     }
 
     /**
@@ -82,57 +83,62 @@ public class FXTrayIcon {
      */
     @API
     public FXTrayIcon(Stage parentStage, URL iconImagePath) {
-        this(iconImagePath, 16, 16, parentStage);
+        this(parentStage, loadImageFromFile(iconImagePath, 16, 16));
     }
 
     /**
-     * Overloaded Constructor is called by the optional constructors
-     * @param iconImagePath A path to an icon image
-     * @param iconWidth optional to set a different icon width
-     * @param iconHeight optional to set a different icon height
-     * @param parentStage The parent Stage of the tray icon.
+     * Creates an instance of FXTrayIcon with the provided
+     * icon and a provided{@code javafx.stage.Stage} as its parent.
+     * @param parentStage The parent Stage of the tray icon. Must not be null.
+     * @param icon The image to use as the tray icon. Must not be null.
      */
-    private FXTrayIcon(URL iconImagePath, int iconWidth, int iconHeight, Stage parentStage) {
+    @API
+    public FXTrayIcon(Stage parentStage, Image icon) {
+      Objects.requireNonNull(parentStage, "parentStage must not be null");
+      Objects.requireNonNull(icon, "icon must not be null");
+
+      ensureSystemTraySupported();
+      isMac = System.getProperty("os.name")
+          .toLowerCase(Locale.ENGLISH)
+          .contains("mac");
+
+      tray = SystemTray.getSystemTray();
+      // Keeps the JVM running even if there are no
+      // visible JavaFX Stages, otherwise JVM would
+      // exit and we lose the TrayIcon
+      Platform.setImplicitExit(false);
+
+      attemptSetSystemLookAndFeel();
+
+      this.parentStage = parentStage;
+      this.trayIcon = new TrayIcon(icon, parentStage.getTitle(), popupMenu);
+    }
+
+    private void ensureSystemTraySupported() {
         if (!SystemTray.isSupported()) {
             throw new UnsupportedOperationException(
-                    "SystemTray icons are not "
-                            + "supported by the current desktop environment.");
-        } else {
-            isMac = System.getProperty("os.name")
-                    .toLowerCase(Locale.ENGLISH)
-                    .contains("mac");
-
-            tray = SystemTray.getSystemTray();
-            // Keeps the JVM running even if there are no
-            // visible JavaFX Stages, otherwise JVM would
-            // exit and we lose the TrayIcon
-            Platform.setImplicitExit(false);
-
-            // Set the SystemLookAndFeel as default,
-            // let user override if needed
-            try {
-                UIManager.setLookAndFeel(
-                        UIManager.getSystemLookAndFeelClassName());
-            } catch (ClassNotFoundException
-                    | InstantiationException
-                    | IllegalAccessException
-                    | UnsupportedLookAndFeelException ignored) {}
-
-            try {
-                final Image iconImage = ImageIO.read(iconImagePath)
-                        // Some OSes do not behave well
-                        // if the icon is larger than 16x16
-                        .getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-                this.parentStage = parentStage;
-                this.trayIcon =
-                        new TrayIcon(iconImage
-                                , parentStage.getTitle()
-                                , popupMenu);
-            } catch (IOException e) {
-                throw new IllegalStateException(
-                        "Unable to read the Image at the provided path.");
-            }
+                "SystemTray icons are not "
+                    + "supported by the current desktop environment.");
         }
+    }
+
+    private void attemptSetSystemLookAndFeel() {
+      try {
+        UIManager.setLookAndFeel(
+            UIManager.getSystemLookAndFeelClassName());
+      } catch (ClassNotFoundException
+          | InstantiationException
+          | IllegalAccessException
+          | UnsupportedLookAndFeelException ignored) {}
+    }
+
+    private static Image loadImageFromFile(URL iconImagePath, int iconWidth, int iconHeight) {
+      try {
+        return ImageIO.read(iconImagePath)
+                      .getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+      } catch (IOException e) {
+        throw new IllegalStateException("Unable to read the Image at the provided path: " + iconImagePath, e);
+      }
     }
 
     /**
