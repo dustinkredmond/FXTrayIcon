@@ -554,8 +554,16 @@ public class FXTrayIcon {
      */
     @API
     public void setGraphic(javafx.scene.image.Image img) {
-        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
-        this.trayIcon.setImage(bufferedImage);
+        setGraphic(SwingFXUtils.fromFXImage(img, null));
+    }
+
+    /**
+     * Provides a way to change the TrayIcon image at runtime.
+     * @param img Java AWT Image
+     */
+    @API
+    public void setGraphic(Image img) {
+        this.trayIcon.setImage(img);
     }
 
     /**
