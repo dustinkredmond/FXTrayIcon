@@ -47,6 +47,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -550,6 +551,18 @@ public class FXTrayIcon {
     public void setGraphic(javafx.scene.image.Image img) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
         this.trayIcon.setImage(bufferedImage);
+    }
+
+    /**
+     * Provides a way to change the TrayIcon image at runtime.
+     * @param imgFile java.io.File Object
+     */
+    @API
+    public void setGraphic(File imgFile) {
+        try {
+            this.trayIcon.setImage(ImageIO.read(imgFile));
+        }
+        catch (IOException e) {e.printStackTrace();}
     }
 
     /**
