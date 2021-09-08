@@ -306,6 +306,34 @@ public class FXTrayIcon {
     }
 
     /**
+     * Adds the specified MenuItems to the FXTrayIcon's menu
+     * Add separators by creating a MenuItem with text 'separator'
+     * ex: addMenuItems(menuItem1, menuItem2, menuSeparator, menuItem3);
+     * @param menuItems multiple MenuItem objects to be added
+     */
+    @API
+    public void addMenuItems(javafx.scene.control.MenuItem... menuItems ) {
+        EventQueue.invokeLater(() -> {
+            for (javafx.scene.control.MenuItem menuItem : menuItems) {
+                if (menuItem.getText().equals("separator")) {
+                    this.popupMenu.addSeparator();
+                }
+                else {
+                    if (menuItem instanceof Menu) {
+                        addMenu((Menu) menuItem);
+                        return;
+                    }
+                    if (isNotUnique(menuItem)) {
+                        throw new UnsupportedOperationException(
+                                "Menu Item labels must be unique, duplicate menuItem: " + menuItem.getText());
+                    }
+                    this.popupMenu.add(AWTUtils.convertFromJavaFX(menuItem));
+                }
+            }
+        });
+    }
+
+    /**
      * Inserts the specified MenuItem into the FXTrayIcon's menu
      * at the supplied index.
      * @param menuItem MenuItem to be inserted
