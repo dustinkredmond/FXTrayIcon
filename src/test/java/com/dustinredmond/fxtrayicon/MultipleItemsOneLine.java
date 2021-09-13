@@ -13,12 +13,11 @@ public class MultipleItemsOneLine extends Application {
 		icon.show();
 		MenuItem menu1     = new MenuItem("Option 1");
 		MenuItem menu2     = new MenuItem("Option 2");
-		MenuItem separator = new MenuItem("separator");
 		MenuItem exitMenu  = new MenuItem("Exit");
 		menu1.setOnAction(e -> menu1());
 		menu2.setOnAction(e -> menu2());
 		exitMenu.setOnAction(e -> System.exit(0));
-		icon.addMenuItems(menu1, menu2, separator, exitMenu);
+		icon.addMenuItems(menu1, menu2, exitMenu);
 	}
 
 	private void menu1() {System.out.println("Option 1");}
