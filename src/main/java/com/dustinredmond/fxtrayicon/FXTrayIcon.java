@@ -47,6 +47,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -306,29 +307,24 @@ public class FXTrayIcon {
     }
 
     /**
-     * Adds the specified MenuItems to the FXTrayIcon's menu
-     * Add separators by creating a MenuItem with text 'separator'
-     * ex: addMenuItems(menuItem1, menuItem2, menuSeparator, menuItem3);
-     * @param menuItems multiple MenuItem objects to be added
+     * Adds the specified MenuItems to FXTrayIcon's menu.
+     * Pass in as many MenuItems as needed separated by a comma.
+     * ex: addMenuItems(menuItem1, menuItem2, menuItem3);
+     * @param menuItems multiple comma separated MenuItem objects
      */
     @API
     public void addMenuItems(javafx.scene.control.MenuItem... menuItems ) {
         EventQueue.invokeLater(() -> {
             for (javafx.scene.control.MenuItem menuItem : menuItems) {
-                if (menuItem.getText().equals("separator")) {
-                    this.popupMenu.addSeparator();
+                if (menuItem instanceof Menu) {
+                    addMenu((Menu) menuItem);
+                    return;
                 }
-                else {
-                    if (menuItem instanceof Menu) {
-                        addMenu((Menu) menuItem);
-                        return;
-                    }
-                    if (isNotUnique(menuItem)) {
-                        throw new UnsupportedOperationException(
-                                "Menu Item labels must be unique, duplicate menuItem: " + menuItem.getText());
-                    }
-                    this.popupMenu.add(AWTUtils.convertFromJavaFX(menuItem));
+                if (isNotUnique(menuItem)) {
+                    throw new UnsupportedOperationException(
+                            "Menu Item labels must be unique.");
                 }
+                this.popupMenu.add(AWTUtils.convertFromJavaFX(menuItem));
             }
         });
     }
@@ -340,8 +336,7 @@ public class FXTrayIcon {
      * @param index Index to insert the MenuItem at
      */
     @API
-    public void insertMenuItem(javafx.scene.control.MenuItem menuItem,
-                               int index) {
+    public void insertMenuItem(javafx.scene.control.MenuItem menuItem, int index) {
         EventQueue.invokeLater(() -> {
             if (isNotUnique(menuItem)) {
                 throw new UnsupportedOperationException(
@@ -578,6 +573,18 @@ public class FXTrayIcon {
     public void setGraphic(javafx.scene.image.Image img) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
         this.trayIcon.setImage(bufferedImage);
+    }
+
+    /**
+     * Provides a way to change the TrayIcon image at runtime.
+     * @param imgFile java.io.File Object
+     */
+    @API
+    public void setGraphic(File imgFile) {
+        try {
+            this.trayIcon.setImage(ImageIO.read(imgFile));
+        }
+        catch (IOException e) {e.printStackTrace();}
     }
 
     /**
