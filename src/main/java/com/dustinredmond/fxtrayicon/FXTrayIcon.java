@@ -335,7 +335,8 @@ public class FXTrayIcon {
      * @param index Index to insert the MenuItem at
      */
     @API
-    public void insertMenuItem(javafx.scene.control.MenuItem menuItem, int index) {
+    public void insertMenuItem(javafx.scene.control.MenuItem menuItem,
+                               int index) {
         EventQueue.invokeLater(() -> {
             if (isNotUnique(menuItem)) {
                 throw new UnsupportedOperationException(
