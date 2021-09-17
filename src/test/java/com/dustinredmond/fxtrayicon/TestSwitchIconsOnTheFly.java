@@ -48,6 +48,7 @@ import static javafx.scene.layout.AnchorPane.setRightAnchor;
 public class TestSwitchIconsOnTheFly extends Application {
 
 
+	AnchorPane root;
 	private final String fileName1 = "FXIconRedWhite.png";
 	private final String fileName2 = "FXIconRedYellow.png";
 	private final String fileName3 = "FXIconBlueWhite.png";
@@ -85,7 +86,7 @@ public class TestSwitchIconsOnTheFly extends Application {
 		Random random = new Random();
 		changeIcon(imageURLs[random.nextInt(6)]);
 	}
-	AnchorPane root;
+
 	@Override public void start(Stage stage) {
 		root = new AnchorPane();
 		root.setStyle(style3);

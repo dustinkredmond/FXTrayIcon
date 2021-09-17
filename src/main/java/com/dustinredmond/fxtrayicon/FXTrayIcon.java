@@ -111,9 +111,9 @@ public class FXTrayIcon {
          */
         @API
         public Builder menuItem(String label, EventHandler<ActionEvent> e) {
-            javafx.scene.control.MenuItem menuItem = new javafx.scene.control.MenuItem(label);
-            menuItem.setOnAction(e);
-            trayIcon.addMenuItem(menuItem);
+            javafx.scene.control.MenuItem mi = new javafx.scene.control.MenuItem(label);
+            mi.setOnAction(e);
+            trayIcon.addMenuItem(mi);
             return this;
         }
 
@@ -123,8 +123,8 @@ public class FXTrayIcon {
          * @return this Builder object
          */
         public Builder menuItem(String label) {
-            javafx.scene.control.MenuItem menuItem = new javafx.scene.control.MenuItem(label);
-            trayIcon.addMenuItem(menuItem);
+            javafx.scene.control.MenuItem mi = new javafx.scene.control.MenuItem(label);
+            trayIcon.addMenuItem(mi);
             return this;
         }
 
