@@ -28,10 +28,10 @@ import javafx.stage.Stage;
 public class TestAddDefaultMenuItem extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         primaryStage.setTitle("My App");
 
-        FXTrayIcon icon = new FXTrayIcon(primaryStage, getClass().getResource("icons8-link-64.png"));
+        FXTrayIcon icon = new FXTrayIcon(primaryStage, getClass().getResource("FXIconRedWhite.png"));
         icon.addTitleItem(true);
         icon.addExitItem(true);
         icon.show();

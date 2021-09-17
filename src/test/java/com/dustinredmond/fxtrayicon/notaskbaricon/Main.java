@@ -95,7 +95,6 @@ public class Main extends Application {
 			icon.addMenuItem(menuExit);
 			icon.show();
 		}
-
 	}
 
 	private FXTrayIcon icon;

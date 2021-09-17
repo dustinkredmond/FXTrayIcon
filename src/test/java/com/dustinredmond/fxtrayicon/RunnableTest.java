@@ -48,6 +48,7 @@ public class RunnableTest extends Application {
 
         BorderPane root = new BorderPane();
         stage.setScene(new Scene(root));
+        stage.setOnCloseRequest(e-> System.exit(0));
 
         // By default, our FXTrayIcon will have an entry with our Application's title in bold font,
         // when clicked, this MenuItem will call stage.show()
@@ -57,7 +58,7 @@ public class RunnableTest extends Application {
         stage.setTitle("FXTrayIcon test!");
 
         // Instantiate the FXTrayIcon providing the parent Stage and a path to an Image file
-        FXTrayIcon trayIcon = new FXTrayIcon(stage, getClass().getResource("icons8-link-64.png"));
+        FXTrayIcon trayIcon = new FXTrayIcon(stage, getClass().getResource("FXIconRedWhite.png"));
         trayIcon.show();
 
         // By default the FXTrayIcon's tooltip will be the parent stage's title, that we used in the constructor
@@ -117,6 +118,6 @@ public class RunnableTest extends Application {
      * @return URL to an example icon PNG
      */
     public URL getIcon() {
-        return getClass().getResource("icons8-link-64.png");
+        return getClass().getResource("FXIconRedWhite.png");
     }
 }

@@ -72,7 +72,7 @@ public class TestFXTrayIcon extends Application {
      * Test for making sure that we're able to 'convert' a
      * JavaFX MenuItem into an AWT MenuItem via AWTUtils.convertFromJavaFX()
      */
-    public void testShouldConvertSuccessful() {
+    @Test public void testShouldConvertSuccessful() {
         MenuItem fxItem = new MenuItem("SomeText");
         fxItem.setDisable(true);
         fxItem.setOnAction(e -> {/* ignored */});
@@ -87,7 +87,7 @@ public class TestFXTrayIcon extends Application {
      * Test that an Exception is thrown when AWTUtils cannot
      * translate and AWT MenuItem behavior over to JavaFX MenuItem
      */
-    public void testShouldConvertFail() {
+    @Test public void testShouldConvertFail() {
         MenuItem fxItem = new MenuItem();
         fxItem.setGraphic(new Label());
         try {
@@ -101,7 +101,7 @@ public class TestFXTrayIcon extends Application {
      * Sanity test to make sure that FXTrayIcon.isSupported() does not
      * give a different result than java.awt.SystemTray.isSupported()
      */
-    public void testTrayIconSupported() {
+    @Test public void testTrayIconSupported() {
         assertEquals(SystemTray.isSupported(), FXTrayIcon.isSupported());
     }
 
@@ -109,7 +109,7 @@ public class TestFXTrayIcon extends Application {
      * Make sure that our test icon is not null. If this fails, other
      * tests will not run successfully.
      */
-    public void testNotNullTestResource() {
+    @Test public void testNotNullTestResource() {
         try {
             assertNotNull(getClass().getResource(TEST_ICON));
         } catch (Exception e) {
@@ -120,13 +120,13 @@ public class TestFXTrayIcon extends Application {
     /**
      * Stupid sanity test, if this fails for any reason, we have issues.
      */
-    public void testInitialization() {
+    @Test public void testInitialization() {
         if (FXTrayIcon.isSupported()) {
             FXTrayIcon icon = new FXTrayIcon(new Stage(), getClass().getResource(TEST_ICON));
             assertNotNull(icon);
         }
     }
 
-    private static final String TEST_ICON = "icons8-link-64.png";
+    private static final String TEST_ICON = "FXIconRedWhite.png";
 
 }
