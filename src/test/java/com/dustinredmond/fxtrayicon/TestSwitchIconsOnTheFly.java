@@ -118,11 +118,11 @@ public class TestSwitchIconsOnTheFly extends Application {
 		// With the Builder class, we can quickly create our FXTrayIcon Menu
 		trayIcon = new FXTrayIcon.Builder(stage, icon1,width,height)
 				.toolTip("Chose a random icon")
-				.menuItem(menuRandom)
+				.menuItem("RandomIcon",e->choseRandomIcon())
 				.separator()
-				.menuItem(menuExit)
+				.menuItem("Exit Application",e-> System.exit(0))
+				.show()
 				.build();
-		trayIcon.show();
 
 		ChoiceBox<String> iconChoiceBox = new ChoiceBox<>(nameList);
 		iconChoiceBox.setOnAction(e-> newIconChoice(iconChoiceBox.getValue()));
@@ -205,6 +205,7 @@ public class TestSwitchIconsOnTheFly extends Application {
 		System.out.println(index);
 		changeIcon(imageURLs[index]);
 	}
+
 
 	private Node getNode(AnchorPane root, VBox control) {
 		root.getChildren().add(control);
