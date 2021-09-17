@@ -59,7 +59,6 @@ public class FXTrayIcon {
     public static class Builder {
 
         private FXTrayIcon trayIcon;
-        private boolean show = false;
 
         /**
          * Creates an instance of FXTrayIcon with the provided
@@ -99,32 +98,6 @@ public class FXTrayIcon {
         @API
         public Builder menuItem(javafx.scene.control.MenuItem menuItem) {
             trayIcon.addMenuItem(menuItem);
-            return this;
-        }
-
-        /**
-         * Add a MenuItem by merely passing the String for its label and the EventHandler
-         * that will be assigned to it
-         * @param label the text that will be on the menu item
-         * @param e the EventHandler
-         * @return this Builder object
-         */
-        @API
-        public Builder menuItem(String label, EventHandler<ActionEvent> e) {
-            javafx.scene.control.MenuItem mi = new javafx.scene.control.MenuItem(label);
-            mi.setOnAction(e);
-            trayIcon.addMenuItem(mi);
-            return this;
-        }
-
-        /**
-         * Add a MenuItem by simply passing in the String for its label.
-         * @param label the text that will be on the menu item
-         * @return this Builder object
-         */
-        public Builder menuItem(String label) {
-            javafx.scene.control.MenuItem mi = new javafx.scene.control.MenuItem(label);
-            trayIcon.addMenuItem(mi);
             return this;
         }
 
@@ -231,21 +204,12 @@ public class FXTrayIcon {
             return this;
         }
 
-        /**
-         * Invoke the Show method when the build is complete.
-         * @return this Builder object
-         */
-        public Builder show() {
-            this.show = true;
-            return this;
-        }
 
         /**
          * Must be the LAST build statement in your Builder sentence.
          * @return a new instance of FXTrayIcon.
          */
         public FXTrayIcon build() {
-            if (show) trayIcon.show();
             return trayIcon;
         }
     }
@@ -397,6 +361,7 @@ public class FXTrayIcon {
         }
         this.trayIcon.addMouseListener(getPrimaryClickListener(e));
     }
+
 
     /**
      * Adds a MenuItem to the {@code FXTrayIcon} that will close the
