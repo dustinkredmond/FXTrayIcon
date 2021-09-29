@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
  *  Allows for a developer to create a tray icon
  *  using JavaFX style API.
  */
-public class    FXTrayIcon {
+public class FXTrayIcon {
 
     /**
      * Creates an instance of FXTrayIcon with the provided
@@ -124,6 +124,8 @@ public class    FXTrayIcon {
 
         private FXTrayIcon trayIcon;
         private boolean showMenu = false;
+        private final String fileName1 = "FXIconRedWhite.png";
+        URL icon1 = getClass().getResource(fileName1);
 
         /**
          * Creates an instance of FXTrayIcon with the provided
@@ -152,6 +154,10 @@ public class    FXTrayIcon {
             else {
                 trayIcon = new FXTrayIcon(parentStage,iconImagePath);
             }
+        }
+
+        public Builder(Stage parentStage) {
+            trayIcon = new FXTrayIcon(parentStage,icon1,26,26);
         }
 
         /**
@@ -292,7 +298,6 @@ public class    FXTrayIcon {
             return this;
         }
 
-
         /**
          * Must be the LAST build statement in your Builder sentence.
          * @return a new instance of FXTrayIcon.
@@ -302,7 +307,6 @@ public class    FXTrayIcon {
             return trayIcon;
         }
     }
-
 
     private void ensureSystemTraySupported() {
         if (!SystemTray.isSupported()) {
@@ -404,7 +408,6 @@ public class    FXTrayIcon {
         }
         this.trayIcon.addMouseListener(getPrimaryClickListener(e));
     }
-
 
     /**
      * Adds a MenuItem to the {@code FXTrayIcon} that will close the
@@ -508,8 +511,7 @@ public class    FXTrayIcon {
      * @param index Index to insert the MenuItem at
      */
     @API
-    public void insertMenuItem(javafx.scene.control.MenuItem menuItem,
-                               int index) {
+    public void insertMenuItem(javafx.scene.control.MenuItem menuItem,int index) {
         EventQueue.invokeLater(() -> {
             if (isNotUnique(menuItem)) {
                 throw new UnsupportedOperationException(
