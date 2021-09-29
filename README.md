@@ -22,6 +22,10 @@ FXTrayIcon icon = new FXTrayIcon(stage, getClass().getResource("someImageFile.pn
 icon.show();
 ```
 
+## Or use Builder Style
+```java
+FXTrayIcon icon = new FXTrayIcon.Builder(stage, iconURL).menuItem("Menu 1", e-> myMethod()).addExitItem().show().build();
+```
 
 ## How do I add to my project 
 
