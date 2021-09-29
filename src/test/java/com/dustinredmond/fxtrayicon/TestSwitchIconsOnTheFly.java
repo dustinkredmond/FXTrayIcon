@@ -15,7 +15,7 @@ package com.dustinredmond.fxtrayicon;
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -47,8 +47,6 @@ import static javafx.scene.layout.AnchorPane.*;
 public class TestSwitchIconsOnTheFly extends Application {
 
 
-	private ClassLoader resource = TestSwitchIconsOnTheFly.class.getClassLoader();
-
 	private final String fileName1 = "FXIconRedWhite.png";
 	private final String fileName2 = "FXIconRedYellow.png";
 	private final String fileName3 = "FXIconBlueWhite.png";
@@ -72,16 +70,12 @@ public class TestSwitchIconsOnTheFly extends Application {
 	private final String name5 = "Green-White";
 	private final String name6 = "Green-Yellow";
 
-	private int width;
-	private int height;
-
-	private FXTrayIcon trayIcon  = null;
-	private URL[]      imageURLs = new URL[]{icon1,icon2,icon3,icon4,icon5,icon6};
-	private ObservableList<String> nameList = FXCollections.observableArrayList(Arrays.asList(name1,name2,name3,name4,name5,name6));
-	public final String style1 = "-fx-background-color: radial-gradient(radius 180%, orange, derive(darkred, -30%), derive(yellow, 30%));";
+	private       FXTrayIcon             trayIcon  = null;
+	private final URL[]                  imageURLs = new URL[]{icon1,icon2,icon3,icon4,icon5,icon6};
+	private final ObservableList<String> nameList  = FXCollections.observableArrayList(Arrays.asList(name1, name2, name3, name4, name5, name6));
+	public final  String                 style1    = "-fx-background-color: radial-gradient(radius 180%, orange, derive(darkred, -30%), derive(yellow, 30%));";
 	public final String style2 = "-fx-background-color: radial-gradient(radius 180%, pink, derive(purple, -30%), derive(purple, 30%));";
 	public final String style3 = "-fx-background-color: radial-gradient(radius 180%, yellow, derive(darkorange, -30%), derive(lightsalmon, 30%));";
-	public final String style4 = "-fx-background-color: radial-gradient(radius 180%, cyan, derive(darkgreen, -30%), derive(ghostwhite, 30%));";
 
 	private ImageView iView;
 
@@ -96,8 +90,7 @@ public class TestSwitchIconsOnTheFly extends Application {
 		stage.setWidth(650);
 		stage.setHeight(450);
 
-		width = (System.getProperty("os.name").contains("Windows")) ? 16 : 26; //Windows likes 16 x 16 icons
-		height = (System.getProperty("os.name").contains("Windows")) ? 16 : 26;
+		//Windows likes 16 x 16 icons
 
 		stage.setScene(new Scene(root));
 
@@ -117,20 +110,10 @@ public class TestSwitchIconsOnTheFly extends Application {
 		// With the Builder class, we can quickly create our FXTrayIcon Menu
 		trayIcon = new FXTrayIcon.Builder(stage).menuItem("Exit",e-> System.exit(0)).show().build();
 
-/*
-		trayIcon = new FXTrayIcon.Builder(stage, icon1,width,height)
-				.toolTip("Chose a random icon")
-				.menuItem(menuRandom)
-				.separator()
-				.menuItem(menuExit)
-				.build();
-		trayIcon.show();
-*/
-
 		ChoiceBox<String> iconChoiceBox = new ChoiceBox<>(nameList);
 		iconChoiceBox.setOnAction(e-> newIconChoice(iconChoiceBox.getValue()));
 
-		// We can also nest menus, below is an Options menu with sub-items
+		// We can also nest menus, below is an Options' menu with sub-items
 		VBox vBox = new VBox(5);
 		Label lblChoose = new Label("Chose an Icon");
 		iView = new ImageView();
@@ -165,10 +148,9 @@ public class TestSwitchIconsOnTheFly extends Application {
 			Image image = new Image(iconURL.toExternalForm());
 			iView.setImage(image);
 			iView.setPreserveRatio(true);
-			double w = iView.getScene().getWindow().getWidth();
-			double h = iView.getScene().getWindow().getHeight();
+			double height = iView.getScene().getWindow().getHeight();
 			//iView.setFitWidth(w - (w * .25));
-			iView.setFitHeight(h - (h * .25));
+			iView.setFitHeight(height - (height * .25));
 			trayIcon.setGraphic(image);
 	}
 
@@ -217,18 +199,12 @@ public class TestSwitchIconsOnTheFly extends Application {
 		root.getChildren().add(control);
 		return root.getChildren().get(root.getChildren().indexOf(control));
 	}
-	private Node getNode(AnchorPane root, Button control) {
-		root.getChildren().add(control);
-		return root.getChildren().get(root.getChildren().indexOf(control));
-	}
+
 	private Node getNode(AnchorPane root, ChoiceBox<String> control) {
 		root.getChildren().add(control);
 		return root.getChildren().get(root.getChildren().indexOf(control));
 	}
-	private Node getNode(AnchorPane root, ImageView control) {
-		root.getChildren().add(control);
-		return root.getChildren().get(root.getChildren().indexOf(control));
-	}
+
 	private void setNodePosition(Node node, double left, double right, double top, double bottom) {
 		if (top != -1) setTopAnchor(node, top);
 		if (bottom != -1) setBottomAnchor(node, bottom);
