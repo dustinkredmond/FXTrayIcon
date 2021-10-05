@@ -117,9 +117,10 @@ public class FXTrayIcon {
      * permitting the passing of a full set of MenuItems, Separators, and every
      * settable option of FXTrayIcon from one Builder line of code.
      */
+    @API
     public static class Builder {
 
-        private FXTrayIcon trayIcon;
+        private final FXTrayIcon trayIcon;
         private boolean showMenu = false;
         private final String fileName1 = "FXIconRedWhite.png";
         URL icon1 = getClass().getResource(fileName1);
