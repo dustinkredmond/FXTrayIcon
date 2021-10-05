@@ -280,6 +280,7 @@ public class FXTrayIcon {
          * This must be called before fxTrayIcon.show() is called.
          * @param addTitleMenuItem If true, the FXTrayIcon's popup menu will display
          *                         the main stages title and will show the stage on click
+         * @return this
          */
         @API
         public Builder addTitleItem(boolean addTitleMenuItem) {
