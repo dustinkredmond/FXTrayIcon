@@ -504,6 +504,29 @@ public class FXTrayIcon {
     }
 
     /**
+     * Adds the specified MenuItems to FXTrayIcon's menu.
+     * Pass in as many MenuItems as needed separated by a comma.
+     * ex: addMenuItems(menuItem1, menuItem2, menuItem3);
+     * @param menuItems multiple comma separated MenuItem objects
+     */
+    @API
+    public void addMenuItems(javafx.scene.control.MenuItem... menuItems ) {
+        EventQueue.invokeLater(() -> {
+            for (javafx.scene.control.MenuItem menuItem : menuItems) {
+                if (menuItem instanceof Menu) {
+                    addMenu((Menu) menuItem);
+                    return;
+                }
+                if (isNotUnique(menuItem)) {
+                    throw new UnsupportedOperationException(
+                            "Menu Item labels must be unique.");
+                }
+                this.popupMenu.add(AWTUtils.convertFromJavaFX(menuItem));
+            }
+        });
+    }
+
+    /**
      * Inserts the specified MenuItem into the FXTrayIcon's menu
      * at the supplied index.
      * @param menuItem MenuItem to be inserted
