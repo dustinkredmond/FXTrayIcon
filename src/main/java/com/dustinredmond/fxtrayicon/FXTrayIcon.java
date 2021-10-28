@@ -120,7 +120,7 @@ public class FXTrayIcon {
     @API
     public static class Builder {
 
-        private final FXTrayIcon trayIcon;
+        protected FXTrayIcon trayIcon;
         private boolean showMenu = false;
         private final String fileName1 = "FXIconRedWhite.png";
         URL icon1 = getClass().getResource(fileName1);
