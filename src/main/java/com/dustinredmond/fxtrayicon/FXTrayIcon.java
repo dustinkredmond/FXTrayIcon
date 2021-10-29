@@ -78,7 +78,7 @@ public class FXTrayIcon {
      */
     @API
     public FXTrayIcon(Stage parentStage, URL iconImagePath) {
-        this(parentStage, loadImageFromFile(iconImagePath, 16, 16));
+        this(parentStage, loadImageFromFile(iconImagePath));
     }
 
     /**
@@ -93,9 +93,6 @@ public class FXTrayIcon {
       Objects.requireNonNull(icon, "icon must not be null");
 
       ensureSystemTraySupported();
-      isMac = System.getProperty("os.name")
-          .toLowerCase(Locale.ENGLISH)
-          .contains("mac");
 
       tray = SystemTray.getSystemTray();
       // Keeps the JVM running even if there are no
@@ -375,6 +372,11 @@ public class FXTrayIcon {
           | UnsupportedLookAndFeelException ignored) {}
     }
 
+    private static Image loadImageFromFile(URL iconImagePath) {
+        if (isMac()) return loadImageFromFile(iconImagePath, 26, 26);
+        else return loadImageFromFile(iconImagePath, 16, 16);
+    }
+
     private static Image loadImageFromFile(URL iconImagePath, int iconWidth, int iconHeight) {
       try {
         return ImageIO.read(iconImagePath)
@@ -382,6 +384,12 @@ public class FXTrayIcon {
       } catch (IOException e) {
         throw new IllegalStateException("Unable to read the Image at the provided path: " + iconImagePath, e);
       }
+    }
+
+    private static boolean isMac() {
+        return System.getProperty("os.name")
+                     .toLowerCase(Locale.ENGLISH)
+                     .contains("mac");
     }
 
     /**

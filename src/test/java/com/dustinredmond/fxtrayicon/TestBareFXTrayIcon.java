@@ -30,7 +30,7 @@ public class TestBareFXTrayIcon extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Test FXTrayIcon with empty menu");
-        FXTrayIcon trayIcon = new FXTrayIcon(stage, getClass().getResource("icons8-link-64.png"));
+        FXTrayIcon trayIcon = new FXTrayIcon(stage, getClass().getResource("FXIconRedWhite.png"),26,26);
         trayIcon.show();
     }
 
