@@ -82,6 +82,17 @@ public class FXTrayIcon {
     }
 
     /**
+     * Use this constructor to have FXTrayIcon use a default graphic for the tray icon.
+     * This can be handy for "quick and dirty" runs of the library so that you don't need
+     * to worry about setting up a graphic and defining the URL object.
+     * @param parentStage Stage for FXTrayIcon
+     */
+    @API
+    public FXTrayIcon(Stage parentStage) {
+        this(parentStage, loadImageFromFile(null));
+    }
+
+    /**
      * Creates an instance of FXTrayIcon with the provided
      * icon and a provided{@code javafx.stage.Stage} as its parent.
      * @param parentStage The parent Stage of the tray icon. Must not be null.
@@ -127,10 +138,10 @@ public class FXTrayIcon {
         private       EventHandler<ActionEvent>                   event;
         private final Map<Integer, javafx.scene.control.MenuItem> menuItemMap        = new HashMap<>();
         private final List<Integer>                               separatorIndexList = new ArrayList<>();
-        private final URL                                         defaultIconPath    = getClass().getResource("FXIconRedWhite.png");
         private       boolean                                     showTrayIcon       = false;
         private       boolean                                     useDefaultIcon     = false;
         private       Integer                                     index              = 0;
+        private final URL                                         defaultIconPath    = getClass().getResource("FXIconRedWhite.png");
 
 
         /**
@@ -315,8 +326,8 @@ public class FXTrayIcon {
 
             if (iconWidth == 0 || iconHeight == 0) {
                 if (isMac) {
-                    iconWidth = 26;
-                    iconHeight = 26;
+                    iconWidth = 22;
+                    iconHeight = 22;
                 }
                 else {
                     iconWidth = 16;
@@ -373,7 +384,8 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromFile(URL iconImagePath) {
-        if (isMac()) return loadImageFromFile(iconImagePath, 26, 26);
+        if (iconImagePath == null) iconImagePath = FXTrayIcon.class.getResource("FXIconRedWhite.png");
+        if (isMac()) return loadImageFromFile(iconImagePath, 22, 22);
         else return loadImageFromFile(iconImagePath, 16, 16);
     }
 
@@ -990,4 +1002,5 @@ public class FXTrayIcon {
      * the notifications (AWT or AppleScript)
      */
     private boolean isMac;
+
 }

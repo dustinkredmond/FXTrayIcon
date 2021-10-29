@@ -54,6 +54,7 @@ public class TestBuilderClass extends Application {
 		// This can be disabled by simply removing the MenuItem after instantiating the FXTrayIcon
 		// though, by convention, most applications implement this functionality.
 		stage.setTitle("FXTrayIcon Test Builder Class!");
+		stage.setOnCloseRequest(e-> System.exit(0));
 
 		// We first create the MenuItems that we want to add into FXTrayIcon
 		MenuItem menuItemTest = new MenuItem("Create some JavaFX component!");
@@ -107,17 +108,14 @@ public class TestBuilderClass extends Application {
 		// providing it with the parent Stage and a path to an image file.
 		// The Builder class brings everything together in a single sentence, including
 		// all of our menus and separators.
-		System.out.println(System.getProperty("os.name"));
-		int width = (System.getProperty("os.name").contains("Windows")) ? 16 : 26; //Windows likes 16 x 16 icons
-		int height = (System.getProperty("os.name").contains("Windows")) ? 16 : 26;
 
-		trayIcon = new FXTrayIcon.Builder(stage,getClass().getResource("FXIconRedYellow.png"),width,height)
+		trayIcon = new FXTrayIcon.Builder(stage,getClass().getResource("FXIconRedYellow.png"))
 				.toolTip("An alternative tooltip!")
 				.menuItem(menuItemTest)
 				.menuItem(menuOptions)
 				.applicationTitle("FXTrayIcon Builder Text")
 				.separator()
-				.menuItem(menuExit)
+				.addExitMenuItem()
 				.build();
 
 		trayIcon.show();
