@@ -31,7 +31,7 @@ public class TestAddDefaultMenuItem extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("My App");
 
-        FXTrayIcon icon = new FXTrayIcon(primaryStage, getClass().getResource("icons8-link-64.png"));
+        FXTrayIcon icon = new FXTrayIcon(primaryStage, getClass().getResource("FXIconRedWhite.png"));
         icon.addTitleItem(true);
         icon.addExitItem(true);
         icon.show();
