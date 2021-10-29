@@ -38,7 +38,6 @@ import static org.junit.Assert.*;
  * helper classes.
  */
 public class TestFXTrayIcon extends Application {
-
     /**
      * Entry point for runnable tests.
      * Determines if we're running the tests in a headless
