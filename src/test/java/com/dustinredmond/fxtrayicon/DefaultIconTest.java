@@ -9,7 +9,7 @@ public class DefaultIconTest extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Default Icon");
 
-		FXTrayIcon icon = new FXTrayIcon
+		new FXTrayIcon
 				.Builder(primaryStage)
 				.menuItem("Option 1", e -> menu1())
 				.menuItem("Option 2", e -> menu2())

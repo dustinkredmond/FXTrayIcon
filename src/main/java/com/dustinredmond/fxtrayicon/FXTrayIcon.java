@@ -58,31 +58,6 @@ import java.util.stream.Collectors;
 public class FXTrayIcon {
 
     /**
-     * Creates a {@code MouseListener} whose
-     * single-click action performs the passed
-     * JavaFX EventHandler
-     * @param e A JavaFX event to be performed
-     * @return A MouseListener fired by single-click
-     */
-    private MouseListener getPrimaryClickListener(EventHandler<ActionEvent> e) {
-        return new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent me) {
-                Platform.runLater(() -> e.handle(new ActionEvent()));
-            }
-
-            @Override
-            public void mousePressed(MouseEvent ignored) { }
-            @Override
-            public void mouseReleased(MouseEvent ignored) { }
-            @Override
-            public void mouseEntered(MouseEvent ignored) { }
-            @Override
-            public void mouseExited(MouseEvent ignored) { }
-        };
-    }
-
-    /**
      * The default AWT SystemTray
      */
     private final SystemTray tray;
@@ -133,6 +108,31 @@ public class FXTrayIcon {
      * the notifications (AWT or AppleScript)
      */
     private boolean isMac;
+
+    /**
+     * Creates a {@code MouseListener} whose
+     * single-click action performs the passed
+     * JavaFX EventHandler
+     * @param e A JavaFX event to be performed
+     * @return A MouseListener fired by single-click
+     */
+    private MouseListener getPrimaryClickListener(EventHandler<ActionEvent> e) {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent me) {
+                Platform.runLater(() -> e.handle(new ActionEvent()));
+            }
+
+            @Override
+            public void mousePressed(MouseEvent ignored) { }
+            @Override
+            public void mouseReleased(MouseEvent ignored) { }
+            @Override
+            public void mouseEntered(MouseEvent ignored) { }
+            @Override
+            public void mouseExited(MouseEvent ignored) { }
+        };
+    }
 
 
     /**
