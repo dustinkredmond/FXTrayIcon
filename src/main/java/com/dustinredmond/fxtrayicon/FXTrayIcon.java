@@ -422,6 +422,11 @@ public class FXTrayIcon {
         }
     }
 
+    /**
+     * protected constructor called by the Builder class to finalize instantiation
+     * @param build Builder class instance
+     */
+    @API
     protected FXTrayIcon(Builder build) {
         this(build.parentStage, build.icon);
         this.parentStage = build.parentStage;
@@ -448,6 +453,7 @@ public class FXTrayIcon {
      * custom features.
      * @return The nest trayIcon within this instance of FXTrayIcon.
      */
+    @API
     protected final TrayIcon getTrayIcon() {
         return trayIcon;
     };
