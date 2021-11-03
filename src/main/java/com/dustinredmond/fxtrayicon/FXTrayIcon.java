@@ -442,6 +442,16 @@ public class FXTrayIcon {
         }
     }
 
+    /**
+     * Gets the nested AWT {@link TrayIcon}. This is intended for extended
+     * instances of FXTrayIcon which require the access to implement
+     * custom features.
+     * @return The nest trayIcon within this instance of FXTrayIcon.
+     */
+    protected final TrayIcon getTrayIcon() {
+        return trayIcon;
+    };
+
     private void ensureSystemTraySupported() {
         if (!SystemTray.isSupported()) {
             throw new UnsupportedOperationException(
