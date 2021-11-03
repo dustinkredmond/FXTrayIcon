@@ -76,7 +76,7 @@ public class FXTrayIcon {
     /**
      * The AWT TrayIcon managed by FXTrayIcon
      */
-    private final TrayIcon trayIcon;
+    protected final TrayIcon trayIcon;
 
     /**
      * The AWT PopupMenu managed by FXTrayIcon
@@ -422,7 +422,7 @@ public class FXTrayIcon {
         }
     }
 
-    private FXTrayIcon(Builder build) {
+    protected FXTrayIcon(Builder build) {
         this(build.parentStage, build.icon);
         this.parentStage = build.parentStage;
         this.isMac = build.isMac;
