@@ -134,7 +134,6 @@ public class FXTrayIcon {
         };
     }
 
-
     /**
      * Creates an instance of FXTrayIcon with the provided
      * icon and a provided{@code javafx.stage.Stage} as its parent.
