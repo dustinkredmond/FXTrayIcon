@@ -37,7 +37,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Random;
@@ -45,7 +44,6 @@ import java.util.Random;
 import static javafx.scene.layout.AnchorPane.*;
 
 public class TestSwitchIconsOnTheFly extends Application {
-
 
 	AnchorPane root;
 
@@ -77,11 +75,11 @@ public class TestSwitchIconsOnTheFly extends Application {
 	private final String name8 = "Green-Glass";
 
 	private       FXTrayIcon             trayIcon  = null;
-	private final URL[]                  imageURLs = new URL[]{icon1,icon2,icon3,icon4,icon5,icon6,icon7,icon8};
+	private final URL[]                  imageURLs = new URL[]{icon1, icon2, icon3, icon4, icon5, icon6, icon7, icon8};
 	private final ObservableList<String> nameList  = FXCollections.observableArrayList(Arrays.asList(name1, name2, name3, name4, name5, name6, name7, name8));
 	public final  String                 style1    = "-fx-background-color: radial-gradient(radius 180%, orange, derive(darkred, -30%), derive(yellow, 30%));";
-	public final String style2 = "-fx-background-color: radial-gradient(radius 180%, pink, derive(purple, -30%), derive(purple, 30%));";
-	public final String style3 = "-fx-background-color: radial-gradient(radius 180%, yellow, derive(darkorange, -30%), derive(lightsalmon, 30%));";
+	public final  String                 style2    = "-fx-background-color: radial-gradient(radius 180%, pink, derive(purple, -30%), derive(purple, 30%));";
+	public final  String                 style3    = "-fx-background-color: radial-gradient(radius 180%, yellow, derive(darkorange, -30%), derive(lightsalmon, 30%));";
 
 	private ImageView iView;
 
@@ -211,6 +209,7 @@ public class TestSwitchIconsOnTheFly extends Application {
 		root.getChildren().add(control);
 		return root.getChildren().get(root.getChildren().indexOf(control));
 	}
+
 	private Node getNode(AnchorPane root, Label control) {
 		root.getChildren().add(control);
 		return root.getChildren().get(root.getChildren().indexOf(control));

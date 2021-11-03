@@ -28,9 +28,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import org.junit.Test;
-
 import java.awt.*;
-
 import static org.junit.Assert.*;
 
 /**
@@ -38,6 +36,9 @@ import static org.junit.Assert.*;
  * helper classes.
  */
 public class TestFXTrayIcon extends Application {
+
+    private static final String TEST_ICON = "FXIconRedWhite.png";
+
     /**
      * Entry point for runnable tests.
      * Determines if we're running the tests in a headless
@@ -125,7 +126,4 @@ public class TestFXTrayIcon extends Application {
             assertNotNull(icon);
         }
     }
-
-    private static final String TEST_ICON = "FXIconRedWhite.png";
-
 }

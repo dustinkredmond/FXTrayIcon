@@ -58,6 +58,84 @@ import java.util.stream.Collectors;
 public class FXTrayIcon {
 
     /**
+     * Creates a {@code MouseListener} whose
+     * single-click action performs the passed
+     * JavaFX EventHandler
+     * @param e A JavaFX event to be performed
+     * @return A MouseListener fired by single-click
+     */
+    private MouseListener getPrimaryClickListener(EventHandler<ActionEvent> e) {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent me) {
+                Platform.runLater(() -> e.handle(new ActionEvent()));
+            }
+
+            @Override
+            public void mousePressed(MouseEvent ignored) { }
+            @Override
+            public void mouseReleased(MouseEvent ignored) { }
+            @Override
+            public void mouseEntered(MouseEvent ignored) { }
+            @Override
+            public void mouseExited(MouseEvent ignored) { }
+        };
+    }
+
+    /**
+     * The default AWT SystemTray
+     */
+    private final SystemTray tray;
+
+    /**
+     * The parent Stage of the FXTrayIcon
+     */
+    private Stage parentStage;
+
+    /**
+     * The application's title, to be used
+     * as default tooltip text for the FXTrayIcon
+     */
+    private String appTitle;
+
+    /**
+     * The AWT TrayIcon managed by FXTrayIcon
+     */
+    private final TrayIcon trayIcon;
+
+    /**
+     * The AWT PopupMenu managed by FXTrayIcon
+     */
+    private final PopupMenu popupMenu = new PopupMenu();
+
+    /**
+     * If true, when the FXTrayIcon's {@code show()}
+     * method is called, adds a MenuItem that will allow
+     * for the JavaFX program to be terminated and the
+     * TrayIcon to be removed.
+     * This is set to false by default.
+     */
+    private boolean addExitMenuItem = false;
+
+    /**
+     * If true, when the FXTrayIcon's {@code show()}
+     * method is called, adds a MenuItem with the main Stage's title,
+     * that will show the main JavaFX stage when clicked.
+     * This is set to false by default.
+     */
+    private boolean addTitleMenuItem = false;
+
+    /**
+     * Set to true if the end-user's operating
+     * system is MacOS.
+     *
+     * This is used in determining how to handle
+     * the notifications (AWT or AppleScript)
+     */
+    private boolean isMac;
+
+
+    /**
      * Creates an instance of FXTrayIcon with the provided
      * icon and a provided{@code javafx.stage.Stage} as its parent.
      * @param parentStage The parent Stage of the tray icon.
@@ -108,7 +186,7 @@ public class FXTrayIcon {
       tray = SystemTray.getSystemTray();
       // Keeps the JVM running even if there are no
       // visible JavaFX Stages, otherwise JVM would
-      // exit and we lose the TrayIcon
+      // exit, and we lose the TrayIcon
       Platform.setImplicitExit(false);
 
       attemptSetSystemLookAndFeel();
@@ -925,82 +1003,5 @@ public class FXTrayIcon {
             Platform.runLater(this.parentStage::show);
         }
     };
-
-    /**
-     * Creates a {@code MouseListener} whose
-     * single-click action performs the passed
-     * JavaFX EventHandler
-     * @param e A JavaFX event to be performed
-     * @return A MouseListener fired by single-click
-     */
-    private MouseListener getPrimaryClickListener(EventHandler<ActionEvent> e) {
-        return new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent me) {
-                Platform.runLater(() -> e.handle(new ActionEvent()));
-            }
-
-            @Override
-            public void mousePressed(MouseEvent ignored) { }
-            @Override
-            public void mouseReleased(MouseEvent ignored) { }
-            @Override
-            public void mouseEntered(MouseEvent ignored) { }
-            @Override
-            public void mouseExited(MouseEvent ignored) { }
-        };
-    }
-
-    /**
-     * The default AWT SystemTray
-     */
-    private final SystemTray tray;
-
-    /**
-     * The parent Stage of the FXTrayIcon
-     */
-    private Stage parentStage;
-
-    /**
-     * The application's title, to be used
-     * as default tooltip text for the FXTrayIcon
-     */
-    private String appTitle;
-
-    /**
-     * The AWT TrayIcon managed by FXTrayIcon
-     */
-    private final TrayIcon trayIcon;
-
-    /**
-     * The AWT PopupMenu managed by FXTrayIcon
-     */
-    private final PopupMenu popupMenu = new PopupMenu();
-
-    /**
-     * If true, when the FXTrayIcon's {@code show()}
-     * method is called, adds a MenuItem that will allow
-     * for the JavaFX program to be terminated and the
-     * TrayIcon to be removed.
-     * This is set to false by default.
-     */
-    private boolean addExitMenuItem = false;
-
-    /**
-     * If true, when the FXTrayIcon's {@code show()}
-     * method is called, adds a MenuItem with the main Stage's title,
-     * that will show the main JavaFX stage when clicked.
-     * This is set to false by default.
-     */
-    private boolean addTitleMenuItem = false;
-
-    /**
-     * Set to true if the end-user's operating
-     * system is MacOS.
-     *
-     * This is used in determining how to handle
-     * the notifications (AWT or AppleScript)
-     */
-    private boolean isMac;
 
 }
