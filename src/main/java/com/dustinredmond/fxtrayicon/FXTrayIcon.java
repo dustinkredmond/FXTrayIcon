@@ -45,6 +45,7 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -456,7 +457,7 @@ public class FXTrayIcon {
     @API
     protected final TrayIcon getTrayIcon() {
         return trayIcon;
-    };
+    }
 
     private void ensureSystemTraySupported() {
         if (!SystemTray.isSupported()) {
@@ -477,9 +478,9 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromFile(URL iconImagePath) {
-        if (iconImagePath == null) iconImagePath = FXTrayIcon.class.getResource("FXIconRedWhite.png");
-        if (isMac()) return loadImageFromFile(iconImagePath, 22, 22);
-        else return loadImageFromFile(iconImagePath, 16, 16);
+        URL defaultIconImagePath = FXTrayIcon.class.getResource("FXIconRedWhite.png");
+        if (isMac()) return loadImageFromFile((iconImagePath == null) ? defaultIconImagePath : iconImagePath, 22, 22);
+        else return loadImageFromFile((iconImagePath == null) ? defaultIconImagePath : iconImagePath, 16, 16);
     }
 
     private static Image loadImageFromFile(URL iconImagePath, int iconWidth, int iconHeight) {
@@ -931,6 +932,16 @@ public class FXTrayIcon {
      */
     @API
     public void setGraphic(javafx.scene.image.Image img) {
+        setGraphic(SwingFXUtils.fromFXImage(img, null));
+    }
+
+    /**
+     * Provides a way to change the TrayIcon image at runtime.
+     * @param file a java.io.Fil object
+     */
+    @API
+    public void setGraphic(File file) {
+        javafx.scene.image.Image img = new javafx.scene.image.Image(file.getAbsolutePath());
         setGraphic(SwingFXUtils.fromFXImage(img, null));
     }
 
