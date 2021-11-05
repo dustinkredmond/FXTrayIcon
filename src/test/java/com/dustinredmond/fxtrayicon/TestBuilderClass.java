@@ -29,7 +29,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.net.URL;
 
 /**
@@ -54,17 +53,18 @@ public class TestBuilderClass extends Application {
 		// This can be disabled by simply removing the MenuItem after instantiating the FXTrayIcon
 		// though, by convention, most applications implement this functionality.
 		stage.setTitle("FXTrayIcon Test Builder Class!");
+		stage.setOnCloseRequest(e -> System.exit(0));
 
 		// We first create the MenuItems that we want to add into FXTrayIcon
 		MenuItem menuItemTest = new MenuItem("Create some JavaFX component!");
 		menuItemTest.setOnAction(e -> new Alert(Alert.AlertType.INFORMATION, "We just ran some JavaFX code from an AWT MenuItem!").showAndWait());
 		MenuItem menuExit = new MenuItem("Exit Application");
-		menuExit.setOnAction(e->System.exit(0));
+		menuExit.setOnAction(e -> System.exit(0));
 
 
 		// We can also nest menus, below is an Options menu with sub-items
-		Menu menuOptions = new Menu("Options");
-		MenuItem miOn = new MenuItem("On");
+		Menu     menuOptions = new Menu("Options");
+		MenuItem miOn        = new MenuItem("On");
 		miOn.setOnAction(e -> System.out.println("Options -> On clicked"));
 		MenuItem miOff = new MenuItem("Off");
 		miOff.setOnAction(e -> System.out.println("Options -> Off clicked"));
@@ -107,17 +107,14 @@ public class TestBuilderClass extends Application {
 		// providing it with the parent Stage and a path to an image file.
 		// The Builder class brings everything together in a single sentence, including
 		// all of our menus and separators.
-		System.out.println(System.getProperty("os.name"));
-		int width = (System.getProperty("os.name").contains("Windows")) ? 16 : 26; //Windows likes 16 x 16 icons
-		int height = (System.getProperty("os.name").contains("Windows")) ? 16 : 26;
 
-		trayIcon = new FXTrayIcon.Builder(stage,getClass().getResource("FXIconRedYellow.png"),width,height)
+		trayIcon = new FXTrayIcon.Builder(stage, getClass().getResource("FXIconRedYellow.png"))
 				.toolTip("An alternative tooltip!")
 				.menuItem(menuItemTest)
 				.menuItem(menuOptions)
 				.applicationTitle("FXTrayIcon Builder Text")
 				.separator()
-				.menuItem(menuExit)
+				.addExitMenuItem()
 				.build();
 
 		trayIcon.show();
@@ -125,6 +122,7 @@ public class TestBuilderClass extends Application {
 
 	/**
 	 * Test icon used for FXTrayIcon runnable tests
+	 *
 	 * @return URL to an example icon PNG
 	 */
 	public URL getIcon() {

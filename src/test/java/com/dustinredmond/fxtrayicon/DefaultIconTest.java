@@ -3,11 +3,12 @@ package com.dustinredmond.fxtrayicon;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class MultipleItemsOneLine extends Application {
+public class DefaultIconTest extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		primaryStage.setTitle("Many From One");
+		primaryStage.setTitle("Default Icon");
+
 		new FXTrayIcon
 				.Builder(primaryStage)
 				.menuItem("Option 1", e -> menu1())

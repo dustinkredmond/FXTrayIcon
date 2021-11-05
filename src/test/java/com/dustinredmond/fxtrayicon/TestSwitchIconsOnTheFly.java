@@ -37,7 +37,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Random;
@@ -45,7 +44,6 @@ import java.util.Random;
 import static javafx.scene.layout.AnchorPane.*;
 
 public class TestSwitchIconsOnTheFly extends Application {
-
 
 	AnchorPane root;
 
@@ -55,6 +53,8 @@ public class TestSwitchIconsOnTheFly extends Application {
 	private final String fileName4 = "FXIconBlueYellow.png";
 	private final String fileName5 = "FXIconGreenWhite.png";
 	private final String fileName6 = "FXIconGreenYellow.png";
+	private final String fileName7 = "i-Icon-Glass-Blue2.png";
+	private final String fileName8 = "i-Icon-Glass-Green.png";
 
 	URL icon1 = getClass().getResource(fileName1);
 	URL icon2 = getClass().getResource(fileName2);
@@ -62,6 +62,8 @@ public class TestSwitchIconsOnTheFly extends Application {
 	URL icon4 = getClass().getResource(fileName4);
 	URL icon5 = getClass().getResource(fileName5);
 	URL icon6 = getClass().getResource(fileName6);
+	URL icon7 = getClass().getResource(fileName7);
+	URL icon8 = getClass().getResource(fileName8);
 
 	private final String name1 = "Red-White";
 	private final String name2 = "Red-Yellow";
@@ -69,13 +71,15 @@ public class TestSwitchIconsOnTheFly extends Application {
 	private final String name4 = "Blue-Yellow";
 	private final String name5 = "Green-White";
 	private final String name6 = "Green-Yellow";
+	private final String name7 = "Blue-Glass";
+	private final String name8 = "Green-Glass";
 
 	private       FXTrayIcon             trayIcon  = null;
-	private final URL[]                  imageURLs = new URL[]{icon1,icon2,icon3,icon4,icon5,icon6};
-	private final ObservableList<String> nameList  = FXCollections.observableArrayList(Arrays.asList(name1, name2, name3, name4, name5, name6));
+	private final URL[]                  imageURLs = new URL[]{icon1, icon2, icon3, icon4, icon5, icon6, icon7, icon8};
+	private final ObservableList<String> nameList  = FXCollections.observableArrayList(Arrays.asList(name1, name2, name3, name4, name5, name6, name7, name8));
 	public final  String                 style1    = "-fx-background-color: radial-gradient(radius 180%, orange, derive(darkred, -30%), derive(yellow, 30%));";
-	public final String style2 = "-fx-background-color: radial-gradient(radius 180%, pink, derive(purple, -30%), derive(purple, 30%));";
-	public final String style3 = "-fx-background-color: radial-gradient(radius 180%, yellow, derive(darkorange, -30%), derive(lightsalmon, 30%));";
+	public final  String                 style2    = "-fx-background-color: radial-gradient(radius 180%, pink, derive(purple, -30%), derive(purple, 30%));";
+	public final  String                 style3    = "-fx-background-color: radial-gradient(radius 180%, yellow, derive(darkorange, -30%), derive(lightsalmon, 30%));";
 
 	private ImageView iView;
 
@@ -182,6 +186,16 @@ public class TestSwitchIconsOnTheFly extends Application {
 				root.setStyle(style3);
 				break;
 
+			case name7:
+				index = 6;
+				root.setStyle(style2);
+				break;
+
+			case name8:
+				index = 7;
+				root.setStyle(style3);
+				break;
+
 			default:
 				index = 0;
 				root.setStyle(style1);
@@ -195,6 +209,7 @@ public class TestSwitchIconsOnTheFly extends Application {
 		root.getChildren().add(control);
 		return root.getChildren().get(root.getChildren().indexOf(control));
 	}
+
 	private Node getNode(AnchorPane root, Label control) {
 		root.getChildren().add(control);
 		return root.getChildren().get(root.getChildren().indexOf(control));
