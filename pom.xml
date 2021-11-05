@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.dustinredmond.fxtrayicon</groupId>
     <artifactId>FXTrayIcon</artifactId>
-    <version>3.1.1</version>
+    <version>3.1.2</version>
 
     <name>FXTrayIcon</name>
     <description>Easily add system tray icons to JavaFX projects</description>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
