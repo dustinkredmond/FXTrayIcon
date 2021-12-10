@@ -64,7 +64,7 @@ public class AWTUtils {
         if (!errors.isEmpty()) {
             throw new UnsupportedOperationException(String.format(
                     "The following methods were called on the " +
-                            "passed JavaFX MenuItem (%s), these methods are not" +
+                            "passed JavaFX MenuItem (%s), these methods are not " +
                             "supported by FXTrayIcon.", errors));
         }
 
