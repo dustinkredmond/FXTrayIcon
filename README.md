@@ -111,7 +111,7 @@ to indicate the level of severity of the message.
 |------------|---------------------|---------------------------------------------------------------------------------------------------------------------------|
 | Windows 10 | Fully supported     | N/A                                                                                                                       |
 | Mac OS     | Partially supported | In the `displayMessage()` methods. Custom notification icons are not supported in AppleScript calls, but the TrayIcon is.  |
-| Linux      | Partially supported | Some desktop environments that support `java.awt.SystemTray` are supported. Many are **not**.                             |
+| Linux      | Partially supported | Some desktop environments that support `java.awt.SystemTray` are supported. Many are **not**. You should not rely on the `isSupported` method as a matter of truth, testing on individual desktop environments is strongly encouraged.                            |
 
 
 Call `FXTrayIcon.isSupported()` to see if the current platform
