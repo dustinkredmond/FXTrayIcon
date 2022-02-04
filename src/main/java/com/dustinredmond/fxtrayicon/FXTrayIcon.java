@@ -388,6 +388,7 @@ public class FXTrayIcon {
          * Sets up Builder so that once FXTrayIcon is instantiated, it will show immediately.
          * @return this Builder object
          */
+        @API
         public Builder show() {
             this.showTrayIcon = true;
             return this;
@@ -397,6 +398,7 @@ public class FXTrayIcon {
          * Must be the LAST build statement in your Builder sentence.
          * @return a new instance of FXTrayIcon.
          */
+        @API
         public FXTrayIcon build() {
             isMac = System.getProperty("os.name")
                           .toLowerCase(Locale.ENGLISH)
@@ -406,16 +408,14 @@ public class FXTrayIcon {
                 if (isMac) {
                     iconWidth = 22;
                     iconHeight = 22;
-                }
-                else {
+                } else {
                     iconWidth = 16;
                     iconHeight = 16;
                 }
             }
             if (useDefaultIcon) {
                 icon = loadImageFromFile(defaultIconPath,iconWidth,iconHeight);
-            }
-            else {
+            } else {
                 icon = loadImageFromFile(iconImagePath,iconWidth,iconHeight);
             }
 
@@ -441,8 +441,7 @@ public class FXTrayIcon {
         for (int x = 0; x <= build.index; x++) {
             if (build.menuItemMap.containsKey(x)) {
                 addMenuItem(build.menuItemMap.get(x));
-            }
-            else if (build.separatorIndexList.contains(x)) {
+            } else if (build.separatorIndexList.contains(x)) {
                 addSeparator();
             }
         }
