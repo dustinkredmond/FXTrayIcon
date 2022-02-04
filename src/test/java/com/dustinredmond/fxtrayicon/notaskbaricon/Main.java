@@ -1,7 +1,7 @@
 package com.dustinredmond.fxtrayicon.notaskbaricon;
 
 /*
- * Copyright (c) 2021 Michael Sims, Dustin Redmond and contributors
+ * Copyright (c) 2022 Michael Sims, Dustin Redmond and contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
