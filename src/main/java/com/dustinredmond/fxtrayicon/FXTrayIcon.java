@@ -111,6 +111,11 @@ public class FXTrayIcon {
     private boolean isMac;
 
     /**
+     * Used for the addExitMenuItem() builder method.
+     */
+    private String exitMenuItemLabel = "";
+
+    /**
      * Creates a {@code MouseListener} whose
      * single-click action performs the passed
      * JavaFX EventHandler
@@ -212,6 +217,7 @@ public class FXTrayIcon {
         private       String                                      tooltip            = "";
         private       String                                      appTitle;
         private       boolean                                     addExitMenuItem    = false;
+        private       String                                      exitMenuItemLabel  = "";
         private       boolean                                     addTitleMenuItem   = false;
         private       EventHandler<ActionEvent>                   event;
         private final Map<Integer, javafx.scene.control.MenuItem> menuItemMap        = new HashMap<>();
@@ -370,6 +376,19 @@ public class FXTrayIcon {
         }
 
         /**
+         * Creates a menuItem with option for a custom
+         * label and puts it at the bottom of the menu.
+         * When engaged, it closes the application.
+         * @return this Builder object
+         */
+        @API
+        public Builder addExitMenuItem(String label) {
+            this.exitMenuItemLabel = label;
+            this.addExitMenuItem = true;
+            return this;
+        }
+
+        /**
          * Adds an EventHandler that is called when the FXTrayIcon's
          * action is called. On Microsoft's Windows 10, this is invoked
          * by a single-click of the primary mouse button. On Apple's MacOS,
@@ -435,6 +454,7 @@ public class FXTrayIcon {
         this.appTitle = build.appTitle;
         this.addExitMenuItem = build.addExitMenuItem;
         this.addTitleMenuItem = build.addTitleMenuItem;
+        this.exitMenuItemLabel = build.exitMenuItemLabel;
         if (build.showTrayIcon) show();
         if (!build.tooltip.equals("")) setTooltip(build.tooltip);
         if (build.event != null) setOnAction(build.event);
@@ -538,9 +558,11 @@ public class FXTrayIcon {
                 // continue to run after no more Stages remain,
                 // thus we provide a way to terminate it by default.
                 if (addExitMenuItem) {
-                    MenuItem miExit = new MenuItem("Exit Application");
+                    String label = exitMenuItemLabel.equals("") ? "Exit Application" : exitMenuItemLabel;
+                    MenuItem miExit = new MenuItem(label);
                     miExit.addActionListener(e -> {
                         this.tray.remove(this.trayIcon);
+                        Platform.setImplicitExit(true);
                         Platform.exit();
                     });
                     this.popupMenu.add(miExit);
