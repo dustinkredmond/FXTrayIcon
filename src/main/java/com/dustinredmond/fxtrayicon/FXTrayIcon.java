@@ -962,7 +962,13 @@ public class FXTrayIcon {
      */
     @API
     public void setGraphic(File file) {
-        javafx.scene.image.Image img = new javafx.scene.image.Image(file.getAbsolutePath());
+        javafx.scene.image.Image img;
+        try {
+            img = new javafx.scene.image.Image(file.getAbsolutePath());
+        }
+        catch(Exception e) {
+            img = new javafx.scene.image.Image("file:" + file.getAbsolutePath());
+        }
         setGraphic(SwingFXUtils.fromFXImage(img, null));
     }
 
