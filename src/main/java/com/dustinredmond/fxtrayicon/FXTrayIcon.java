@@ -29,25 +29,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.stage.Stage;
+
 import javax.imageio.ImageIO;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import java.awt.AWTException;
-import java.awt.Desktop;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
+import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,6 +48,9 @@ import java.util.stream.Collectors;
  *  using JavaFX style API.
  */
 public class FXTrayIcon {
+
+    private static final Integer WinScale  = 16;
+    private static final Integer CoreScale = 22;
 
     /**
      * The default AWT SystemTray
@@ -102,15 +96,6 @@ public class FXTrayIcon {
     private boolean addTitleMenuItem = false;
 
     /**
-     * Set to true if the end-user's operating
-     * system is MacOS.
-     *
-     * This is used in determining how to handle
-     * the notifications (AWT or AppleScript)
-     */
-    private boolean isMac;
-
-    /**
      * Used for the addExitMenuItem() builder method.
      */
     private String exitMenuItemLabel = "";
@@ -150,7 +135,7 @@ public class FXTrayIcon {
      */
     @API
     public FXTrayIcon(Stage parentStage, URL iconImagePath, int iconWidth, int iconHeight) {
-        this(parentStage, loadImageFromFile(iconImagePath, iconWidth, iconHeight));
+        this(parentStage, loadImageFromURL(iconImagePath, iconWidth, iconHeight),true);
     }
 
     /**
@@ -161,7 +146,100 @@ public class FXTrayIcon {
      */
     @API
     public FXTrayIcon(Stage parentStage, URL iconImagePath) {
-        this(parentStage, loadImageFromFile(iconImagePath));
+        this(parentStage, loadImageFromURL(iconImagePath),true);
+    }
+
+    /**
+     * Creates an instance of FXTrayIcon with the provided
+     * icon File with dimensions and a provided{@code javafx.stage.Stage}
+     * as its parent.
+     * @param parentStage The parent Stage of the tray icon.
+     * @param iconFile A java.io.File object
+     * @param iconWidth an int, icon width
+     * @param iconHeight an int, icon height
+     */
+    @API
+    public FXTrayIcon(Stage parentStage, File iconFile, int iconWidth, int iconHeight) {
+        this(parentStage, loadImageFromFile(iconFile, iconWidth, iconHeight),true);
+    }
+
+    /**
+     * Creates an instance of FXTrayIcon with the provided
+     * icon File and a provided{@code javafx.stage.Stage} as its parent.
+     * @param parentStage The parent Stage of the tray icon.
+     * @param iconFile A java.io.File object
+     */
+    @API
+    public FXTrayIcon(Stage parentStage, File iconFile) {
+        this(parentStage, loadImageFromFile(iconFile),true);
+    }
+
+    /**
+     * Creates an instance of FXTrayIcon with the provided
+     * icon Image with dimensions and a provided{@code javafx.stage.Stage}
+     * as its parent.
+     * @param parentStage The parent Stage of the tray icon.
+     * @param javaFXImage A javafx.scene.image.Image object
+     * @param iconWidth an int, icon width
+     * @param iconHeight an int, icon height
+     */
+    @API
+    public FXTrayIcon(Stage parentStage, javafx.scene.image.Image javaFXImage, int iconWidth, int iconHeight) {
+        this(parentStage,loadImageFromFX(javaFXImage, iconWidth, iconHeight),true);
+    }
+
+    /**
+     * Creates an instance of FXTrayIcon with the provided
+     * icon Image and a provided{@code javafx.stage.Stage} as its parent.
+     * @param parentStage The parent Stage of the tray icon.
+     * @param javaFXImage A javafx.scene.image.Image object
+     */
+    @API
+    public FXTrayIcon(Stage parentStage, javafx.scene.image.Image javaFXImage) {
+        this(parentStage,loadImageFromFX(javaFXImage),true);
+    }
+
+    /**
+     * Creates an instance of FXTrayIcon with the provided
+     * icon and specified dimensions and a provided{@code javafx.stage.Stage} as its parent.
+     * @param parentStage The parent Stage of the tray icon. Must not be null.
+     * @param image a java.awt.Image object. Must not be null
+     * @param iconWidth an int, icon Width
+     * @param iconHeight an int, icon Height
+     */
+    @API
+    public FXTrayIcon(Stage parentStage, Image image, int iconWidth, int iconHeight) {
+        this(parentStage,loadImageFromAWT(image, iconWidth, iconHeight),true);
+    }
+
+    /**
+     * Creates an instance of FXTrayIcon with the provided
+     * icon image and a provided{@code javafx.stage.Stage} as its parent.
+     * @param parentStage The parent Stage of the tray icon. Must not be null.
+     * @param image a java.awt.Image object. Must not be null
+     */
+    @API
+    public FXTrayIcon(Stage parentStage, Image image) {
+        this(parentStage, loadImageFromAWT(image), true);
+    }
+
+    @API
+    private FXTrayIcon(Stage parentStage, Image image, boolean finalCall) {
+        Objects.requireNonNull(parentStage, "parentStage must not be null");
+        Objects.requireNonNull(image, "icon must not be null");
+
+        ensureSystemTraySupported();
+
+        tray = SystemTray.getSystemTray();
+        // Keeps the JVM running even if there are no
+        // visible JavaFX Stages, otherwise JVM would
+        // exit, and we lose the TrayIcon
+        Platform.setImplicitExit(false);
+
+        attemptSetSystemLookAndFeel();
+
+        this.parentStage = parentStage;
+        this.trayIcon = new TrayIcon(image, parentStage.getTitle(), popupMenu);
     }
 
     /**
@@ -172,32 +250,7 @@ public class FXTrayIcon {
      */
     @API
     public FXTrayIcon(Stage parentStage) {
-        this(parentStage, loadImageFromFile(null));
-    }
-
-    /**
-     * Creates an instance of FXTrayIcon with the provided
-     * icon and a provided{@code javafx.stage.Stage} as its parent.
-     * @param parentStage The parent Stage of the tray icon. Must not be null.
-     * @param icon The image to use as the tray icon. Must not be null.
-     */
-    @API
-    public FXTrayIcon(Stage parentStage, Image icon) {
-      Objects.requireNonNull(parentStage, "parentStage must not be null");
-      Objects.requireNonNull(icon, "icon must not be null");
-
-      ensureSystemTraySupported();
-
-      tray = SystemTray.getSystemTray();
-      // Keeps the JVM running even if there are no
-      // visible JavaFX Stages, otherwise JVM would
-      // exit, and we lose the TrayIcon
-      Platform.setImplicitExit(false);
-
-      attemptSetSystemLookAndFeel();
-
-      this.parentStage = parentStage;
-      this.trayIcon = new TrayIcon(icon, parentStage.getTitle(), popupMenu);
+        this(parentStage, loadDefaultIconImage());
     }
 
     /**
@@ -209,11 +262,6 @@ public class FXTrayIcon {
     public static class Builder {
 
         private final Stage                                       parentStage;
-        private       URL                                         iconImagePath;
-        private       int                                         iconWidth;
-        private       int                                         iconHeight;
-        private       Image                                       icon;
-        private       boolean                                     isMac;
         private       String                                      tooltip            = "";
         private       String                                      appTitle;
         private       boolean                                     addExitMenuItem    = false;
@@ -223,9 +271,8 @@ public class FXTrayIcon {
         private final Map<Integer, javafx.scene.control.MenuItem> menuItemMap        = new HashMap<>();
         private final List<Integer>                               separatorIndexList = new ArrayList<>();
         private       boolean                                     showTrayIcon       = false;
-        private       boolean                                     useDefaultIcon     = false;
         private       Integer                                     index              = 0;
-        private final URL                                         defaultIconPath    = getClass().getResource("FXIconRedWhite.png");
+        private final Image                                       icon;
 
 
         /**
@@ -239,9 +286,7 @@ public class FXTrayIcon {
         @API
         public Builder(Stage parentStage, URL iconImagePath, int iconWidth, int iconHeight) {
             this.parentStage = parentStage;
-            this.iconImagePath = iconImagePath;
-            this.iconWidth = iconWidth;
-            this.iconHeight = iconHeight;
+            icon = loadImageFromURL(iconImagePath, iconWidth, iconHeight);
         }
 
         /**
@@ -253,19 +298,99 @@ public class FXTrayIcon {
         @API
         public Builder(Stage parentStage, URL iconImagePath) {
             this.parentStage = parentStage;
-            this.iconImagePath = iconImagePath;
+            icon = loadImageFromURL(iconImagePath);
         }
 
         /**
-         * Using this constructor will cause FXTrayIcon to use a default, built in icon graphic.
-         * Perfect for quick tests when you don't want to mess with adding your own
-         * URL path and graphic.
-         * @param parentStage your stage or your apps default parentStage.
+         * Creates an instance of FXTrayIcon with the provided
+         * icon File with dimensions and a provided{@code javafx.stage.Stage}
+         * as its parent.
+         * @param parentStage The parent Stage of the tray icon.
+         * @param iconFile A java.io.File object
+         * @param iconWidth an int, icon width
+         * @param iconHeight an int, icon height
+         */
+        @API
+        public Builder(Stage parentStage, File iconFile, int iconWidth, int iconHeight) {
+            this.parentStage = parentStage;
+            icon = loadImageFromFile(iconFile, iconWidth, iconHeight);
+        }
+
+        /**
+         * Creates an instance of FXTrayIcon with the provided
+         * icon File and a provided{@code javafx.stage.Stage} as its parent.
+         * @param parentStage The parent Stage of the tray icon.
+         * @param iconFile A java.io.File object
+         */
+        @API
+        public Builder(Stage parentStage, File iconFile) {
+            this.parentStage = parentStage;
+            icon = loadImageFromFile(iconFile);
+        }
+
+        /**
+         * Creates an instance of FXTrayIcon with the provided
+         * icon Image with dimensions and a provided{@code javafx.stage.Stage}
+         * as its parent.
+         * @param parentStage The parent Stage of the tray icon.
+         * @param javaFXImage A javafx.scene.image.Image object
+         * @param iconWidth an int, icon width
+         * @param iconHeight an int, icon height
+         */
+        @API
+        public Builder(Stage parentStage, javafx.scene.image.Image javaFXImage, int iconWidth, int iconHeight) {
+            this.parentStage = parentStage;
+            icon = loadImageFromFX(javaFXImage, iconWidth, iconHeight);
+        }
+
+        /**
+         * Creates an instance of FXTrayIcon with the provided
+         * icon Image and a provided{@code javafx.stage.Stage} as its parent.
+         * @param parentStage The parent Stage of the tray icon.
+         * @param javaFXImage A javafx.scene.image.Image object
+         */
+        @API
+        public Builder(Stage parentStage, javafx.scene.image.Image javaFXImage) {
+            this.parentStage = parentStage;
+            icon = loadImageFromFX(javaFXImage);
+        }
+
+        /**
+         * Creates an instance of FXTrayIcon with the provided
+         * icon and specified dimensions and a provided{@code javafx.stage.Stage} as its parent.
+         * @param parentStage The parent Stage of the tray icon. Must not be null.
+         * @param image a java.awt.Image object. Must not be null
+         * @param iconWidth an int, icon Width
+         * @param iconHeight an int, icon Height
+         */
+        @API
+        public Builder(Stage parentStage, Image image, int iconWidth, int iconHeight) {
+            this.parentStage = parentStage;
+            icon = loadImageFromAWT(image, iconWidth, iconHeight);
+        }
+
+        /**
+         * Creates an instance of FXTrayIcon with the provided
+         * icon image and a provided{@code javafx.stage.Stage} as its parent.
+         * @param parentStage The parent Stage of the tray icon. Must not be null.
+         * @param image a java.awt.Image object. Must not be null
+         */
+        @API
+        public Builder(Stage parentStage, Image image) {
+            this.parentStage = parentStage;
+            icon = loadImageFromAWT(image);
+        }
+
+        /**
+         * Use this constructor to have FXTrayIcon use a default graphic for the tray icon.
+         * This can be handy for "quick and dirty" runs of the library so that you don't need
+         * to worry about setting up a graphic and defining the URL object.
+         * @param parentStage Stage for FXTrayIcon
          */
         @API
         public Builder(Stage parentStage) {
             this.parentStage = parentStage;
-            useDefaultIcon = true;
+            icon = loadDefaultIconImage();
         }
 
         /**
@@ -419,25 +544,6 @@ public class FXTrayIcon {
          */
         @API
         public FXTrayIcon build() {
-            isMac = System.getProperty("os.name")
-                          .toLowerCase(Locale.ENGLISH)
-                          .contains("mac");
-
-            if (iconWidth == 0 || iconHeight == 0) {
-                if (isMac) {
-                    iconWidth = 22;
-                    iconHeight = 22;
-                } else {
-                    iconWidth = 16;
-                    iconHeight = 16;
-                }
-            }
-            if (useDefaultIcon) {
-                icon = loadImageFromFile(defaultIconPath,iconWidth,iconHeight);
-            } else {
-                icon = loadImageFromFile(iconImagePath,iconWidth,iconHeight);
-            }
-
             return new FXTrayIcon(this);
         }
     }
@@ -448,9 +554,8 @@ public class FXTrayIcon {
      */
     @API
     protected FXTrayIcon(Builder build) {
-        this(build.parentStage, build.icon);
+        this(build.parentStage, build.icon,true);
         this.parentStage = build.parentStage;
-        this.isMac = build.isMac;
         this.appTitle = build.appTitle;
         this.addExitMenuItem = build.addExitMenuItem;
         this.addTitleMenuItem = build.addTitleMenuItem;
@@ -467,6 +572,7 @@ public class FXTrayIcon {
         }
     }
 
+
     /**
      * Gets the nested AWT {@link TrayIcon}. This is intended for extended
      * instances of FXTrayIcon which require the access to implement
@@ -481,37 +587,83 @@ public class FXTrayIcon {
     private void ensureSystemTraySupported() {
         if (!SystemTray.isSupported()) {
             throw new UnsupportedOperationException(
-                "SystemTray icons are not "
+                    "SystemTray icons are not "
                     + "supported by the current desktop environment.");
         }
     }
 
     private void attemptSetSystemLookAndFeel() {
-      try {
-        UIManager.setLookAndFeel(
-            UIManager.getSystemLookAndFeelClassName());
-      } catch (ClassNotFoundException
-          | InstantiationException
-          | IllegalAccessException
-          | UnsupportedLookAndFeelException ignored) {}
+        try {
+            UIManager.setLookAndFeel(
+                    UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException
+                 | InstantiationException
+                 | IllegalAccessException
+                 | UnsupportedLookAndFeelException ignored) {}
     }
 
-    private static Image loadImageFromFile(URL iconImagePath) {
+    private static Image loadImageFromURL(URL iconImagePath) {
+        if (isWin()) return loadImageFromURL(iconImagePath, WinScale, WinScale);
+        else return loadImageFromURL(iconImagePath, CoreScale, CoreScale);
+    }
+
+    private static Image loadImageFromURL(URL iconImagePath, int iconWidth, int iconHeight) {
+        try {
+            return ImageIO.read(iconImagePath)
+                          .getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to read the Image at the provided path: " + iconImagePath, e);
+        }
+    }
+
+    private static Image loadImageFromFile(File file) {
+        if (isWin()) return loadImageFromFile(file, WinScale, WinScale);
+        else return loadImageFromFile(file, CoreScale, CoreScale);
+    }
+
+    private static Image loadImageFromFile(File file, int iconWidth, int iconHeight) {
+        try (InputStream is = new FileInputStream(file)){
+            return ImageIO.read(is)
+                          .getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+        }
+        catch (FileNotFoundException e) {
+            throw new IllegalStateException("Unable to load the Image at the provided path (File not found): " + file.getAbsolutePath(), e);
+        }
+        catch (IOException e) {
+            throw new IllegalStateException("Unable to read the Image at the provided path (perhaps not an image file, or it is corrupt): " + file.getAbsolutePath(), e);
+        }
+    }
+
+    private static Image loadImageFromFX(javafx.scene.image.Image javaFXImage) {
+        if(isWin()) return loadImageFromFX(javaFXImage,WinScale,WinScale);
+        else return loadImageFromFX(javaFXImage,CoreScale,CoreScale);
+    }
+
+    private static Image loadImageFromFX(javafx.scene.image.Image javaFXImage, int iconWidth, int iconHeight) {
+        return SwingFXUtils.fromFXImage(javaFXImage, null).getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+    }
+
+    private static Image loadImageFromAWT(Image image) {
+        if(isWin()) return image.getScaledInstance(WinScale, WinScale, Image.SCALE_SMOOTH);
+        else return image.getScaledInstance(CoreScale, CoreScale, Image.SCALE_SMOOTH);
+    }
+
+    private static Image loadImageFromAWT(java.awt.Image image, int iconWidth, int iconHeight) {
+        return image.getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+    }
+
+    private static Image loadDefaultIconImage() {
         URL defaultIconImagePath = FXTrayIcon.class.getResource("FXIconRedWhite.png");
-        if (isMac()) return loadImageFromFile((iconImagePath == null) ? defaultIconImagePath : iconImagePath, 22, 22);
-        else return loadImageFromFile((iconImagePath == null) ? defaultIconImagePath : iconImagePath, 16, 16);
+        return loadImageFromURL(defaultIconImagePath);
     }
 
-    private static Image loadImageFromFile(URL iconImagePath, int iconWidth, int iconHeight) {
-      try {
-        return ImageIO.read(iconImagePath)
-                      .getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-      } catch (IOException e) {
-        throw new IllegalStateException("Unable to read the Image at the provided path: " + iconImagePath, e);
-      }
+    private static boolean isWin() {
+        return System.getProperty("os.name")
+                     .toLowerCase(Locale.ENGLISH)
+                     .contains("windows");
     }
 
-    private static boolean isMac() {
+    private boolean isMac() {
         return System.getProperty("os.name")
                      .toLowerCase(Locale.ENGLISH)
                      .contains("mac");
@@ -538,10 +690,10 @@ public class FXTrayIcon {
                 // show the main JavaFX stage when clicked.
                 if (addTitleMenuItem) {
                     String miTitle = (this.appTitle != null) ?
-                            this.appTitle
-                            : (parentStage != null && parentStage.getTitle() != null
-                            && !parentStage.getTitle().isEmpty()) ?
-                            parentStage.getTitle() : "Show Application";
+                                     this.appTitle
+                                                             : (parentStage != null && parentStage.getTitle() != null
+                                                                && !parentStage.getTitle().isEmpty()) ?
+                                                               parentStage.getTitle() : "Show Application";
 
                     MenuItem miStage = new MenuItem(miTitle);
                     miStage.setFont(Font.decode(null).deriveFont(Font.BOLD));
@@ -642,7 +794,7 @@ public class FXTrayIcon {
             for (int i = 0; i < this.popupMenu.getItemCount(); i++) {
                 MenuItem awtItem = this.popupMenu.getItem(i);
                 if (awtItem.getLabel().equals(fxMenuItem.getText()) ||
-                        awtItem.getName().equals(fxMenuItem.getText())) {
+                    awtItem.getName().equals(fxMenuItem.getText())) {
                     toBeRemoved = awtItem;
                 }
             }
@@ -802,8 +954,8 @@ public class FXTrayIcon {
     @API
     public boolean isShowing() {
         return Arrays.stream(
-                tray.getTrayIcons())
-                .collect(Collectors.toList()).contains(trayIcon);
+                             tray.getTrayIcons())
+                     .collect(Collectors.toList()).contains(trayIcon);
     }
 
     /**
@@ -814,12 +966,12 @@ public class FXTrayIcon {
      */
     @API
     public void showInfoMessage(String title, String message) {
-        if (isMac) {
+        if (isMac()) {
             showMacAlert(title, message,"Information");
         } else {
             EventQueue.invokeLater(() ->
-                    this.trayIcon.displayMessage(
-                            title, message, TrayIcon.MessageType.INFO));
+                                           this.trayIcon.displayMessage(
+                                                   title, message, TrayIcon.MessageType.INFO));
         }
     }
 
@@ -841,12 +993,12 @@ public class FXTrayIcon {
      */
     @API
     public void showWarningMessage(String title, String message) {
-        if (isMac) {
+        if (isMac()) {
             showMacAlert(title, message,"Warning");
         } else {
             EventQueue.invokeLater(() ->
-                    this.trayIcon.displayMessage(
-                            title, message, TrayIcon.MessageType.WARNING));
+                                           this.trayIcon.displayMessage(
+                                                   title, message, TrayIcon.MessageType.WARNING));
         }
     }
 
@@ -868,12 +1020,12 @@ public class FXTrayIcon {
      */
     @API
     public void showErrorMessage(String title, String message) {
-        if (isMac) {
+        if (isMac()) {
             showMacAlert(title, message,"Error");
         } else {
             EventQueue.invokeLater(() ->
-                    this.trayIcon.displayMessage(
-                            title, message, TrayIcon.MessageType.ERROR));
+                                           this.trayIcon.displayMessage(
+                                                   title, message, TrayIcon.MessageType.ERROR));
         }
     }
 
@@ -896,12 +1048,12 @@ public class FXTrayIcon {
      */
     @API
     public void showMessage(String title, String message) {
-        if (isMac) {
+        if (isMac()) {
             showMacAlert(title, message,"Message");
         } else {
             EventQueue.invokeLater(() ->
-                    this.trayIcon.displayMessage(
-                            title, message, TrayIcon.MessageType.NONE));
+                                           this.trayIcon.displayMessage(
+                                                   title, message, TrayIcon.MessageType.NONE));
         }
     }
 
@@ -949,29 +1101,99 @@ public class FXTrayIcon {
 
     /**
      * Provides a way to change the TrayIcon image at runtime.
-     * @param img JavaFX Image
+     * by passing in a JavaFX Image object. The image will be
+     * scaled to the correct size for the OS.
+     * @param javaFXImage javafx.scene.image.Image object
      */
     @API
-    public void setGraphic(javafx.scene.image.Image img) {
-        setGraphic(SwingFXUtils.fromFXImage(img, null));
+    public void setGraphic(javafx.scene.image.Image javaFXImage) {
+        setFinalGraphic(loadImageFromFX(javaFXImage));
     }
 
     /**
      * Provides a way to change the TrayIcon image at runtime.
-     * @param file a java.io.Fil object
+     * by passing in a JavaFX Image object with the option to
+     * set the image width and height. If the image is not
+     * sized correctly, it can render as a garbled image.
+     * @param javaFXImage javafx.scene.image.Image object
+     * @param iconWidth int object
+     * @param iconHeight int object
+     */
+    @API
+    public void setGraphic(javafx.scene.image.Image javaFXImage, int iconWidth, int iconHeight) {
+        setFinalGraphic(loadImageFromFX(javaFXImage, iconWidth, iconHeight));
+    }
+
+    /**
+     * Provides a way to change the TrayIcon image at runtime.
+     * by passing in a Java IO File object. The image will be
+     * scaled to the correct size for the OS.
+     * @param file a java.io.File object
+     * @deprecated use setGraphic(File, FXTrayScale)
      */
     @API
     public void setGraphic(File file) {
-        javafx.scene.image.Image img = new javafx.scene.image.Image(file.getAbsolutePath());
-        setGraphic(SwingFXUtils.fromFXImage(img, null));
+        setFinalGraphic(loadImageFromFile(file));
     }
 
     /**
-     * Provides a way to change the TrayIcon image at runtime.
-     * @param img Java AWT Image
+     * Provides a way to change the TrayIcon image at runtime
+     * with optional dimensions provided. Dimensions must
+     * be correct for the required OS, or it might display as
+     * a garbled image.
+     * @param file a java.io.File object
+     * @param iconWidth an int, the width of the icon
+     * @param iconHeight an int, the height of the icon
      */
     @API
-    public void setGraphic(Image img) {
+    public void setGraphic(File file, int iconWidth, int iconHeight) {
+        setFinalGraphic(loadImageFromFile(file, iconWidth, iconHeight));
+    }
+
+    /**
+     * Provides a way to change the TrayIcon image at runtime
+     * by specifying the image URL. The image will be scaled
+     * to the correct size for the OS.
+     * @param imageURL a java.net.URL object
+     */
+    @API
+    public void setGraphic(URL imageURL) {
+        setFinalGraphic(loadImageFromURL(imageURL));
+    }
+
+    /**
+     * Provides a way to change the TrayIcon image at runtime
+     * by specifying the image file via a URL object with the
+     * option specifying the dimension of the image. If the image
+     * is not dimensioned correctly, it can render as a garbled
+     * image.
+     * @param imageURL a java.net.URL object
+     * @param iconWidth an int, the width of the icon
+     * @param iconHeight an int, the height of the icon
+     */
+    @API
+    public void setGraphic(URL imageURL, int iconWidth, int iconHeight) {
+        setFinalGraphic(loadImageFromURL(imageURL, iconWidth, iconHeight));
+    }
+
+    /**
+     * Provides a way to change the TrayIcon image at runtime
+     * by passing in a Java AWT image object. Dimensions must
+     * be correct for the required OS, or it might display as
+     * a garbled image.
+     * @param image a java.awt.Image object
+     */
+    @API
+    public void setGraphic(Image image) {
+        setFinalGraphic(loadImageFromAWT(image));
+    }
+
+    @API
+    public void setGraphic(Image image, int iconWidth, int iconHeight) {
+        setFinalGraphic(loadImageFromAWT(image, iconWidth, iconHeight));
+    }
+
+    private void setFinalGraphic(Image img) {
         this.trayIcon.setImage(img);
     }
 
@@ -994,8 +1216,8 @@ public class FXTrayIcon {
     private void showMacAlert(String subTitle, String message, String title) {
         String execute = String.format(
                 "display notification \"%s\""
-                        + " with title \"%s\""
-                        + " subtitle \"%s\"",
+                + " with title \"%s\""
+                + " subtitle \"%s\"",
                 message != null ? message : "",
                 title != null ? title : "",
                 subTitle != null ? subTitle : ""
@@ -1003,7 +1225,7 @@ public class FXTrayIcon {
 
         try {
             Runtime.getRuntime()
-                    .exec(new String[] { "osascript", "-e", execute });
+                   .exec(new String[] { "osascript", "-e", execute });
         } catch (IOException e) {
             throw new UnsupportedOperationException(
                     "Cannot run osascript with given parameters.");
@@ -1018,7 +1240,7 @@ public class FXTrayIcon {
         EventQueue.invokeLater(() -> {
             java.awt.Menu awtMenu = new java.awt.Menu(menu.getText());
             menu.getItems().forEach(subItem ->
-                    awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
+                                            awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
             this.popupMenu.add(awtMenu);
         });
     }
