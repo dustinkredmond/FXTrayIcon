@@ -981,7 +981,7 @@ public class FXTrayIcon {
             setGraphic(image);
         }
         catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -999,7 +999,7 @@ public class FXTrayIcon {
             setGraphic(image);
         }
         catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
