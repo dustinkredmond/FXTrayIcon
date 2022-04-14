@@ -976,7 +976,8 @@ public class FXTrayIcon {
     @API
     public void setGraphic(File file, int iconWidth, int iconHeight) {
         try {
-            Image image = loadImageFromFile(new URL("file:" + file.getAbsolutePath()),iconWidth, iconHeight);
+            URL url = new URL("file:" + file.getAbsolutePath());
+            Image image = loadImageFromFile(url,iconWidth, iconHeight);
             setGraphic(image);
         }
         catch (MalformedURLException e) {
@@ -993,7 +994,8 @@ public class FXTrayIcon {
     @API
     public void setGraphic(String URLString, int iconWidth, int iconHeight) {
         try {
-            Image image = loadImageFromFile(new URL(URLString),iconWidth, iconHeight);
+            URL url = new URL(URLString);
+            Image image = loadImageFromFile(url,iconWidth, iconHeight);
             setGraphic(image);
         }
         catch (MalformedURLException e) {
