@@ -47,6 +47,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -962,15 +963,45 @@ public class FXTrayIcon {
      */
     @API
     public void setGraphic(File file) {
-        javafx.scene.image.Image img;
-        try {
-            img = new javafx.scene.image.Image(file.getAbsolutePath());
-        }
-        catch(Exception e) {
-            img = new javafx.scene.image.Image("file:" + file.getAbsolutePath());
-        }
+        javafx.scene.image.Image img = new javafx.scene.image.Image(file.getAbsolutePath());
         setGraphic(SwingFXUtils.fromFXImage(img, null));
     }
+
+    /**
+     * Provides a way to change the TrayIcon image at runtime.
+     * @param file a java.io.Fil object
+     * @param iconWidth an int, the width of the icon
+     * @param iconHeight an int, the height of the icon
+     */
+    @API
+    public void setGraphic(File file, int iconWidth, int iconHeight) {
+        try {
+            Image image = loadImageFromFile(new URL("file:" + file.getAbsolutePath()),iconWidth, iconHeight);
+            setGraphic(image);
+        }
+        catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Provides a way to change the TrayIcon image at runtime.
+     * @param URLString a String of the URL to the image file
+     * @param iconWidth an int, the width of the icon
+     * @param iconHeight an int, the height of the icon
+     */
+    @API
+    public void setGraphic(String URLString, int iconWidth, int iconHeight) {
+        try {
+            Image image = loadImageFromFile(new URL(URLString),iconWidth, iconHeight);
+            setGraphic(image);
+        }
+        catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
     /**
      * Provides a way to change the TrayIcon image at runtime.
