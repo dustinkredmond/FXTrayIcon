@@ -225,9 +225,10 @@ public class FXTrayIcon {
 
     @API
     private FXTrayIcon(Stage parentStage, Image image, boolean finalCall) {
-        Objects.requireNonNull(parentStage, "parentStage must not be null");
-        Objects.requireNonNull(image, "icon must not be null");
-
+        if(finalCall) {
+            Objects.requireNonNull(parentStage, "parentStage must not be null");
+            Objects.requireNonNull(image, "icon must not be null");
+        }
         ensureSystemTraySupported();
 
         tray = SystemTray.getSystemTray();
@@ -648,7 +649,7 @@ public class FXTrayIcon {
         else return image.getScaledInstance(CoreScale, CoreScale, Image.SCALE_SMOOTH);
     }
 
-    private static Image loadImageFromAWT(java.awt.Image image, int iconWidth, int iconHeight) {
+    private static Image loadImageFromAWT(Image image, int iconWidth, int iconHeight) {
         return image.getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
     }
 
