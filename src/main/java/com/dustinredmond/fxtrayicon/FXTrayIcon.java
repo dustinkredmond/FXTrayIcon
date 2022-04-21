@@ -15,7 +15,7 @@ package com.dustinredmond.fxtrayicon;
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -38,8 +38,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.*;
 import java.net.URL;
-import java.util.List;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -223,7 +225,6 @@ public class FXTrayIcon {
         this(parentStage, loadImageFromAWT(image), true);
     }
 
-    @API
     private FXTrayIcon(Stage parentStage, Image image, boolean finalCall) {
         if(finalCall) {
             Objects.requireNonNull(parentStage, "parentStage must not be null");
@@ -269,16 +270,14 @@ public class FXTrayIcon {
         private       String                                      exitMenuItemLabel  = "";
         private       boolean                                     addTitleMenuItem   = false;
         private       EventHandler<ActionEvent>                   event;
-        private final Map<Integer, javafx.scene.control.MenuItem> menuItemMap        = new HashMap<>();
-        private final List<Integer>                               separatorIndexList = new ArrayList<>();
+        private       ActionListener                              exitMenuItemActionListener;
         private       boolean                                     showTrayIcon       = false;
-        private       Integer                                     index              = 0;
         private final Image                                       icon;
 
 
         /**
          * Creates an instance of FXTrayIcon with the provided
-         * icon and a provided{@code javafx.stage.Stage} as its parent.
+         * icon and a provided {@code javafx.stage.Stage} as its parent.
          * @param parentStage The parent Stage of the tray icon.
          * @param iconImagePath A path to an icon image
          * @param iconWidth optional to set a different icon width
@@ -292,7 +291,7 @@ public class FXTrayIcon {
 
         /**
          * Creates an instance of FXTrayIcon with the provided
-         * icon and a provided{@code javafx.stage.Stage} as its parent.
+         * icon and a provided {@code javafx.stage.Stage} as its parent.
          * @param parentStage The parent Stage of the tray icon.
          * @param iconImagePath A path to an icon image
          */
@@ -304,7 +303,7 @@ public class FXTrayIcon {
 
         /**
          * Creates an instance of FXTrayIcon with the provided
-         * icon File with dimensions and a provided{@code javafx.stage.Stage}
+         * icon File with dimensions and a provided {@code javafx.stage.Stage}
          * as its parent.
          * @param parentStage The parent Stage of the tray icon.
          * @param iconFile A java.io.File object
@@ -319,7 +318,7 @@ public class FXTrayIcon {
 
         /**
          * Creates an instance of FXTrayIcon with the provided
-         * icon File and a provided{@code javafx.stage.Stage} as its parent.
+         * icon File and a provided {@code javafx.stage.Stage} as its parent.
          * @param parentStage The parent Stage of the tray icon.
          * @param iconFile A java.io.File object
          */
@@ -331,7 +330,7 @@ public class FXTrayIcon {
 
         /**
          * Creates an instance of FXTrayIcon with the provided
-         * icon Image with dimensions and a provided{@code javafx.stage.Stage}
+         * icon Image with dimensions and a provided {@code javafx.stage.Stage}
          * as its parent.
          * @param parentStage The parent Stage of the tray icon.
          * @param javaFXImage A javafx.scene.image.Image object
@@ -346,7 +345,7 @@ public class FXTrayIcon {
 
         /**
          * Creates an instance of FXTrayIcon with the provided
-         * icon Image and a provided{@code javafx.stage.Stage} as its parent.
+         * icon Image and a provided {@code javafx.stage.Stage} as its parent.
          * @param parentStage The parent Stage of the tray icon.
          * @param javaFXImage A javafx.scene.image.Image object
          */
@@ -358,7 +357,7 @@ public class FXTrayIcon {
 
         /**
          * Creates an instance of FXTrayIcon with the provided
-         * icon and specified dimensions and a provided{@code javafx.stage.Stage} as its parent.
+         * icon and specified dimensions and a provided {@code javafx.stage.Stage} as its parent.
          * @param parentStage The parent Stage of the tray icon. Must not be null.
          * @param image a java.awt.Image object. Must not be null
          * @param iconWidth an int, icon Width
@@ -372,7 +371,7 @@ public class FXTrayIcon {
 
         /**
          * Creates an instance of FXTrayIcon with the provided
-         * icon image and a provided{@code javafx.stage.Stage} as its parent.
+         * icon image and a provided {@code javafx.stage.Stage} as its parent.
          * @param parentStage The parent Stage of the tray icon. Must not be null.
          * @param image a java.awt.Image object. Must not be null
          */
@@ -405,8 +404,7 @@ public class FXTrayIcon {
         public Builder menuItem(String label, EventHandler<ActionEvent> eventHandler) {
             javafx.scene.control.MenuItem menuItem = new javafx.scene.control.MenuItem(label);
             menuItem.setOnAction(eventHandler);
-            menuItemMap.put(index,menuItem);
-            index++;
+            BuildOrder.addMenuItem(menuItem);
             return this;
         }
 
@@ -418,8 +416,7 @@ public class FXTrayIcon {
          */
         @API
         public Builder menuItem(javafx.scene.control.MenuItem menuItem) {
-            menuItemMap.put(index,menuItem);
-            index++;
+            BuildOrder.addMenuItem(menuItem);
             return this;
         }
 
@@ -431,10 +428,36 @@ public class FXTrayIcon {
          */
         @API
         public Builder menuItems(javafx.scene.control.MenuItem ... menuItems) {
-            for (javafx.scene.control.MenuItem menuItem : menuItems) {
-                menuItemMap.put(index,menuItem);
-                index++;
-            }
+            BuildOrder.addMenuItems(menuItems);
+            return this;
+        }
+
+        /**
+         * Can be used to add a sub menu to FXTrayIcon, by passing in the Sub Menu
+         * label, then by passing in either individual MenuItems separated by commas
+         * or an entire MenuItem[] array.
+         * @param label String for Menu label
+         * @param menuItems either a {@code javafx.scene.control.MenuItem[]} array or individual {@code javafx.scene.control.MenuItem} separated by commas
+         * @return this Builder object
+         */
+        @API
+        public Builder menu(String label, javafx.scene.control.MenuItem... menuItems) {
+            Menu menu = new Menu(label);
+            menu.getItems().addAll(menuItems);
+            BuildOrder.addMenu(menu);
+            return this;
+        }
+
+        /**
+         * Can be used to add a sub menu to FXTrayIcon by first building a
+         * javafx.scene.control.Menu object populated with MenuItems then passing
+         * that Menu object into this method.
+         * @param menu a {@code javafx.scene.control.Menu} object
+         * @return this Builder object
+         */
+        @API
+        public Builder menu(Menu menu) {
+            BuildOrder.addMenu(menu);
             return this;
         }
 
@@ -445,8 +468,7 @@ public class FXTrayIcon {
          */
         @API
         public Builder separator() {
-            separatorIndexList.add(index);
-            index++;
+            BuildOrder.addSeparator();
             return this;
         }
 
@@ -502,9 +524,9 @@ public class FXTrayIcon {
         }
 
         /**
-         * Creates a menuItem with option for a custom
-         * label and puts it at the bottom of the menu.
-         * When engaged, it closes the application.
+         * Creates a menuItem that always remains as the last menuItem in the tray menu
+         * with option for a custom label. When engaged, it closes the application.
+         * @param label a {@code String} of desired label for the exit menuItem
          * @return this Builder object
          */
         @API
@@ -515,8 +537,23 @@ public class FXTrayIcon {
         }
 
         /**
+         * Creates a menuItem that always remains as the last menuItem in the tray menu.
+         * You can optionally add your own event action that will execute when the menuItem is engaged.
+         * @param label a {@code String} of desired label for the exit menuItem
+         * @param event a {@code java.awt.ActionListener} object. Can be built with lambda ex: {@code e-> {}}
+         * @return this Builder object
+         */
+        @API
+        public Builder addExitMenuItem(String label, ActionListener event) {
+            this.exitMenuItemLabel = label;
+            this.addExitMenuItem = true;
+            this.exitMenuItemActionListener = event;
+            return this;
+        }
+
+        /**
          * Adds an EventHandler that is called when the FXTrayIcon's
-         * action is called. On Microsoft's Windows 10, this is invoked
+         * action is called. On Microsoft's Windows 10 and 11, this is invoked
          * by a single-click of the primary mouse button. On Apple's MacOS,
          * this is invoked by a two-finger click on the TrayIcon, while
          * a single click will invoke the context menu.
@@ -561,18 +598,27 @@ public class FXTrayIcon {
         this.addExitMenuItem = build.addExitMenuItem;
         this.addTitleMenuItem = build.addTitleMenuItem;
         this.exitMenuItemLabel = build.exitMenuItemLabel;
-        if (build.showTrayIcon) show();
+        this.exitMenuItemActionListener = build.exitMenuItemActionListener;
         if (!build.tooltip.equals("")) setTooltip(build.tooltip);
         if (build.event != null) setOnAction(build.event);
-        for (int x = 0; x <= build.index; x++) {
-            if (build.menuItemMap.containsKey(x)) {
-                addMenuItem(build.menuItemMap.get(x));
-            } else if (build.separatorIndexList.contains(x)) {
-                addSeparator();
+        for (int i = 0; i < BuildOrder.getItemCount(); i++) {
+            switch(BuildOrder.getItemType(i)) {
+                case MENU: {
+                    addMenu(BuildOrder.getMenu(i));
+                    break;
+                }
+                case MENU_ITEM: {
+                    addMenuItem(BuildOrder.getMenuItem(i));
+                    break;
+                }
+                case SEPARATOR: {
+                    addSeparator();
+                    break;
+                }
             }
         }
+        if (build.showTrayIcon) show();
     }
-
 
     /**
      * Gets the nested AWT {@link TrayIcon}. This is intended for extended
@@ -670,6 +716,10 @@ public class FXTrayIcon {
                      .contains("mac");
     }
 
+    private boolean shown = false;
+
+    private ActionListener exitMenuItemActionListener;
+
     /**
      * Adds the FXTrayIcon to the system tray.
      * This will add the TrayIcon with the image initialized in the
@@ -707,22 +757,38 @@ public class FXTrayIcon {
                     this.popupMenu.insert(miStage, 0);
                 }
 
-                // If Platform.setImplicitExit(false) then the JVM will
-                // continue to run after no more Stages remain,
-                // thus we provide a way to terminate it by default.
                 if (addExitMenuItem) {
-                    String label = exitMenuItemLabel.equals("") ? "Exit Application" : exitMenuItemLabel;
-                    MenuItem miExit = new MenuItem(label);
-                    miExit.addActionListener(e -> {
-                        this.tray.remove(this.trayIcon);
-                        Platform.setImplicitExit(true);
-                        Platform.exit();
+                    EventQueue.invokeLater(() -> {
+                        String label = exitMenuItemLabel.equals("") ? "Exit Application" : exitMenuItemLabel;
+                        MenuItem miExit = new MenuItem(label);
+
+                        // If Platform.setImplicitExit(false) then the JVM will
+                        // continue to run after no more Stages remain,
+                        // thus we provide a way to terminate it by default.
+                        ActionListener defaultActionListener;
+                        if(isMac()) {
+                            defaultActionListener = e->{
+                                this.tray.remove(this.trayIcon);
+                                Platform.setImplicitExit(true);
+                                Platform.exit();
+                                System.exit(0);
+                            };
+                        }
+                        else {
+                            defaultActionListener = e->{
+                                this.tray.remove(this.trayIcon);
+                                Platform.setImplicitExit(true);
+                                Platform.exit();
+                            };
+                        }
+                        miExit.addActionListener((this.exitMenuItemActionListener == null) ? defaultActionListener : this.exitMenuItemActionListener);
+                        popupMenu.add(miExit);
                     });
-                    this.popupMenu.add(miExit);
                 }
 
                 // Show parent stage when user clicks the icon
                 this.trayIcon.addActionListener(stageShowListener);
+                shown = true;
             } catch (AWTException e) {
                 throw new IllegalStateException("Unable to add TrayIcon", e);
             }
@@ -828,22 +894,12 @@ public class FXTrayIcon {
      */
     @API
     public void addMenuItem(javafx.scene.control.MenuItem menuItem) {
-        EventQueue.invokeLater(() -> {
-            if (menuItem instanceof Menu) {
-                addMenu((Menu) menuItem);
-                return;
-            }
-            if (isNotUnique(menuItem)) {
-                throw new UnsupportedOperationException(
-                        "Menu Item labels must be unique.");
-            }
-            this.popupMenu.add(AWTUtils.convertFromJavaFX(menuItem));
-        });
+        EventQueue.invokeLater(() -> addMenuItemPrivately(menuItem));
     }
 
     /**
      * Adds the specified MenuItems to FXTrayIcon's menu.
-     * Pass in as many MenuItems as needed separated by a comma.
+     * Pass in as many MenuItems as needed, separated by a comma.
      * ex: addMenuItems(menuItem1, menuItem2, menuItem3);
      * @param menuItems multiple comma separated MenuItem objects
      */
@@ -851,17 +907,26 @@ public class FXTrayIcon {
     public void addMenuItems(javafx.scene.control.MenuItem... menuItems ) {
         EventQueue.invokeLater(() -> {
             for (javafx.scene.control.MenuItem menuItem : menuItems) {
-                if (menuItem instanceof Menu) {
-                    addMenu((Menu) menuItem);
-                    return;
-                }
-                if (isNotUnique(menuItem)) {
-                    throw new UnsupportedOperationException(
-                            "Menu Item labels must be unique.");
-                }
-                this.popupMenu.add(AWTUtils.convertFromJavaFX(menuItem));
+                addMenuItemPrivately(menuItem);
             }
         });
+    }
+
+    private void addMenuItemPrivately(javafx.scene.control.MenuItem menuItem) {
+        if (menuItem instanceof Menu) {
+            addMenu((Menu) menuItem);
+            return;
+        }
+        if (isNotUnique(menuItem)) {
+            throw new UnsupportedOperationException(
+                    "Menu Item labels must be unique.");
+        }
+        if (addExitMenuItem && shown) {
+            this.popupMenu.insert(AWTUtils.convertFromJavaFX(menuItem), this.popupMenu.getItemCount() - 1);
+        }
+        else {
+            this.popupMenu.add(AWTUtils.convertFromJavaFX(menuItem));
+        }
     }
 
     /**
@@ -1078,11 +1143,11 @@ public class FXTrayIcon {
     }
 
     /**
-     * Checks whether or not the system tray icon is supported on the
-     * current platform.
+     * Checks whether the system tray icon is supported on the
+     * current platform, or not.
      *
      * Just because the system tray is supported, does not mean that the
-     * current platform implements all of the system tray functionality.
+     * current platform implements all system tray functionality.
      * @return false if the system tray is not supported, true if any
      *          part of the system tray functionality is supported.
      */
@@ -1208,8 +1273,7 @@ public class FXTrayIcon {
     }
 
     /**
-     * Displays a sliding info message similar to what Windows
-     * does, but without AWT
+     * Displays a sliding info message. Behavior is similar to Windows, but without AWT
      * @param subTitle The message caption
      * @param message The message text
      * @param title The message title
@@ -1242,7 +1306,12 @@ public class FXTrayIcon {
             java.awt.Menu awtMenu = new java.awt.Menu(menu.getText());
             menu.getItems().forEach(subItem ->
                                             awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
-            this.popupMenu.add(awtMenu);
+            if(addExitMenuItem && shown) {
+                this.popupMenu.insert(awtMenu, this.popupMenu.getItemCount() - 1);
+            }
+            else {
+                this.popupMenu.add(awtMenu);
+            }
         });
     }
 
