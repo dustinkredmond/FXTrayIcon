@@ -39,7 +39,7 @@ public class NestedSubMenus extends Application {
 		Scene scene = new Scene(splitPane);
 		stage.setScene(scene);
 
-		FXTrayIcon trayIcon = new FXTrayIcon.Builder(stage)
+		new FXTrayIcon.Builder(stage)
 				.applicationTitle("Nested Sub Menus")
 				.addTitleItem(true)
 				.menu("Send Right", newMenuItem("Send Text", e-> sendTextRight()), newMenuItem("Clear Text", e->clearRightMessage()))

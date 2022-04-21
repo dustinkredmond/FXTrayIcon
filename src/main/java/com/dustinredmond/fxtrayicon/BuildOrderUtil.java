@@ -28,7 +28,7 @@ import javafx.scene.control.MenuItem;
 import java.util.HashMap;
 import java.util.Map;
 
-class BuildOrder {
+class BuildOrderUtil {
 
 	private static Integer                      index       = 0;
 	private static final Map<Integer, MenuObject> objectMap = new HashMap<>();
@@ -114,11 +114,15 @@ class BuildOrder {
 
 	/**
 	 * This is a pseudo record class that is used by class
-	 * BuildOrder in a Map, so that the objects that are passed
+	 * BuildOrderUtil in a Map, so that the objects that are passed
 	 * to Builder in the build sentence can have their serial
 	 * order maintained.
 	 */
 	private static class MenuObject {
+
+		private Menu menu;
+		private MenuItem menuItem;
+		private final ItemType itemType;
 
 		/**
 		 * class constructor that only accepts a {@code javafx.scene.control.Menu} object
@@ -145,10 +149,6 @@ class BuildOrder {
 		MenuObject() {
 			this.itemType = ItemType.SEPARATOR;
 		}
-
-		private Menu menu;
-		private MenuItem menuItem;
-		private final ItemType itemType;
 
 		/**
 		 * @return ItemType

@@ -53,6 +53,9 @@ public class FXTrayIcon {
 
     private static final Integer WinScale  = 16;
     private static final Integer CoreScale = 22;
+    private boolean shown = false;
+    private ActionListener exitMenuItemActionListener;
+
 
     /**
      * The default AWT SystemTray
@@ -404,7 +407,7 @@ public class FXTrayIcon {
         public Builder menuItem(String label, EventHandler<ActionEvent> eventHandler) {
             javafx.scene.control.MenuItem menuItem = new javafx.scene.control.MenuItem(label);
             menuItem.setOnAction(eventHandler);
-            BuildOrder.addMenuItem(menuItem);
+            BuildOrderUtil.addMenuItem(menuItem);
             return this;
         }
 
@@ -416,7 +419,7 @@ public class FXTrayIcon {
          */
         @API
         public Builder menuItem(javafx.scene.control.MenuItem menuItem) {
-            BuildOrder.addMenuItem(menuItem);
+            BuildOrderUtil.addMenuItem(menuItem);
             return this;
         }
 
@@ -428,7 +431,7 @@ public class FXTrayIcon {
          */
         @API
         public Builder menuItems(javafx.scene.control.MenuItem ... menuItems) {
-            BuildOrder.addMenuItems(menuItems);
+            BuildOrderUtil.addMenuItems(menuItems);
             return this;
         }
 
@@ -444,7 +447,7 @@ public class FXTrayIcon {
         public Builder menu(String label, javafx.scene.control.MenuItem... menuItems) {
             Menu menu = new Menu(label);
             menu.getItems().addAll(menuItems);
-            BuildOrder.addMenu(menu);
+            BuildOrderUtil.addMenu(menu);
             return this;
         }
 
@@ -457,7 +460,7 @@ public class FXTrayIcon {
          */
         @API
         public Builder menu(Menu menu) {
-            BuildOrder.addMenu(menu);
+            BuildOrderUtil.addMenu(menu);
             return this;
         }
 
@@ -468,7 +471,7 @@ public class FXTrayIcon {
          */
         @API
         public Builder separator() {
-            BuildOrder.addSeparator();
+            BuildOrderUtil.addSeparator();
             return this;
         }
 
@@ -601,20 +604,21 @@ public class FXTrayIcon {
         this.exitMenuItemActionListener = build.exitMenuItemActionListener;
         if (!build.tooltip.equals("")) setTooltip(build.tooltip);
         if (build.event != null) setOnAction(build.event);
-        for (int i = 0; i < BuildOrder.getItemCount(); i++) {
-            switch(BuildOrder.getItemType(i)) {
+        for (int i = 0; i < BuildOrderUtil.getItemCount(); i++) {
+            switch(BuildOrderUtil.getItemType(i)) {
                 case MENU: {
-                    addMenu(BuildOrder.getMenu(i));
+                    addMenu(BuildOrderUtil.getMenu(i));
                     break;
                 }
                 case MENU_ITEM: {
-                    addMenuItem(BuildOrder.getMenuItem(i));
+                    addMenuItem(BuildOrderUtil.getMenuItem(i));
                     break;
                 }
                 case SEPARATOR: {
                     addSeparator();
                     break;
                 }
+                default:
             }
         }
         if (build.showTrayIcon) show();
@@ -715,10 +719,6 @@ public class FXTrayIcon {
                      .toLowerCase(Locale.ENGLISH)
                      .contains("mac");
     }
-
-    private boolean shown = false;
-
-    private ActionListener exitMenuItemActionListener;
 
     /**
      * Adds the FXTrayIcon to the system tray.
@@ -824,6 +824,34 @@ public class FXTrayIcon {
     @API
     public void addExitItem(boolean addExitMenuItem) {
         this.addExitMenuItem = addExitMenuItem;
+    }
+
+    /**
+     * Adds a menuItem to the {@code FXTrayIcon} that always remains as
+     * the last menuItem in the tray menu, with option for a custom label.
+     * When engaged, it closes the application.
+     * This must be called before fxTrayIcon.show() is called.
+     * @param label a {@code String} of desired label for the exit menuItem
+     */
+    @API
+    public void addExitItem(String label) {
+        this.addExitMenuItem = true;
+        this.exitMenuItemLabel = label;
+    }
+
+    /**
+     * Adds a menuItem to the {@code FXTrayIcon} that always remains as
+     * the last menuItem in the tray menu. You can optionally add your own
+     * event action that will execute when the menuItem is engaged.
+     * This must be called before fxTrayIcon.show() is called.
+     * @param label a {@code String} of desired label for the exit menuItem
+     * @param event a {@code java.awt.ActionListener} object. Can be built with lambda ex: {@code e-> {}}
+     */
+    @API
+    public void addExitItem(String label, ActionListener event) {
+        this.addExitMenuItem = true;
+        this.exitMenuItemLabel = label;
+        this.exitMenuItemActionListener = event;
     }
 
     /**
