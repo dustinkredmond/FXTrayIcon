@@ -6,7 +6,7 @@ you can set any option, add menuItems and even subMenus to your tray icon, all i
 FXTrayIcon will build the menu in the order in which you add the items into your build sentence.
 
 Here are the constructor options for the Builder
-```
+```Java
 FXTrayIcon trayIcon = new FXTrayIcon.Builder(primaryStage, URL iconImagePath)
 FXTrayIcon trayIcon = new FXTrayIcon.Builder(primaryStage, java.io.File iconImageFile)
 FXTrayIcon trayIcon = new FXTrayIcon.Builder(primaryStage, javafx.scene.image.Image iconJavaFXImage)
