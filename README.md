@@ -26,7 +26,7 @@ icon.show();
 ```java
 FXTrayIcon icon = new FXTrayIcon.Builder(stage, iconURL).menuItem("Menu 1", e-> myMethod()).addExitItem().show().build();
 ```
-[Click here for a Builder tutorial](https://github.com/EasyG0ing1/FXTrayIcon/blob/main/BuilderTutorial.md)
+[Click here for a Builder tutorial](https://github.com/dustinkredmond/FXTrayIcon/blob/main/BuilderTutorial.md)
 
 ## How do I add to my project 
 
