@@ -98,7 +98,20 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-
+            <!-- Maven jar plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.2</version>
+                <configuration>
+                    <skipIfEmpty>true</skipIfEmpty>
+                    <archive>
+                        <manifestEntries>
+                            <Automatic-Module-Name>com.dustinkredmond.fxtrayicon</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
             <!-- Maven Deploy plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
