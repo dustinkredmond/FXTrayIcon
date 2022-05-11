@@ -266,16 +266,16 @@ public class FXTrayIcon {
     @API
     public static class Builder {
 
-        private final Stage                                       parentStage;
-        private       String                                      tooltip            = "";
-        private       String                                      appTitle;
-        private       boolean                                     addExitMenuItem    = false;
-        private       String                                      exitMenuItemLabel  = "";
-        private       boolean                                     addTitleMenuItem   = false;
-        private       EventHandler<ActionEvent>                   event;
-        private       ActionListener                              exitMenuItemActionListener;
-        private       boolean                                     showTrayIcon       = false;
-        private final Image                                       icon;
+        private final Stage                     parentStage;
+        private       String                    tooltip           = "";
+        private       String                    appTitle;
+        private       boolean                   addExitMenuItem   = false;
+        private       String                    exitMenuItemLabel = "";
+        private       boolean                   addTitleMenuItem  = false;
+        private       EventHandler<ActionEvent> event;
+        private       ActionListener            exitMenuItemActionListener;
+        private       boolean                   showTrayIcon      = false;
+        private final Image                     icon;
 
 
         /**
@@ -481,7 +481,7 @@ public class FXTrayIcon {
          * @return this Builder object
          */
         @API
-        public Builder toolTip(String tooltip) {
+        public Builder tooltip(String tooltip) {
             this.tooltip = tooltip;
             return this;
         }
@@ -596,11 +596,11 @@ public class FXTrayIcon {
     @API
     protected FXTrayIcon(Builder build) {
         this(build.parentStage, build.icon,true);
-        this.parentStage = build.parentStage;
-        this.appTitle = build.appTitle;
-        this.addExitMenuItem = build.addExitMenuItem;
-        this.addTitleMenuItem = build.addTitleMenuItem;
-        this.exitMenuItemLabel = build.exitMenuItemLabel;
+        this.parentStage                = build.parentStage;
+        this.appTitle                   = build.appTitle;
+        this.addExitMenuItem            = build.addExitMenuItem;
+        this.addTitleMenuItem           = build.addTitleMenuItem;
+        this.exitMenuItemLabel          = build.exitMenuItemLabel;
         this.exitMenuItemActionListener = build.exitMenuItemActionListener;
         if (!build.tooltip.equals("")) setTooltip(build.tooltip);
         if (build.event != null) setOnAction(build.event);
