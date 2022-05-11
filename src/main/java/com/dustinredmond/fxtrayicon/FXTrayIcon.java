@@ -476,7 +476,7 @@ public class FXTrayIcon {
         }
 
         /**
-         * Set a ToolTip String which pops up for the user when they hover their mouse on FXTrayIcon
+         * Set a Tooltip String which pops up for the user when they hover their mouse on FXTrayIcon
          * @param tooltip Your tooltip String
          * @return this Builder object
          */
