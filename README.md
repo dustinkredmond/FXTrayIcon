@@ -26,6 +26,7 @@ icon.show();
 ```java
 FXTrayIcon icon = new FXTrayIcon.Builder(stage, iconURL).menuItem("Menu 1", e-> myMethod()).addExitItem().show().build();
 ```
+[Click here for a Builder tutorial](https://github.com/dustinkredmond/FXTrayIcon/blob/main/BuilderTutorial.md)
 
 ## How do I add to my project 
 
@@ -121,5 +122,6 @@ supports the system tray.
 ## Projects using `FXTrayIcon`
 - [JDKMon](https://github.com/HanSolo/JDKMon) - A tool that monitors your installed JDK's and informs you about updates.
 - [GlucoStatusFX](https://github.com/HanSolo/glucostatusfx) - Glucose status monitor for Nightscout implemented in JavaFX.
+- [GistFX](https://github.com/RedmondSims/GistFX) - A utility that makes managing and organizing your GitHub Gists easy and convenient.
 
 If your project uses FXTrayIcon, let us know via Pull Request, and we'll feature your project on this README.
