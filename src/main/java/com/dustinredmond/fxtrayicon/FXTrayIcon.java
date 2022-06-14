@@ -38,10 +38,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.*;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -432,6 +430,49 @@ public class FXTrayIcon {
         @API
         public Builder menuItems(javafx.scene.control.MenuItem ... menuItems) {
             BuildOrderUtil.addMenuItems(menuItems);
+            return this;
+        }
+
+        /**
+         * Add a CheckMenuItem without passing your own.
+         * This can be used repeatedly and the checkMenuItems will be shown in the
+         * order you place them in your build sentence.<BR><BR>
+         * See the getCheckMenuItem and getCheckMenuItems methods for accessing CheckMenuItems
+         * @param label String containing the name of this CheckMenuItem
+         * @param eventHandler - Will execute when the menuItem is clicked on.
+         * @return this Builder object
+         */
+        @API
+        public Builder checkMenuItem(String label, EventHandler<ActionEvent> eventHandler) {
+            javafx.scene.control.CheckMenuItem checkMenuItem = new javafx.scene.control.CheckMenuItem(label);
+            checkMenuItem.setOnAction(eventHandler);
+            BuildOrderUtil.addMenuItem(checkMenuItem);
+            return this;
+        }
+
+        /**
+         * Can be used repeatedly to build your checkMenuItems into FXTrayIcon.
+         * The items will appear in the order they are stated in your build sentence.<BR><BR>
+         * See the getCheckMenuItem and getCheckMenuItems methods for accessing CheckMenuItems
+         * @param checkMenuItem a javafx.scene.control.CheckMenuItem object
+         * @return this Builder object
+         */
+        @API
+        public Builder checkMenuItem(javafx.scene.control.CheckMenuItem checkMenuItem) {
+            BuildOrderUtil.addMenuItem(checkMenuItem);
+            return this;
+        }
+
+        /**
+         * Can be used to add more than one CheckMenuItem by separating them by commas.
+         * The items will appear in the order they are stated in your build sentence.<BR><BR>
+         * See the getCheckMenuItem and getCheckMenuItems methods for accessing CheckMenuItems
+         * @param checkMenuItems a javafx.scene.control.CheckMenuItem List
+         * @return this Builder object
+         */
+        @API
+        public Builder checkMenuItems(javafx.scene.control.CheckMenuItem ... checkMenuItems) {
+            BuildOrderUtil.addMenuItems(checkMenuItems);
             return this;
         }
 
@@ -1191,6 +1232,42 @@ public class FXTrayIcon {
     @API
     public int getMenuItemCount() {
         return this.popupMenu.getItemCount();
+    }
+
+    /**
+     * Returns a List of java.awt.CheckboxMenuItems, because when you
+     * add a JavaFX CheckMenuItem into FXTrayIcon, it gets converted
+     * into an AWT object, and if you need to deal with the checked
+     * property of those menuItems, you can access them through this list,
+     * OR by using the getCheckMenuItem method, using the Label property to
+     * specify which menuItem you need to access.
+     * @return List <span>&lt;</span>java.awt.CheckboxMenuItem<span>&#62;</span>
+     */
+    public List<CheckboxMenuItem> getCheckMenuItems() {
+        List<CheckboxMenuItem> list = new ArrayList<>();
+        for (int x = 0; x < popupMenu.getItemCount(); x++) {
+            if(popupMenu.getItem(x) instanceof CheckboxMenuItem) {
+                list.add((CheckboxMenuItem) popupMenu.getItem(x));
+            }
+        }
+        list.sort(Comparator.comparing(CheckboxMenuItem::getLabel));
+        return list;
+    }
+
+    /**
+     * Gain access to a CheckMenuItem after FXTrayIcon is instantiated by calling this
+     * method and passing the label of the menuItem.
+     * @param label - String
+     * @return CheckboxMenuItem - your CheckMenuItem after being converted for FXTrayIcon
+     */
+    public CheckboxMenuItem getCheckMenuItem(String label) {
+        for (int x = 0; x < popupMenu.getItemCount(); x++) {
+            if(popupMenu.getItem(x) instanceof java.awt.CheckboxMenuItem) {
+                if (popupMenu.getItem(x).getLabel().equals(label))
+                    return (CheckboxMenuItem) popupMenu.getItem(x);
+            }
+        }
+        return null;
     }
 
     /**
