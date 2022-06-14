@@ -22,10 +22,11 @@ package com.dustinredmond.fxtrayicon;
  * SOFTWARE.
  */
 
-import java.awt.MenuItem;
+import java.awt.*;
 import java.util.StringJoiner;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.scene.control.CheckMenuItem;
 
 class AWTUtils {
 
@@ -39,7 +40,18 @@ class AWTUtils {
      */
     protected static MenuItem convertFromJavaFX(javafx.scene.control.MenuItem fxItem)
             throws UnsupportedOperationException {
-        MenuItem awtItem = new MenuItem(fxItem.getText());
+        MenuItem awtItem;
+        if (fxItem instanceof CheckMenuItem) {
+            CheckboxMenuItem checkboxMenuItem = new CheckboxMenuItem(fxItem.getText());
+            checkboxMenuItem.setState(((CheckMenuItem) fxItem).isSelected());
+            if (fxItem.getOnAction() != null) {
+                checkboxMenuItem.addItemListener(e -> Platform
+                        .runLater(() -> fxItem.getOnAction().handle(new ActionEvent())));
+            }
+            awtItem = checkboxMenuItem;
+        } else {
+            awtItem = new MenuItem(fxItem.getText());
+        }
 
         // some JavaFX to AWT translations aren't possible/supported
         // build list of which unsupported methods have been called on
