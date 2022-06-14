@@ -26,7 +26,7 @@ new FXTrayIcon.Builder(stage,icon).menuItem("My Menu", e -> myMenuMethod()).buil
 ```
 OR, you can pre-build them and add them into the Builder like this
 ```java
-MenuItem myMenuItem = new MenuItem;
+MenuItem myMenuItem = new MenuItem();
 myMenuItem.setOnAction(e-> myMenuMethod());
 new FXTrayIcon.Builder(stage,icon).menuItem(myMenuItem).build();
 ```
@@ -41,10 +41,10 @@ new FXTrayIcon.Builder(stage,icon)
 ```
 OR pre-built
 ```java
-MenuItem myMenuItem1 = new MenuItem;
+MenuItem myMenuItem1 = new MenuItem();
 myMenuItem1.setOnAction(e-> myMenuMethod1());
 
-MenuItem myMenuItem2 = new MenuItem;
+MenuItem myMenuItem2 = new MenuItem();
 myMenuItem2.setOnAction(e-> myMenuMethod2());
 
 new FXTrayIcon.Builder(stage,icon).menuItems(myMenuItem1, myMenuItem2).build();
@@ -55,10 +55,10 @@ Or you can even pre-build an entire Menu with MenuItems, then add that in as a b
 ```java
 Menu menu = new Menu("My Sub Menu");
 
-MenuItem myMenuItem1 = new MenuItem;
+MenuItem myMenuItem1 = new MenuItem();
 myMenuItem1.setOnAction(e-> myMenuMethod1());
 
-MenuItem myMenuItem2 = new MenuItem;
+MenuItem myMenuItem2 = new MenuItem();
 myMenuItem2.setOnAction(e-> myMenuMethod2());
 
 menu.getItems().addAll(myMenuItem1, myMenuItem2);
@@ -66,14 +66,32 @@ menu.getItems().addAll(myMenuItem1, myMenuItem2);
 new FXTrayIcon.Builder(stage,icon).menu(menu).build();
 ```
 
+Or even include CheckMenuItems:
+```java
+Menu menu = new Menu("My Sub Menu");
+
+MenuItem myMenuItem1 = new MenuItem();
+CheckMenuItem myCheckMenuItem = new CheckMenuItem();
+myMenuItem1.setOnAction(e-> myMenuMethod1());
+myCheckMenuItem.setOnAction(e-> myCheckMenuMethod());
+
+MenuItem myMenuItem2 = new MenuItem();
+myMenuItem2.setOnAction(e-> myMenuMethod2());
+
+menu.getItems().addAll(myMenuItem1, myMenuItem2);
+
+new FXTrayIcon.Builder(stage,icon).menu(menu).checkMenuItem(myCheckMenuItem).build();
+
+```
+
 You can also add a branched sub-menu dynamically by calling the menu Builder method, giving
 the sub-menu a label then passing in MenuItem objects like this
 
 ```java
-MenuItem myMenuItem1 = new MenuItem;
+MenuItem myMenuItem1 = new MenuItem();
 myMenuItem1.setOnAction(e-> myMenuMethod1());
 
-MenuItem myMenuItem2 = new MenuItem;
+MenuItem myMenuItem2 = new MenuItem();
 myMenuItem2.setOnAction(e-> myMenuMethod2());
 
 new FXTrayIcon.Builder(stage,icon).menu("My Sub Menu", menuItem1, menuItem2).build();
@@ -88,6 +106,7 @@ new FXTrayIcon.Builder(stage,icon)
     .menuItem("My Menu 2", e -> myMenuMethod2())
     .separator()
     .menuItem("My Menu 3", e -> myMenuMethod3())
+    .checkMenuItem("Selection", e -> myCheckMenuMethod())
     .separator()
     .menuItem("My Menu 4", e -> myMenuMethod4())
     .build();

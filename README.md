@@ -60,6 +60,11 @@ You can even use it from a Groovy script!
 
 ## Features & Screenshots
 
+### CheckMenuItems
+FXTrayIcon now supports the use of CheckMenuItems - See Javadocs for specifics.
+
+![FXTCheck](./img/FXTCheck.gif)
+
 
 ### FXTrayIcon on Windows 10's tray
 
@@ -110,7 +115,7 @@ to indicate the level of severity of the message.
 
 | OS         | Support Status      | Unsupported Features                                                                                                      |
 |------------|---------------------|---------------------------------------------------------------------------------------------------------------------------|
-| Windows 10 | Fully supported     | N/A                                                                                                                       |
+| Windows 11 | Fully supported     | N/A                                                                                                                       |
 | Mac OS     | Partially supported | In the `displayMessage()` methods. Custom notification icons are not supported in AppleScript calls, but the TrayIcon is.  |
 | Linux      | Partially supported | Some desktop environments that support `java.awt.SystemTray` are supported. Many are **not**. You should not rely on the `isSupported` method as a matter of truth, testing on individual desktop environments is strongly encouraged.                            |
 
