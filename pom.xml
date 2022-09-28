@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.dustinredmond.fxtrayicon</groupId>
     <artifactId>FXTrayIcon</artifactId>
-    <version>3.3.0</version>
+    <version>3.3.1</version>
 
     <name>FXTrayIcon</name>
     <description>Easily add system tray icons to JavaFX projects</description>
