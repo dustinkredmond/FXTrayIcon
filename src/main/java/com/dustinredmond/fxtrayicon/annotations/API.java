@@ -44,5 +44,5 @@ public @interface API {
      * @return The version in which the API was added or an empty String
      *         if one is not provided.
      */
-    String version() default "";
+    @SuppressWarnings("unused") String version() default "";
 }
