@@ -65,6 +65,9 @@ public class TestFXTrayIcon extends Application {
         testTrayIconSupported();
         testNotNullTestResource();
         testInitialization();
+        if (CheckIsSupportedByPlatform.isMacOS() || CheckIsSupportedByPlatform.isWindows()) {
+            assertTrue(FXTrayIcon.isSupported());
+        }
         Platform.exit();
     }
 
