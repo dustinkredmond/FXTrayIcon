@@ -49,8 +49,8 @@ import java.util.stream.Collectors;
  */
 public class FXTrayIcon {
 
-    private static final Integer WinScale  = 16;
-    private static final Integer CoreScale = 22;
+    private static final Integer winScale = 16;
+    private static final Integer coreScale = 22;
     private boolean shown = false;
     private ActionListener exitMenuItemActionListener;
 
@@ -695,8 +695,8 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromURL(URL iconImagePath) {
-        if (isWin()) return loadImageFromURL(iconImagePath, WinScale, WinScale);
-        else return loadImageFromURL(iconImagePath, CoreScale, CoreScale);
+        if (isWin()) return loadImageFromURL(iconImagePath, winScale, winScale);
+        else return loadImageFromURL(iconImagePath, coreScale, coreScale);
     }
 
     private static Image loadImageFromURL(URL iconImagePath, int iconWidth, int iconHeight) {
@@ -709,8 +709,8 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromFile(File file) {
-        if (isWin()) return loadImageFromFile(file, WinScale, WinScale);
-        else return loadImageFromFile(file, CoreScale, CoreScale);
+        if (isWin()) return loadImageFromFile(file, winScale, winScale);
+        else return loadImageFromFile(file, coreScale, coreScale);
     }
 
     private static Image loadImageFromFile(File file, int iconWidth, int iconHeight) {
@@ -727,8 +727,8 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromFX(javafx.scene.image.Image javaFXImage) {
-        if(isWin()) return loadImageFromFX(javaFXImage,WinScale,WinScale);
-        else return loadImageFromFX(javaFXImage,CoreScale,CoreScale);
+        if(isWin()) return loadImageFromFX(javaFXImage, winScale, winScale);
+        else return loadImageFromFX(javaFXImage, coreScale, coreScale);
     }
 
     private static Image loadImageFromFX(javafx.scene.image.Image javaFXImage, int iconWidth, int iconHeight) {
@@ -736,8 +736,8 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromAWT(Image image) {
-        if(isWin()) return image.getScaledInstance(WinScale, WinScale, Image.SCALE_SMOOTH);
-        else return image.getScaledInstance(CoreScale, CoreScale, Image.SCALE_SMOOTH);
+        if(isWin()) return image.getScaledInstance(winScale, winScale, Image.SCALE_SMOOTH);
+        else return image.getScaledInstance(coreScale, coreScale, Image.SCALE_SMOOTH);
     }
 
     private static Image loadImageFromAWT(Image image, int iconWidth, int iconHeight) {
@@ -1214,9 +1214,11 @@ public class FXTrayIcon {
     /**
      * Checks whether the system tray icon is supported on the
      * current platform, or not.
-     *
      * Just because the system tray is supported, does not mean that the
      * current platform implements all system tray functionality.
+     * This will always return true on Windows or MacOS. Check the
+     * specific desktop environment for AppIndicator support when
+     * calling this on *nix platforms.
      * @return false if the system tray is not supported, true if any
      *          part of the system tray functionality is supported.
      */
