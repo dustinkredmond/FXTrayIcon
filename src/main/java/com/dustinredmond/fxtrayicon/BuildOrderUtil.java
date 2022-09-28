@@ -30,7 +30,7 @@ import java.util.Map;
 
 class BuildOrderUtil {
 
-	private static Integer                      index       = 0;
+	private static Integer index = 0;
 	private static final Map<Integer, MenuObject> objectMap = new HashMap<>();
 
 	/**
