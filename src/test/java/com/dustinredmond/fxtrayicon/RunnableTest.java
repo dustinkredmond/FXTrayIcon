@@ -35,6 +35,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.net.URL;
 
+
 /**
  * A test of the FXTrayIcon functionality in the form
  * of a runnable JavaFX application. Compile and run this
