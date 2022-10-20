@@ -41,8 +41,9 @@ class AWTUtils {
     protected static MenuItem convertFromJavaFX(javafx.scene.control.MenuItem fxItem)
             throws UnsupportedOperationException {
         MenuItem awtItem;
+        final String menuItemText = fxItem.getText() != null ? fxItem.getText() : "";
         if (fxItem instanceof CheckMenuItem) {
-            CheckboxMenuItem checkboxMenuItem = new CheckboxMenuItem(fxItem.getText());
+            CheckboxMenuItem checkboxMenuItem = new CheckboxMenuItem(menuItemText);
             checkboxMenuItem.setState(((CheckMenuItem) fxItem).isSelected());
             if (fxItem.getOnAction() != null) {
                 checkboxMenuItem.addItemListener(e -> Platform
@@ -50,7 +51,8 @@ class AWTUtils {
             }
             awtItem = checkboxMenuItem;
         } else {
-            awtItem = new MenuItem(fxItem.getText());
+
+            awtItem = new MenuItem(menuItemText);
         }
 
         // some JavaFX to AWT translations aren't possible/supported
