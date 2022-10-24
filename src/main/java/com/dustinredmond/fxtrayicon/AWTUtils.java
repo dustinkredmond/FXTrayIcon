@@ -90,6 +90,8 @@ class AWTUtils {
         // Disable the MenuItem if the FX item is disabled
         awtItem.setEnabled(!fxItem.isDisable());
 
+        fxItem.textProperty().addListener(e -> { awtItem.setLabel(fxItem.getText());});
+
         return awtItem;
     }
 

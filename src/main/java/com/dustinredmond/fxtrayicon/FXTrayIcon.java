@@ -836,6 +836,7 @@ public class FXTrayIcon {
         });
     }
 
+
     /**
      * Adds an EventHandler that is called when the FXTrayIcon's
      * action is called. On Microsoft's Windows 10, this is invoked
