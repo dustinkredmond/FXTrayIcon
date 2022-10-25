@@ -50,6 +50,7 @@ class AWTUtils {
                         .runLater(() -> fxItem.getOnAction().handle(new ActionEvent())));
             }
             awtItem = checkboxMenuItem;
+            ((CheckMenuItem) fxItem).selectedProperty().addListener(e -> ((CheckboxMenuItem) awtItem).setState(((CheckMenuItem) fxItem).isSelected()));
         } else {
 
             awtItem = new MenuItem(menuItemText);
