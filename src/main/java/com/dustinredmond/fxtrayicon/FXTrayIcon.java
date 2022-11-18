@@ -792,7 +792,9 @@ public class FXTrayIcon {
                     miStage.setFont(Font.decode(null).deriveFont(Font.BOLD));
                     miStage.addActionListener(e -> Platform.runLater(() -> {
                         if (parentStage != null) {
-                            parentStage.show();
+                            if (!parentStage.isIconified()) {
+                                parentStage.show();
+                            }
                         }
                     }));
                     //Make sure it's always at the top
