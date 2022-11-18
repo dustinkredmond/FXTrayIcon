@@ -243,6 +243,7 @@ public class FXTrayIcon {
 
         this.parentStage = parentStage;
         this.trayIcon = new TrayIcon(image, parentStage.getTitle(), popupMenu);
+        this.trayIcon.setImageAutoSize(true);
     }
 
     /**
