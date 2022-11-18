@@ -1365,6 +1365,12 @@ public class FXTrayIcon {
         setFinalGraphic(loadImageFromAWT(image));
     }
 
+    /**
+     * Sets the TrayIcon's graphic
+     * @param image Image to set
+     * @param iconWidth Icon's width
+     * @param iconHeight Icon's height
+     */
     @API
     public void setGraphic(Image image, int iconWidth, int iconHeight) {
         setFinalGraphic(loadImageFromAWT(image, iconWidth, iconHeight));
