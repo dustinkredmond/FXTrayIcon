@@ -24,7 +24,6 @@ package com.dustinredmond.fxtrayicon.notaskbaricon;
 
 import com.dustinredmond.fxtrayicon.FXTrayIcon;
 import com.dustinredmond.fxtrayicon.RunnableTest;
-import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -74,8 +73,11 @@ public class Main extends Application {
 		mainStage.initStyle(StageStyle.UTILITY); //This is what makes the icon disappear in Windows.
 		if (FXTrayIcon.isSupported()) {
 			icon = new FXTrayIcon.Builder(stage, iconFile)
-					.menuItem("Show Stage",e -> {Platform.runLater(()-> PlatformImpl.setTaskbarApplication(false));mainStage.show();})
-					.menuItem("Hide Stage",e -> {Platform.runLater(() -> PlatformImpl.setTaskbarApplication(true));mainStage.hide();})
+					.menuItem("Show Stage",e -> {
+						Platform.runLater(()-> stage.setIconified(false));
+						mainStage.show();})
+					.menuItem("Hide Stage",e -> {Platform.runLater(() -> stage.setIconified(true) );
+						mainStage.hide();})
 					.menuItem("Show Message",e -> showMessage())
 					.separator()
 					.menuItem("Exit", e -> System.exit(0))
