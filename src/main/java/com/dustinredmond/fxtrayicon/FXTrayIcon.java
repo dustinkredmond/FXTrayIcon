@@ -1025,8 +1025,7 @@ public class FXTrayIcon {
                     "Menu Item labels must be unique.");
         }
         if (addExitMenuItem && shown) {
-            int index = this.popupMenu.getItemCount() - 1;
-            index = (index < 0) ? 0 : index;
+            int index = this.popupMenu.getItemCount();
             this.popupMenu.insert(AWTUtils.convertFromJavaFX(menuItem), index);
         }
         else {
@@ -1455,8 +1454,7 @@ public class FXTrayIcon {
             menu.getItems().forEach(subItem ->
                                             awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
             if(addExitMenuItem && shown) {
-                int index = this.popupMenu.getItemCount() - 1;
-                index = (index < 0) ? 0 : index;
+                int index = this.popupMenu.getItemCount();
                 this.popupMenu.insert(awtMenu, index);
             }
             else {
