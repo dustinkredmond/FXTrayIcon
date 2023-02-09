@@ -126,8 +126,8 @@ supports the system tray.
 ### Access to TrayIcon
 Being a JavaFX library, much care has gone into keeping the AWT portions of the library out of sight within your IDE while using FXTrayIcon. However, we realize that there are situations where it would be useful to have access to the underlying TrayIcon awt object, so this can be done in two different ways.
 
-1) You can extend FXTrayIcon and in that extended class, you can access the `getTrayIcon()` protected method.
-2) Once you have FXTrayIcon instantiated, you can call the `getRestricted()` method then gain access to the TrayIcon object through that method.
+ 1) You can extend FXTrayIcon and in that extended class, you can access the `getTrayIcon()` protected method.
+ 2) Once you have FXTrayIcon instantiated, you can call the `getRestricted()` method then gain access to the TrayIcon object through that method.
 
 
 ## Projects using `FXTrayIcon`
