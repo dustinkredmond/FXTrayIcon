@@ -103,6 +103,13 @@ public class FXTrayIcon {
      */
     private String exitMenuItemLabel = "";
 
+
+    /**
+     * Used for gaining access to AWT components of the library
+     */
+    private final RestrictedInterface restricted;
+
+
     /**
      * Creates a {@code MouseListener} whose
      * single-click action performs the passed
@@ -116,7 +123,6 @@ public class FXTrayIcon {
             public void mouseClicked(MouseEvent me) {
                 Platform.runLater(() -> e.handle(new ActionEvent()));
             }
-
             @Override
             public void mousePressed(MouseEvent ignored) { }
             @Override
@@ -242,9 +248,17 @@ public class FXTrayIcon {
         attemptSetSystemLookAndFeel();
 
         this.parentStage = parentStage;
-        this.trayIcon = new TrayIcon(image, parentStage.getTitle(), popupMenu);
-        if(!isMac())
-            this.trayIcon.setImageAutoSize(true);
+        this.restricted  = new Restricted(image, parentStage.getTitle(), popupMenu);
+        this.trayIcon    = this.restricted.getTrayIcon();
+        this.trayIcon.setImageAutoSize(true);
+    }
+
+    /**
+     * Use this method to gain access to the instantiated awt TrayIcon object
+     */
+    @API
+    public RestrictedInterface getRestricted() {
+        return restricted;
     }
 
     /**
@@ -971,6 +985,21 @@ public class FXTrayIcon {
         EventQueue.invokeLater(() -> addMenuItemPrivately(menuItem));
     }
 
+
+    /**
+     * Adds the ability to add a MenuItem after instantiation without needing to
+     * pass in a MenuItem object.
+     *
+     * @param label - the text on the MenuItem
+     * @param eventHandler - the EventHandler that the MenuItem executes
+     */
+    @API
+    public void addMenuItem(String label, EventHandler<ActionEvent> eventHandler) {
+        javafx.scene.control.MenuItem menuItem = new javafx.scene.control.MenuItem(label);
+        menuItem.setOnAction(eventHandler);
+        addMenuItemPrivately(menuItem);
+    }
+
     /**
      * Adds the specified MenuItems to FXTrayIcon's menu.
      * Pass in as many MenuItems as needed, separated by a comma.
@@ -996,7 +1025,8 @@ public class FXTrayIcon {
                     "Menu Item labels must be unique.");
         }
         if (addExitMenuItem && shown) {
-            this.popupMenu.insert(AWTUtils.convertFromJavaFX(menuItem), this.popupMenu.getItemCount() - 1);
+            int index = this.popupMenu.getItemCount();
+            this.popupMenu.insert(AWTUtils.convertFromJavaFX(menuItem), index);
         }
         else {
             this.popupMenu.add(AWTUtils.convertFromJavaFX(menuItem));
@@ -1424,7 +1454,8 @@ public class FXTrayIcon {
             menu.getItems().forEach(subItem ->
                                             awtMenu.add(AWTUtils.convertFromJavaFX(subItem)));
             if(addExitMenuItem && shown) {
-                this.popupMenu.insert(awtMenu, this.popupMenu.getItemCount() - 1);
+                int index = this.popupMenu.getItemCount();
+                this.popupMenu.insert(awtMenu, index);
             }
             else {
                 this.popupMenu.add(awtMenu);
