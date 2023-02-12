@@ -103,6 +103,12 @@ public class FXTrayIcon {
      */
     private String exitMenuItemLabel = "";
 
+    /**
+     * This is used to tell the show method to not add the event listener which
+     * normally shows the stage when the icon is clicked. On MacOS, this is
+     * normally activated with a right click.
+     */
+    private boolean noDefaultAction = false;
 
     /**
      * Used for gaining access to AWT components of the library
@@ -290,6 +296,7 @@ public class FXTrayIcon {
         private       ActionListener                              exitMenuItemActionListener;
         private       boolean                                     showTrayIcon       = false;
         private final Image                                       icon;
+        private boolean noDefaultAction = false;
 
 
         /**
@@ -627,6 +634,19 @@ public class FXTrayIcon {
         }
 
         /**
+         * This is used to tell the show method to not add the event listener which
+         * normally shows the stage when the icon is clicked. On MacOS, this is
+         * normally activated with a right click. In order to be able to add a
+         * right click mouse event to the trayIcon object on MacOS, noDefaultAction
+         * needs to be executed.
+         * @return this Builder object
+         */
+        public Builder noDefaultAction() {
+            noDefaultAction = true;
+            return this;
+        }
+
+        /**
          * Sets up Builder so that once FXTrayIcon is instantiated, it will show immediately.
          * @return this Builder object
          */
@@ -659,6 +679,7 @@ public class FXTrayIcon {
         this.addTitleMenuItem = build.addTitleMenuItem;
         this.exitMenuItemLabel = build.exitMenuItemLabel;
         this.exitMenuItemActionListener = build.exitMenuItemActionListener;
+        this.noDefaultAction = build.noDefaultAction;
         if (!build.tooltip.equals("")) setTooltip(build.tooltip);
         if (build.event != null) setOnAction(build.event);
         for (int i = 0; i < BuildOrderUtil.getItemCount(); i++) {
@@ -846,12 +867,27 @@ public class FXTrayIcon {
                 }
 
                 // Show parent stage when user clicks the icon
-                this.trayIcon.addActionListener(stageShowListener);
+                if(!noDefaultAction)
+                    this.trayIcon.addActionListener(stageShowListener);
                 shown = true;
             } catch (AWTException e) {
                 throw new IllegalStateException("Unable to add TrayIcon", e);
             }
         });
+    }
+
+    /**
+     * This is used to tell the show method to not add the event listener which
+     * normally shows the stage when the icon is clicked. On MacOS, this is
+     * normally activated with a right click. In order to be able to add a
+     * right click mouse event to the trayIcon object on MacOS, noDefaultAction
+     * needs to be executed.
+     */
+    public void noDefaultAction() {
+        if(!shown)
+            noDefaultAction = true;
+        else
+            trayIcon.removeActionListener(stageShowListener);
     }
 
 
