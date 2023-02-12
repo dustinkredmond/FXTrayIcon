@@ -32,6 +32,11 @@ public class TestRestrictedAccess extends Application {
 		 * event listener, which when clicked, shows the stage.
 		 */
 		icon.getRestricted().getTrayIcon().addMouseListener(new MouseListener() {
+
+			/**
+			 * This event is fired when the mouse is clicked on the tray icon
+			 * @param - MouseEvent
+			 */
 			@Override public void mouseClicked(MouseEvent e) {
 				if(e.getButton() == 3) {
 					Platform.runLater(() -> {
@@ -40,18 +45,34 @@ public class TestRestrictedAccess extends Application {
 				}
 			}
 
+			/**
+			 * Ignored
+			 * @param - MouseEvent
+			 */
 			@Override public void mousePressed(MouseEvent ignored) {
 
 			}
 
+			/**
+			 * Ignored
+			 * @param - MouseEvent
+			 */
 			@Override public void mouseReleased(MouseEvent ignored) {
 
 			}
 
+			/**
+			 * Ignored
+			 * @param - MouseEvent
+			 */
 			@Override public void mouseEntered(MouseEvent ignored) {
 
 			}
 
+			/**
+			 * Ignored
+			 * @param - MouseEvent
+			 */
 			@Override public void mouseExited(MouseEvent ignored) {
 
 			}
