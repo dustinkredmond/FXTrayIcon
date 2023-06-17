@@ -66,6 +66,62 @@ FXTrayIcon now supports the use of CheckMenuItems - See Javadocs for specifics.
 
 ![FXTCheck](./img/FXTCheck.gif)
 
+## Animated Icons
+
+FXTrayIcon now offers a convenient way to animate the icon in the tray. This is great for things like letting the user know when the program is processing something or even to subtly get their attention.
+
+![animation](./img/animation.gif)
+
+The way you use it is straight forward. You first create all of the frames of the animation and save each frame into a file. The turning circle above,
+for example, took 45 files to create. Once you have the files, you can load into the FXTrayIcon in one of two ways.
+
+First option is to just make a `LinkedList<File>` and create the File objects and load them into the list. There are a couple of ways to do this, you could put them into their own folder with no other files,
+then using a File object with the path to the parent folder, you could use file.listFiles() option which loads them into an array and you could then put them into a LinkedList and then sort the list by filename or
+let the library do it for you. If you're including them in a Builder, here is how you would do it:
+
+```Java
+File[]  files = new File("").listFiles();
+LinkedList<File> fileList = new LinkedList<>(Arrays.asList(files));
+fileList.sort(Comparator.comparing(File::getName));
+
+trayIcon = new FXTrayIcon.Builder(primaryStage, iconFile)
+    .animate(fileList, 60)
+    .addExitMenuItem("Exit", e -> Main.stopRunning())
+    .show()
+    .build();  
+```
+
+After FXTrayIcon has been instantiated, you can create a new animation or replace an existing one
+simply following the same syntax as above only from the trayIcon object directly.
+
+Notice in the animate statement, there is a number after the fileList. That is the amount of 
+time that will pass between frame loads in the animation so it controls the speed and it is in milliseconds.
+
+Once tray icon is instantiated, you have these commands available to you:
+
+```Java
+trayIcon.play();
+trayIcon.playFromStart();
+trayIcon.stop();
+trayIcon.pause();
+trayIcon.pauseResume();
+trayIcon.stopReset();
+trayIcon.resetIcon();
+```
+
+And these test methods:
+```Java
+trayIcon.isRunning();
+trayIcon.isPaused();
+trayIcon.isStopped();
+```
+
+And if you need access the timeline of the animation for any reason, just use `getTimeline()`
+
+There is a full working program in the test folder called Animation. It will show you everything you
+to know. Also, the javadocs have been updated for this new feature and they are very thorough.
+
+
 ### FXTrayIcon on Windows 10's tray
 
 ![FXTrayIcon example](./img/fxtrayicon-1.png)
@@ -126,6 +182,27 @@ underlying TrayIcon awt object, so this can be done in two different ways.
 
 -   You can extend FXTrayIcon and in that extended class, you can access the `getTrayIcon()` protected method.
 -   Once you have FXTrayIcon instantiated, you can call the `getRestricted()` method then gain access to the TrayIcon object through that method.
+
+### About icon sizes
+The nature of how FXTrayIcon needing to be a library that works side by side with Swing, because we still do not 
+have a native JavaFX means for utilizing the system tray, icon sizing can be problematic with different operating systems.
+If you use the methods that do not require you to specify the icon size, then FXTrayIcon will use the best
+size for whichever operating system you're running it on. Windows requires a slightly smaller size than Macs.
+
+This animation feature does not have any options for specifying the size of the icon because it is best to just
+let it use the defaults. However, if you still want to control the size of the icon and the animation icon,
+then you can override the defauoy by using:
+
+```Java
+.setIconSize(width, height);
+.setIconSize(oneValueWH);
+```
+
+Then those values will become the default icon size that the Builder uses anywhere an icon size isn't required, 
+and also the animation feature will use those values.
+
+You can use that method in the build statement or after instantiation. The Builder will not build anything until
+the end so that you have an opportunity to change those values if desired.
 
 ## Projects using `FXTrayIcon`
 
