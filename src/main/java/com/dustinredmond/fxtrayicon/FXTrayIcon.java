@@ -23,6 +23,7 @@ package com.dustinredmond.fxtrayicon;
  */
 
 import com.dustinredmond.fxtrayicon.annotations.API;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 /**
  * Class for creating a JavaFX System Tray Icon.
  * Allows for a developer to create a tray icon
@@ -50,9 +52,13 @@ import java.util.stream.Collectors;
 public class FXTrayIcon {
 
     private static final Integer winScale = 16;
-    private static final Integer coreScale = 22;
+    private static final Integer macLinScale = 22;
     private boolean shown = false;
     private ActionListener exitMenuItemActionListener;
+    private Animation animation;
+    private Image icon;
+    private static IconScale iconScale = isWin() ? new IconScale(winScale) : new IconScale(macLinScale);
+    private static final IconScale coreSize = isWin() ? new IconScale(winScale) : new IconScale(macLinScale);
 
 
     /**
@@ -114,7 +120,6 @@ public class FXTrayIcon {
      * Used for gaining access to AWT components of the library
      */
     private final RestrictedInterface restricted;
-
 
     /**
      * Creates a {@code MouseListener} whose
@@ -304,7 +309,28 @@ public class FXTrayIcon {
     @API
     public static class Builder {
 
+        private enum ConstructorImageOption {
+            IMAGE, URL, FILE, FX_IMAGE, DEFAULT;
+
+            public String Name() {
+                switch (this) {
+                    case URL: return "URL";
+                    case FILE: return "FILE";
+                    case IMAGE: return "IMAGE";
+                    case FX_IMAGE: return "FX_IMAGE";
+                    case DEFAULT: return "DEFAULT";
+                }
+                return "";
+            }
+        }
+
+        private  ConstructorImageOption cio;
         private final Stage parentStage;
+        private URL conImageURL;
+        private File conImageFile;
+        private Image conImage;
+        private javafx.scene.image.Image conFXImage;
+
         private String tooltip = "";
         private String appTitle;
         private boolean addExitMenuItem = false;
@@ -313,46 +339,59 @@ public class FXTrayIcon {
         private EventHandler<ActionEvent> event;
         private ActionListener exitMenuItemActionListener;
         private boolean showTrayIcon = false;
-        private final Image icon;
+        private Image icon;
         private boolean noDefaultAction = false;
-        private Animation animation;
-        private boolean animate = false;
-        private LinkedList<Image> imageList;
+        protected LinkedList<Image> imageList;
+        protected int frameRateMS;
+        protected LinkedList<File> ImageFileList = null;
+        protected LinkedList<javafx.scene.image.Image> ImageList = null;
 
-        public Builder animate(LinkedList<javafx.scene.image.Image> imageList, int iconWH, int frameRateMS) {
-            animate = true;
-            this.imageList = new LinkedList<>();
-            for(javafx.scene.image.Image fxImage : imageList) {
-                this.imageList.addLast(loadImageFromFX(fxImage, iconWH, iconWH));
-            }
-            return this;
-        }
-
-        public Builder animate(LinkedList<File> imageFileList, int iconWH, int frameRateMS, boolean sortList) {
-            animate = true;
-            if(sortList)
-                imageFileList.sort(Comparator.comparing(File::getName));
-            this.imageList = new LinkedList<>();
-            for(File file : imageFileList) {
-                imageList.addLast(loadImageFromFile(file, iconWH, iconWH));
-            }
-            return this;
+        private void setOption(ConstructorImageOption option) {
+            cio = option;
+            System.out.println("option changed to: " + cio.Name());
         }
 
 
         /**
-         * Creates an instance of FXTrayIcon with the provided
-         * icon and a provided {@code javafx.stage.Stage} as its parent.
+         * By default, any method that accepts an icon but also does not require the dimensions, uses a default value
+         * depending on the operating system and this method will overwrite those values and become the new default
+         * values for anything you do concerning icons in FXTrayIcon.
          *
+         * @param width  icon width in pixels
+         * @param height icon height in pixels
+         * @return this Builder
+         */
+        public Builder setIconSize(int width, int height) {
+            iconScale = new IconScale(width, height);
+            return this;
+        }
+
+        /**
+         * Overloaded method, so you can put in just one value for the icon size when the width and height are
+         * the same value; please read the discussion about icon sizes in the other method,
+         *
+         * @param sizeWH icon width AND height in pixels expressed as a single value (W = H)
+         * @return this Builder
+         */
+        public Builder setIconSize(int sizeWH) {
+            iconScale = new IconScale(sizeWH, sizeWH);
+            return this;
+        }
+
+        /**
          * @param parentStage   The parent Stage of the tray icon.
          * @param iconImagePath A path to an icon image
          * @param iconWidth     optional to set a different icon width
          * @param iconHeight    optional to set a different icon height
+         * @deprecated Creates an instance of FXTrayIcon with the provided
+         * icon and a provided {@code javafx.stage.Stage} as its parent.
          */
         @API
         public Builder(Stage parentStage, URL iconImagePath, int iconWidth, int iconHeight) {
             this.parentStage = parentStage;
-            icon = loadImageFromURL(iconImagePath, iconWidth, iconHeight);
+            conImageURL = iconImagePath;
+            setOption(ConstructorImageOption.URL);
+            iconScale = new IconScale(iconWidth, iconHeight);
         }
 
         /**
@@ -365,23 +404,25 @@ public class FXTrayIcon {
         @API
         public Builder(Stage parentStage, URL iconImagePath) {
             this.parentStage = parentStage;
-            icon = loadImageFromURL(iconImagePath);
+            conImageURL = iconImagePath;
+            setOption(ConstructorImageOption.URL);
         }
 
         /**
-         * Creates an instance of FXTrayIcon with the provided
-         * icon File with dimensions and a provided {@code javafx.stage.Stage}
-         * as its parent.
-         *
          * @param parentStage The parent Stage of the tray icon.
          * @param iconFile    A java.io.File object
          * @param iconWidth   an int, icon width
          * @param iconHeight  an int, icon height
+         * @deprecated Creates an instance of FXTrayIcon with the provided
+         * icon File with dimensions and a provided {@code javafx.stage.Stage}
+         * as its parent.
          */
         @API
         public Builder(Stage parentStage, File iconFile, int iconWidth, int iconHeight) {
             this.parentStage = parentStage;
-            icon = loadImageFromFile(iconFile, iconWidth, iconHeight);
+            conImageFile = iconFile;
+            setOption(ConstructorImageOption.FILE);
+            iconScale = new IconScale(iconWidth, iconHeight);
         }
 
         /**
@@ -394,38 +435,25 @@ public class FXTrayIcon {
         @API
         public Builder(Stage parentStage, File iconFile) {
             this.parentStage = parentStage;
-            icon = loadImageFromFile(iconFile);
+            conImageFile = iconFile;
+            setOption(ConstructorImageOption.FILE);
         }
 
         /**
-         * Creates an instance of FXTrayIcon with the provided
-         * icon Image with dimensions and a provided {@code javafx.stage.Stage}
-         * as its parent.
-         *
          * @param parentStage The parent Stage of the tray icon.
          * @param javaFXImage A javafx.scene.image.Image object
          * @param iconWidth   an int, icon width
          * @param iconHeight  an int, icon height
+         * @deprecated Creates an instance of FXTrayIcon with the provided
+         * icon Image with dimensions and a provided {@code javafx.stage.Stage}
+         * as its parent.
          */
         @API
         public Builder(Stage parentStage, javafx.scene.image.Image javaFXImage, int iconWidth, int iconHeight) {
             this.parentStage = parentStage;
-            icon = loadImageFromFX(javaFXImage, iconWidth, iconHeight);
-        }
-
-        /**
-         * Creates an instance of FXTrayIcon with the provided
-         * icon Image with single dimension used for width and height and
-         * a provided {@code javafx.stage.Stage} as its parent.
-         *
-         * @param parentStage The parent Stage of the tray icon.
-         * @param javaFXImage A javafx.scene.image.Image object
-         * @param iconWH   an int, icon width and height
-         */
-        @API
-        public Builder(Stage parentStage, javafx.scene.image.Image javaFXImage, int iconWH) {
-            this.parentStage = parentStage;
-            icon = loadImageFromFX(javaFXImage, iconWH, iconWH);
+            conFXImage = javaFXImage;
+            setOption(ConstructorImageOption.FX_IMAGE);
+            iconScale = new IconScale(iconWidth, iconHeight);
         }
 
         /**
@@ -438,37 +466,24 @@ public class FXTrayIcon {
         @API
         public Builder(Stage parentStage, javafx.scene.image.Image javaFXImage) {
             this.parentStage = parentStage;
-            icon = loadImageFromFX(javaFXImage);
+            conFXImage = javaFXImage;
+            setOption(ConstructorImageOption.FX_IMAGE);
         }
 
         /**
-         * Creates an instance of FXTrayIcon with the provided
-         * icon and specified dimensions and a provided {@code javafx.stage.Stage} as its parent.
-         *
          * @param parentStage The parent Stage of the tray icon. Must not be null.
          * @param image       a java.awt.Image object. Must not be null
          * @param iconWidth   an int, icon Width
          * @param iconHeight  an int, icon Height
+         * @deprecated Creates an instance of FXTrayIcon with the provided
+         * icon and specified dimensions and a provided {@code javafx.stage.Stage} as its parent.
          */
         @API
         public Builder(Stage parentStage, Image image, int iconWidth, int iconHeight) {
             this.parentStage = parentStage;
-            icon = loadImageFromAWT(image, iconWidth, iconHeight);
-        }
-
-        /**
-         * Creates an instance of FXTrayIcon with the provided
-         * icon and single dimension representing width and height and
-         * a provided {@code javafx.stage.Stage} as its parent.
-         *
-         * @param parentStage The parent Stage of the tray icon. Must not be null.
-         * @param image       a java.awt.Image object. Must not be null
-         * @param iconWH   an int, icon Width
-         */
-        @API
-        public Builder(Stage parentStage, Image image, int iconWH) {
-            this.parentStage = parentStage;
-            icon = loadImageFromAWT(image, iconWH, iconWH);
+            conImage = image;
+            setOption(ConstructorImageOption.IMAGE);
+            iconScale = new IconScale(iconWidth, iconHeight);
         }
 
         /**
@@ -481,7 +496,8 @@ public class FXTrayIcon {
         @API
         public Builder(Stage parentStage, Image image) {
             this.parentStage = parentStage;
-            icon = loadImageFromAWT(image);
+            conImage = image;
+            setOption(ConstructorImageOption.IMAGE);
         }
 
         /**
@@ -494,7 +510,52 @@ public class FXTrayIcon {
         @API
         public Builder(Stage parentStage) {
             this.parentStage = parentStage;
-            icon = loadDefaultIconImage();
+            setOption(ConstructorImageOption.DEFAULT);
+        }
+
+        /**
+         * Add an optional animated icon to FXTrayIcon by passing in a LinkedList of JavaFX Image objects where each
+         * image is a single frame of the animation, you also need to specify the time delay between frames.
+         * filename. Animations are played using Javas animation library, which is extremely efficient and non-blocking.
+         * <p>
+         * Icon sizes are now using a default value based the OS that is running which can be overridden using the
+         * setIconSize() method;
+         *
+         * @param imageList   - LinkedList containing javafx.scene.image.Image objects
+         * @param frameRateMS - this an integer that defines the time delay between each image in milliseconds.
+         * @return this builder object.
+         */
+        @API
+        public Builder animate(LinkedList<javafx.scene.image.Image> imageList, int frameRateMS) {
+            this.imageList = new LinkedList<>();
+            this.ImageList = imageList;
+            this.frameRateMS = frameRateMS;
+            return this;
+        }
+
+        /**
+         * Add an optional animated icon to FXTrayIcon by passing in a LinkedList of JavaFX Files where each file
+         * is an image for each frame of the animation and optionally set the flag to have that file list sorted by
+         * filename, you also need to specify the time delay between frames.
+         * <p>
+         * Animations are played using Javas animation library, which is extremely efficient and non-blocking.
+         * <p>
+         * Icon sizes are now using a default value based the OS that is running which can be overridden using the
+         * setIconSize() method;
+         *
+         * @param imageFileList - LinkedList containing java.io.File objects
+         * @param frameRateMS   - this an integer that defines the time delay between each image in milliseconds.
+         * @param sortList      - boolean indicating that you want the file list sorted by filename.
+         * @return this builder object.
+         */
+        @API
+        public Builder animate(LinkedList<File> imageFileList, int frameRateMS, boolean sortList) {
+            this.imageList = new LinkedList<>();
+            ImageFileList = new LinkedList<>(imageFileList);
+            if (sortList)
+                ImageFileList.sort(Comparator.comparing(File::getName));
+            this.frameRateMS = frameRateMS;
+            return this;
         }
 
         /**
@@ -761,7 +822,52 @@ public class FXTrayIcon {
          */
         @API
         public FXTrayIcon build() {
-            return new FXTrayIcon(this);
+            loadIcon();
+            checkAnimation();
+            FXTrayIcon fxTrayIcon = new FXTrayIcon(this);
+            if (imageList != null) {
+                fxTrayIcon.animation = new Animation(fxTrayIcon, imageList, frameRateMS);
+            }
+            return fxTrayIcon;
+        }
+
+        private void loadIcon() {
+            switch (cio) {
+                case URL: {
+                    icon = loadImageFromURL(conImageURL, iconScale.width(), iconScale.height());
+                    break;
+                }
+                case FILE: {
+                    icon = loadImageFromFile(conImageFile, iconScale.width(), iconScale.height());
+                    break;
+                }
+                case IMAGE: {
+                    icon = loadImageFromAWT(conImage, iconScale.width(), iconScale.height());
+                    break;
+                }
+                case FX_IMAGE: {
+                    icon = loadImageFromFX(conFXImage, iconScale.width(), iconScale.height());
+                    break;
+                }
+                case DEFAULT: {
+                    icon = loadDefaultIconImage();
+                    break;
+                }
+            }
+        }
+
+        private void checkAnimation() {
+            if (ImageList != null) {
+                for (javafx.scene.image.Image fxImage : ImageList) {
+                    this.imageList.addLast(loadImageFromFX(fxImage, iconScale.width(), iconScale.height()));
+                }
+            }
+            else if (this.ImageFileList != null) {
+                for (File file : ImageFileList) {
+                    imageList.addLast(loadImageFromFile(file, iconScale.width(), iconScale.height()));
+                }
+            }
+
         }
     }
 
@@ -773,6 +879,7 @@ public class FXTrayIcon {
     @API
     protected FXTrayIcon(Builder build) {
         this(build.parentStage, build.icon, true);
+        this.icon = build.icon;
         this.parentStage = build.parentStage;
         this.appTitle = build.appTitle;
         this.addExitMenuItem = build.addExitMenuItem;
@@ -835,8 +942,7 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromURL(URL iconImagePath) {
-        if (isWin()) return loadImageFromURL(iconImagePath, winScale, winScale);
-        else return loadImageFromURL(iconImagePath, coreScale, coreScale);
+        return loadImageFromURL(iconImagePath, coreSize.width(), coreSize.height());
     }
 
     private static Image loadImageFromURL(URL iconImagePath, int iconWidth, int iconHeight) {
@@ -850,8 +956,7 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromFile(File file) {
-        if (isWin()) return loadImageFromFile(file, winScale, winScale);
-        else return loadImageFromFile(file, coreScale, coreScale);
+        return loadImageFromFile(file, coreSize.width(), coreSize.height());
     }
 
     private static Image loadImageFromFile(File file, int iconWidth, int iconHeight) {
@@ -868,8 +973,7 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromFX(javafx.scene.image.Image javaFXImage) {
-        if (isWin()) return loadImageFromFX(javaFXImage, winScale, winScale);
-        else return loadImageFromFX(javaFXImage, coreScale, coreScale);
+        return loadImageFromFX(javaFXImage, coreSize.width(), coreSize.height());
     }
 
     private static Image loadImageFromFX(javafx.scene.image.Image javaFXImage, int iconWidth, int iconHeight) {
@@ -877,8 +981,7 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromAWT(Image image) {
-        if (isWin()) return image.getScaledInstance(winScale, winScale, Image.SCALE_SMOOTH);
-        else return image.getScaledInstance(coreScale, coreScale, Image.SCALE_SMOOTH);
+        return image.getScaledInstance(coreSize.width(), coreSize.height(), Image.SCALE_SMOOTH);
     }
 
     private static Image loadImageFromAWT(Image image, int iconWidth, int iconHeight) {
@@ -1537,6 +1640,20 @@ public class FXTrayIcon {
 
     /**
      * Provides a way to change the TrayIcon image at runtime
+     * with optional dimensions provided. Dimensions must
+     * be correct for the required OS, or it might display as
+     * a garbled image.
+     *
+     * @param file   a java.io.File object
+     * @param iconWH an int, the width and height as one value
+     */
+    @API
+    public void setGraphic(File file, int iconWH) {
+        setFinalGraphic(loadImageFromFile(file, iconWH, iconWH));
+    }
+
+    /**
+     * Provides a way to change the TrayIcon image at runtime
      * by specifying the image URL. The image will be scaled
      * to the correct size for the OS.
      *
@@ -1589,6 +1706,7 @@ public class FXTrayIcon {
     }
 
     private void setFinalGraphic(Image img) {
+        this.icon = img;
         this.trayIcon.setImage(img);
     }
 
@@ -1676,5 +1794,218 @@ public class FXTrayIcon {
             Platform.runLater(this.parentStage::show);
         }
     };
+
+
+    /**
+     * Use this method to add an animation to FXTrayIcon post instantiation, or use it to replace
+     * any current animation with a different one. You create animations by either passing into the
+     * method a LinkedList of JavaFX Image objects, or just a LinkedList of java.io.File objects
+     * where each file would be one frame of your animation. Next, specify the size of the icon and
+     * since the Width and Height need to be the same, you only pass that in as a single value.
+     * Finally, put the frame rate, which is the amount of time that will lapse between the showing
+     * of the frames in succession. Frame rates are usually around a hundred milliseconds our in
+     * that general range. Lower than 75 might be pushing it where you might experience dropped
+     * frames.
+     * <p>
+     * A quick not on icon sizing. As of the implementation of animations, FXTrayIcon will now use
+     * a default icon size based on your operating system. You can ocerride those values by using
+     * the setIconSize() method.
+     *
+     * @param imageList   - LinkedList of JavaFX Image objects.
+     * @param frameRateMS - The framerate of the animation
+     */
+    @API
+    public void newAnimation(LinkedList<javafx.scene.image.Image> imageList, int frameRateMS) {
+        LinkedList<Image> list = new LinkedList<>();
+        for (javafx.scene.image.Image fxImage : imageList) {
+            list.addLast(loadImageFromFX(fxImage, iconScale.width(), iconScale.height()));
+        }
+        animation = new Animation(this, list, frameRateMS);
+    }
+
+    /**
+     * Use this method to add an animation to FXTrayIcon post instantiation, or use it to replace
+     * any current animation with a different one. You create animations by either passing into the
+     * method a LinkedList of JavaFX Image objects, or just a LinkedList of java.io.File objects
+     * where each file would be one frame of your animation. Next, specify the size of the icon and
+     * since the Width and Height need to be the same, you only pass that in as a single value.
+     * Finally, put the frame rate, which is the amount of time that will lapse between the showing
+     * of the frames in succession. Frame rates are usually around a hundred milliseconds our in
+     * that general range. Lower than 75 might be pushing it where you might experience dropped
+     * frames.
+     *
+     * @param imageFileList - LinkedList of java.nio.File objects each file containing one frame.
+     * @param frameRateMS   - The framerate of the animation
+     * @param sortList      - Set this to true if you want your file list sorted by filename before the images are created
+     */
+    @API
+    public void newAnimation(LinkedList<File> imageFileList, int frameRateMS, boolean sortList) {
+        if (sortList)
+            imageFileList.sort(Comparator.comparing(File::getName));
+        LinkedList<Image> imageList = new LinkedList<>();
+        for (File file : imageFileList) {
+            imageList.addLast(loadImageFromFile(file, iconScale.width(), iconScale.height()));
+        }
+        animation = new Animation(this, imageList, frameRateMS);
+    }
+
+    /**
+     * Starts the animated icon if you generated one either with the newAnimation() method ir in the Builder sentence..
+     */
+    @API
+    public void play() {
+        if (animation != null) {
+            animation.play();
+        }
+    }
+
+    /**
+     * Stops the animated icon if it is running.
+     */
+    @API
+    public void stop() {
+        if (animation != null) {
+            if (isRunning())
+                animation.stop();
+        }
+    }
+
+    /**
+     * Stops the animated icon if it is running and resets the icon to the default that you used when starting the
+     * library or if you changed it with the setGraphic() method.
+     */
+    @API
+    public void stopReset() {
+        if (animation != null) {
+            stop();
+            setGraphic(icon);
+        }
+    }
+
+    /**
+     * resets the icon to the default that you used when starting the library or if you changed it with the setGraphic() method.
+     */
+    @API
+    public void resetIcon() {
+        if (animation != null) {
+            if (!isRunning())
+                setGraphic(icon);
+        }
+    }
+
+    /**
+     * This is how theAnimation package private class animates the icon,
+     * and it needs to be protected because no one else should be using this
+     * means of changing icons because without this dedicated means
+     * of animating the icon, there were conflicts trying to set the default
+     * icon where those settings were overridden by the animator because
+     * they were using the same methods and overriding the icon object
+     * which is the designated default icon.
+     *
+     * @param frame the specific frame od the animation.
+     */
+    @API
+    protected void setAnimationFrame(Image frame) {
+        this.trayIcon.setImage(frame);
+    }
+
+    /**
+     * Pauses the animated icon.
+     */
+    @API
+    public void pause() {
+        if (animation != null) {
+            animation.pause();
+        }
+    }
+
+
+    /**
+     * Use this method to both pause and resume the animation as
+     * it will pause if the animation is running, and it will
+     * play the animation it if it is paused.
+     */
+    @API
+    public void pauseResume() {
+        if (animation != null) {
+            if (isRunning())
+                pause();
+            else if (isPaused())
+                play();
+        }
+    }
+
+    /**
+     * Starts the animated icon over from the first frame in the image list.
+     */
+    @API
+    public void playFromStart() {
+        if (animation != null) {
+            animation.playFromStart();
+        }
+    }
+
+    /**
+     * Lets you check if the icon animation is currently running.
+     *
+     * @return boolean
+     */
+    @API
+    public boolean isRunning() {
+        return animation == null ? false : animation.isRunning();
+    }
+
+    /**
+     * Lets you check if the icon animation is currently paused.
+     *
+     * @return boolean
+     */
+    @API
+    public boolean isPaused() {
+        return animation == null ? false : animation.isPaused();
+    }
+
+    /**
+     * Lets you check if the icon animation is currently stopped.
+     *
+     * @return boolean
+     */
+    @API
+    public boolean isStopped() {
+        return animation == null ? false : animation.isStopped();
+    }
+
+    /**
+     * This method gives you direct access to the animations timeline which you could use
+     * to adjust more advanced settings as well as see metrics that might be relevant to you.
+     */
+    @API
+    public Timeline getAnimationTimeline() {
+        return animation.timeline();
+    }
+
+
+    /**
+     * Starting with the implementation of animations, FXTrayIcon will use default icons sizes based on
+     * which operating system you're running and this method lets you override those values.
+     *
+     * @param width  - icons width in pixels
+     * @param height - icons height in pixels
+     */
+    @API
+    public void setIconSize(int width, int height) {
+        iconScale = new IconScale(width, height);
+    }
+
+    /**
+     * Starting with the implementation of animations, FXTrayIcon will use default icons sizes based on
+     * which operating system you're running and this method lets you override those values.
+     *
+     * @param sizeWH - int for the dimensions of the icon using a single value (W = H)
+     */
+    @API
+    public void setIconSize(int sizeWH) {
+        iconScale = new IconScale(sizeWH, sizeWH);
+    }
 
 }

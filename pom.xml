@@ -109,6 +109,12 @@
                     <source>11</source>
                     <target>11</target>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
             </plugin>
             <!-- Maven Deploy plugin -->
             <plugin>
