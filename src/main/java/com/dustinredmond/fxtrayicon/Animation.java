@@ -36,13 +36,6 @@ import java.util.LinkedList;
  */
 class Animation {
 
-    Animation(FXTrayIcon trayIcon, LinkedList<Image> imageList, int frameRateMS) {
-        this.imageList = imageList;
-        this.frameRateMS = frameRateMS;
-        this.trayIcon = trayIcon;
-        this.timeline = this.getTimeline();
-    }
-
     private final LinkedList<Image> imageList;
     private final int frameRateMS;
     private final FXTrayIcon trayIcon;
@@ -58,6 +51,13 @@ class Animation {
         timeline.getKeyFrames().add(keyFrame);
         timeline.setCycleCount(javafx.animation.Animation.INDEFINITE);
         return timeline;
+    }
+
+    Animation(FXTrayIcon trayIcon, LinkedList<Image> imageList, int frameRateMS) {
+        this.imageList = imageList;
+        this.frameRateMS = frameRateMS;
+        this.trayIcon = trayIcon;
+        this.timeline = this.getTimeline();
     }
 
     public Timeline timeline() {

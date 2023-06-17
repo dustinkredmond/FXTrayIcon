@@ -2,6 +2,9 @@ package com.dustinredmond.fxtrayicon;
 
 public class IconScale {
 
+    private final int width;
+    private final int height;
+
     public IconScale(int width, int height) {
         this.width = width;
         this.height = height;
@@ -11,10 +14,6 @@ public class IconScale {
         this.width = sizeWH;
         this.height = sizeWH;
     }
-
-    private final int width;
-    private final int height;
-
 
     public int width() {
         return width;

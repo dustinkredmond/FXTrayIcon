@@ -138,18 +138,22 @@ public class FXTrayIcon {
 
             @Override
             public void mousePressed(MouseEvent ignored) {
+                //This is empty on purpose
             }
 
             @Override
             public void mouseReleased(MouseEvent ignored) {
+                //This is empty on purpose
             }
 
             @Override
             public void mouseEntered(MouseEvent ignored) {
+                //This is empty on purpose
             }
 
             @Override
             public void mouseExited(MouseEvent ignored) {
+                //This is empty on purpose
             }
         };
     }
@@ -310,21 +314,10 @@ public class FXTrayIcon {
     public static class Builder {
 
         private enum ConstructorImageOption {
-            IMAGE, URL, FILE, FX_IMAGE, DEFAULT;
-
-            public String Name() {
-                switch (this) {
-                    case URL: return "URL";
-                    case FILE: return "FILE";
-                    case IMAGE: return "IMAGE";
-                    case FX_IMAGE: return "FX_IMAGE";
-                    case DEFAULT: return "DEFAULT";
-                }
-                return "";
-            }
+            IMAGE, URL, FILE, FX_IMAGE, DEFAULT
         }
 
-        private  ConstructorImageOption cio;
+        private final ConstructorImageOption cio;
         private final Stage parentStage;
         private URL conImageURL;
         private File conImageFile;
@@ -345,11 +338,6 @@ public class FXTrayIcon {
         protected int frameRateMS;
         protected LinkedList<File> ImageFileList = null;
         protected LinkedList<javafx.scene.image.Image> ImageList = null;
-
-        private void setOption(ConstructorImageOption option) {
-            cio = option;
-            System.out.println("option changed to: " + cio.Name());
-        }
 
 
         /**
@@ -390,7 +378,7 @@ public class FXTrayIcon {
         public Builder(Stage parentStage, URL iconImagePath, int iconWidth, int iconHeight) {
             this.parentStage = parentStage;
             conImageURL = iconImagePath;
-            setOption(ConstructorImageOption.URL);
+            cio = ConstructorImageOption.URL;
             iconScale = new IconScale(iconWidth, iconHeight);
         }
 
@@ -405,7 +393,7 @@ public class FXTrayIcon {
         public Builder(Stage parentStage, URL iconImagePath) {
             this.parentStage = parentStage;
             conImageURL = iconImagePath;
-            setOption(ConstructorImageOption.URL);
+            cio = ConstructorImageOption.URL;
         }
 
         /**
@@ -421,7 +409,7 @@ public class FXTrayIcon {
         public Builder(Stage parentStage, File iconFile, int iconWidth, int iconHeight) {
             this.parentStage = parentStage;
             conImageFile = iconFile;
-            setOption(ConstructorImageOption.FILE);
+            cio = ConstructorImageOption.FILE;
             iconScale = new IconScale(iconWidth, iconHeight);
         }
 
@@ -436,7 +424,7 @@ public class FXTrayIcon {
         public Builder(Stage parentStage, File iconFile) {
             this.parentStage = parentStage;
             conImageFile = iconFile;
-            setOption(ConstructorImageOption.FILE);
+            cio = ConstructorImageOption.FILE;
         }
 
         /**
@@ -452,7 +440,7 @@ public class FXTrayIcon {
         public Builder(Stage parentStage, javafx.scene.image.Image javaFXImage, int iconWidth, int iconHeight) {
             this.parentStage = parentStage;
             conFXImage = javaFXImage;
-            setOption(ConstructorImageOption.FX_IMAGE);
+            cio = ConstructorImageOption.FX_IMAGE;
             iconScale = new IconScale(iconWidth, iconHeight);
         }
 
@@ -467,7 +455,7 @@ public class FXTrayIcon {
         public Builder(Stage parentStage, javafx.scene.image.Image javaFXImage) {
             this.parentStage = parentStage;
             conFXImage = javaFXImage;
-            setOption(ConstructorImageOption.FX_IMAGE);
+            cio = ConstructorImageOption.FX_IMAGE;
         }
 
         /**
@@ -482,7 +470,7 @@ public class FXTrayIcon {
         public Builder(Stage parentStage, Image image, int iconWidth, int iconHeight) {
             this.parentStage = parentStage;
             conImage = image;
-            setOption(ConstructorImageOption.IMAGE);
+            cio = ConstructorImageOption.IMAGE;
             iconScale = new IconScale(iconWidth, iconHeight);
         }
 
@@ -497,7 +485,7 @@ public class FXTrayIcon {
         public Builder(Stage parentStage, Image image) {
             this.parentStage = parentStage;
             conImage = image;
-            setOption(ConstructorImageOption.IMAGE);
+            cio = ConstructorImageOption.IMAGE;
         }
 
         /**
@@ -510,7 +498,7 @@ public class FXTrayIcon {
         @API
         public Builder(Stage parentStage) {
             this.parentStage = parentStage;
-            setOption(ConstructorImageOption.DEFAULT);
+            cio = ConstructorImageOption.DEFAULT;
         }
 
         /**
@@ -853,6 +841,7 @@ public class FXTrayIcon {
                     icon = loadDefaultIconImage();
                     break;
                 }
+                default:
             }
         }
 
@@ -938,6 +927,7 @@ public class FXTrayIcon {
                | InstantiationException
                | IllegalAccessException
                | UnsupportedLookAndFeelException ignored) {
+            //This is empty on purpose
         }
     }
 
@@ -1864,8 +1854,7 @@ public class FXTrayIcon {
      */
     @API
     public void stop() {
-        if (animation != null) {
-            if (isRunning())
+        if (animation != null && isRunning()) {
                 animation.stop();
         }
     }
@@ -1927,11 +1916,11 @@ public class FXTrayIcon {
      */
     @API
     public void pauseResume() {
-        if (animation != null) {
-            if (isRunning())
-                pause();
-            else if (isPaused())
-                play();
+        if (animation != null && isRunning()) {
+            pause();
+        }
+        else if (isPaused()) {
+            play();
         }
     }
 
