@@ -1806,11 +1806,13 @@ public class FXTrayIcon {
      */
     @API
     public void newAnimation(LinkedList<javafx.scene.image.Image> imageList, int frameRateMS) {
-        LinkedList<Image> list = new LinkedList<>();
-        for (javafx.scene.image.Image fxImage : imageList) {
-            list.addLast(loadImageFromFX(fxImage, iconScale.width(), iconScale.height()));
+        if(imageList != null && frameRateMS > 0){
+            LinkedList<Image> list = new LinkedList<>();
+            for (javafx.scene.image.Image fxImage : imageList) {
+                list.addLast(loadImageFromFX(fxImage, iconScale.width(), iconScale.height()));
+            }
+            animation = new Animation(this, list, frameRateMS);
         }
-        animation = new Animation(this, list, frameRateMS);
     }
 
     /**
@@ -1830,13 +1832,15 @@ public class FXTrayIcon {
      */
     @API
     public void newAnimation(LinkedList<File> imageFileList, int frameRateMS, boolean sortList) {
-        if (sortList)
-            imageFileList.sort(Comparator.comparing(File::getName));
-        LinkedList<Image> imageList = new LinkedList<>();
-        for (File file : imageFileList) {
-            imageList.addLast(loadImageFromFile(file, iconScale.width(), iconScale.height()));
+        if(imageFileList != null && frameRateMS > 0) {
+            if (sortList)
+                imageFileList.sort(Comparator.comparing(File::getName));
+            LinkedList<Image> imageList = new LinkedList<>();
+            for (File file : imageFileList) {
+                imageList.addLast(loadImageFromFile(file, iconScale.width(), iconScale.height()));
+            }
+            animation = new Animation(this, imageList, frameRateMS);
         }
-        animation = new Animation(this, imageList, frameRateMS);
     }
 
     /**
@@ -1844,7 +1848,7 @@ public class FXTrayIcon {
      */
     @API
     public void play() {
-        if (animation != null) {
+        if (animation != null &&(isStopped() || isPaused())) {
             animation.play();
         }
     }
@@ -1854,8 +1858,8 @@ public class FXTrayIcon {
      */
     @API
     public void stop() {
-        if (animation != null && isRunning()) {
-                animation.stop();
+        if (animation != null && (isRunning() || isPaused())) {
+            animation.stop();
         }
     }
 
@@ -1895,7 +1899,9 @@ public class FXTrayIcon {
      */
     @API
     protected void setAnimationFrame(Image frame) {
-        this.trayIcon.setImage(frame);
+        if(frame != null && this.trayIcon != null) {
+            this.trayIcon.setImage(frame);
+        }
     }
 
     /**
@@ -1916,11 +1922,13 @@ public class FXTrayIcon {
      */
     @API
     public void pauseResume() {
-        if (animation != null && isRunning()) {
-            pause();
-        }
-        else if (isPaused()) {
-            play();
+        if(animation != null) {
+            if (isRunning()) {
+                pause();
+            }
+            else if (isPaused()) {
+                play();
+            }
         }
     }
 
@@ -1961,7 +1969,7 @@ public class FXTrayIcon {
      */
     @API
     public boolean isStopped() {
-        return animation == null ? false : animation.isStopped();
+        return animation == null ? true : animation.isStopped();
     }
 
     /**
@@ -1970,7 +1978,7 @@ public class FXTrayIcon {
      */
     @API
     public Timeline getAnimationTimeline() {
-        return animation.timeline();
+        return animation == null ? null : animation.timeline();
     }
 
 
@@ -1996,5 +2004,4 @@ public class FXTrayIcon {
     public void setIconSize(int sizeWH) {
         iconScale = new IconScale(sizeWH, sizeWH);
     }
-
 }
