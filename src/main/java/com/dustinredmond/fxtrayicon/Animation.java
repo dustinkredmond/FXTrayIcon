@@ -43,14 +43,15 @@ class Animation {
 
     private Timeline getTimeline() {
         Timeline timeline = new Timeline();
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(frameRateMS), e -> {
-            Image image = imageList.removeFirst();
-            trayIcon.setAnimationFrame(image);
-            imageList.addLast(image);
-        });
-        timeline.getKeyFrames().add(keyFrame);
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(frameRateMS), e -> updateImage()));
         timeline.setCycleCount(javafx.animation.Animation.INDEFINITE);
         return timeline;
+    }
+
+    private void updateImage() {
+        Image image = imageList.removeFirst();
+        trayIcon.setAnimationFrame(image);
+        imageList.addLast(image);
     }
 
     Animation(FXTrayIcon trayIcon, LinkedList<Image> imageList, int frameRateMS) {

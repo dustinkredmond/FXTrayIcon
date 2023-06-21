@@ -7,11 +7,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 
@@ -33,11 +35,33 @@ public class Animation extends Application {
     private LinkedList<File> animationFiles(int max, String folder) {
         LinkedList<File> fileImages = new LinkedList<>();
         for (int x = 1; x <= max; x++) {
-            String fileNumber = (x < 10) ? "0" + x : String.valueOf(x);
-            File file = getResourceFile(String.format(filePath, folder, fileNumber));
-            fileImages.addLast(file);
+            try {
+                String fileNumber = (x < 10) ? "0" + x : String.valueOf(x);
+                File file = getResourceFile(String.format(filePath, folder, fileNumber));
+                Image image = new Image(file.toURI().toURL().toString());
+                fileImages.addLast(file);
+            }
+            catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
         }
         return fileImages;
+    }
+
+    private LinkedList<Image> animationImages(int max, String folder) {
+        LinkedList<Image> fxImages = new LinkedList<>();
+        for (int x = 1; x <= max; x++) {
+            try {
+                String fileNumber = (x < 10) ? "0" + x : String.valueOf(x);
+                File file = getResourceFile(String.format(filePath, folder, fileNumber));
+                Image image = new Image(file.toURI().toURL().toString());
+                fxImages.addLast(image);
+            }
+            catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return fxImages;
     }
 
     @Override
@@ -87,39 +111,39 @@ public class Animation extends Application {
 
     private void startOne() {
         File icon = getResourceFile(String.format(iconPath, "One"));
-        LinkedList<File> fileList = animationFiles(48, "One");
+        LinkedList<Image> fileList = animationImages(48, "One");
         if (fxTrayIcon == null) {
             startTrayIcon(fileList, icon, 100);
         }
         else {
             fxTrayIcon.stop();
-            fxTrayIcon.newAnimation(fileList, 100, false);
+            fxTrayIcon.newAnimation(fileList, 100);
             fxTrayIcon.setGraphic(icon, 24, 24);
         }
     }
 
     private void startTwo() {
         File icon = getResourceFile(String.format(iconPath, "Two"));
-        LinkedList<File> fileList = animationFiles(48, "Two");
+        LinkedList<Image> fileList = animationImages(48, "Two");
         if (fxTrayIcon == null) {
             startTrayIcon(fileList, icon, 100);
         }
         else {
             fxTrayIcon.stop();
-            fxTrayIcon.newAnimation(fileList, 100, false);
+            fxTrayIcon.newAnimation(fileList, 100);
             fxTrayIcon.setGraphic(icon, 24, 24);
         }
     }
 
     private void startThree() {
         File icon = getResourceFile(String.format(iconPath, "Three"));
-        LinkedList<File> fileList = animationFiles(41, "Three");
+        LinkedList<Image> fileList = animationImages(41, "Three");
         if (fxTrayIcon == null) {
             startTrayIcon(fileList, icon, 150);
         }
         else {
             fxTrayIcon.stop();
-            fxTrayIcon.newAnimation(fileList, 150, false);
+            fxTrayIcon.newAnimation(fileList, 150);
             if (icon.exists())
                 fxTrayIcon.setGraphic(icon, 24, 24);
             else {
@@ -129,9 +153,20 @@ public class Animation extends Application {
     }
 
 
-    private void startTrayIcon(LinkedList<File> fileList, File icon, int frameRate) {
+    private void startTrayIcon(LinkedList<File> fileList, File icon, int frameRate, boolean sortList) {
         fxTrayIcon = new FXTrayIcon.Builder(primaryStage, icon)
-                .animate(fileList, frameRate, false)
+                .animate(fileList, frameRate, sortList)
+                .menuItem("Start", e -> startAnimation())
+                .menuItem("Stop", e -> stopAnimation())
+                .separator()
+                .addExitMenuItem()
+                .show()
+                .build();
+    }
+
+    private void startTrayIcon(LinkedList<Image> imageList, File icon, int frameRate) {
+        fxTrayIcon = new FXTrayIcon.Builder(primaryStage, icon)
+                .animate(imageList, frameRate)
                 .menuItem("Start", e -> startAnimation())
                 .menuItem("Stop", e -> stopAnimation())
                 .separator()
