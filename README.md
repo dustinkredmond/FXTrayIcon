@@ -209,5 +209,6 @@ the end so that you have an opportunity to change those values if desired.
 - [JDKMon](https://github.com/HanSolo/JDKMon) - A tool that monitors your installed JDK's and informs you about updates.
 - [GlucoStatusFX](https://github.com/HanSolo/glucostatusfx) - Glucose status monitor for Nightscout implemented in JavaFX.
 - [GistFX](https://github.com/RedmondSims/GistFX) - A utility that makes managing and organizing your GitHub Gists easy and convenient.
+- [NFC4PC](https://github.com/martinpaljak/NFC4PC) - Makes your desktop PC react to NFC tags by opening them just like a mobile phone.
 
 If your project uses FXTrayIcon, let us know via Pull Request, and we'll feature your project on this README.
