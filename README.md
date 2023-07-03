@@ -68,16 +68,22 @@ FXTrayIcon now supports the use of CheckMenuItems - See Javadocs for specifics.
 
 ## Animated Icons
 
-FXTrayIcon now offers a convenient way to animate the icon in the tray. This is great for things like letting the user know when the program is processing something or even to subtly get their attention.
+FXTrayIcon now offers a convenient way to animate the icon in the tray. This is great 
+for things like letting the user know when the program is processing something or even 
+to subtly get their attention.
 
 ![animation](./img/animation.gif)
 
-The way you use it is straight forward. You first create all of the frames of the animation and save each frame into a file. The turning circle above,
-for example, took 45 files to create. Once you have the files, you can load them into FXTrayIcon in one of two ways: Pass in `LinkedList<java.io.File>` or `LinkedList<javafx.scene.image.Image>`
+The way you use it is straightforward. First, create all the frames of the animation and 
+save each frame into a file. The turning circle above, for example, took 45 files to create. 
+Once you have the files, 
+you can load them into FXTrayIcon in one of two ways: Pass in `LinkedList<java.io.File>` or 
+`LinkedList<javafx.scene.image.Image>`. 
 
-For example, create a `LinkedList<File>` containing the File objects of each frame then pass them into 
-FXTrayIcon by using the Builder, or after FXTrayIcon has been instantiated. We recommend putting the files into their
-own folder numbered in sequence, then make the list from that folder.
+For example, create a `LinkedList<File>` containing the `File` objects of each frame, 
+and then pass them into FXTrayIcon using the Builder or after FXTrayIcon has been instantiated. 
+We recommend putting the files into their own folder; numbered in sequence, then create the 
+list from that folder.
 
 Creating the list:
 
@@ -103,7 +109,7 @@ trayIcon.newAnimation(fileList, 75);
 
 The `.newAnimation()` method can also be used to replace an existing animation.
 
-The number after fileList is amount of time that each frame should be shown and is in milliseconds. 
+The number after `fileList` is the amount of time that each frame will be shown, specified in milliseconds. 
 
 These methods can be used to play and control the animation:
 
@@ -126,7 +132,7 @@ trayIcon.isStopped();
 
 And if you need access to the timeline of the animation for any reason, just use `trayIcon.getTimeline()`
 
-There is a full working program in the test folder called Animation. It will show you everything you
+There is a full working program in the test folder called Animation. It will show you everything you need 
 to know. The JavaDocs are also available and are very thorough.
 
 
