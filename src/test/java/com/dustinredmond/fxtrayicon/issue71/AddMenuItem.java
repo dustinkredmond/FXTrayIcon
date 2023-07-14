@@ -21,6 +21,8 @@ import javafx.stage.Stage;
 public class AddMenuItem extends Application {
 
     private FXTrayIcon fxTrayIcon;
+    private Label lblAfter;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -33,8 +35,6 @@ public class AddMenuItem extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
-    private Label lblAfter;
 
     private void show() {
         fxTrayIcon.show();
