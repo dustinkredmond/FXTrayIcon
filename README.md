@@ -68,36 +68,50 @@ FXTrayIcon now supports the use of CheckMenuItems - See Javadocs for specifics.
 
 ## Animated Icons
 
-FXTrayIcon now offers a convenient way to animate the icon in the tray. This is great for things like letting the user know when the program is processing something or even to subtly get their attention.
+FXTrayIcon now offers a convenient way to animate the icon in the tray. This is great 
+for things like letting the user know when the program is processing something or even 
+to subtly get their attention.
 
 ![animation](./img/animation.gif)
 
-The way you use it is straight forward. You first create all of the frames of the animation and save each frame into a file. The turning circle above,
-for example, took 45 files to create. Once you have the files, you can load into the FXTrayIcon in one of two ways.
+The way you use it is straightforward. First, create all the frames of the animation and 
+save each frame into a file. The turning circle above, for example, took 45 files to create. 
+Once you have the files, 
+you can load them into FXTrayIcon in one of two ways: Pass in `LinkedList<java.io.File>` or 
+`LinkedList<javafx.scene.image.Image>`. 
 
-First option is to just make a `LinkedList<File>` and create the File objects and load them into the list. There are a couple of ways to do this, you could put them into their own folder with no other files,
-then using a File object with the path to the parent folder, you could use file.listFiles() option which loads them into an array and you could then put them into a LinkedList and then sort the list by filename or
-let the library do it for you. If you're including them in a Builder, here is how you would do it:
+For example, create a `LinkedList<File>` containing the `File` objects of each frame, 
+and then pass them into FXTrayIcon using the Builder or after FXTrayIcon has been instantiated. 
+We recommend putting the files into their own folder; numbered in sequence, then create the 
+list from that folder.
+
+Creating the list:
 
 ```Java
-File[]  files = new File("").listFiles();
+File[]  files = new File("path/to/my/imageFiles").listFiles();
 LinkedList<File> fileList = new LinkedList<>(Arrays.asList(files));
 fileList.sort(Comparator.comparing(File::getName));
+```
 
+Using the list with the Builder:
+```Java
 trayIcon = new FXTrayIcon.Builder(primaryStage, iconFile)
-    .animate(fileList, 60)
+    .animate(fileList, 75)
     .addExitMenuItem("Exit", e -> Main.stopRunning())
     .show()
     .build();  
 ```
 
-After FXTrayIcon has been instantiated, you can create a new animation or replace an existing one
-simply following the same syntax as above only from the trayIcon object directly.
+Or after instantiation:
+```Java
+trayIcon.newAnimation(fileList, 75);
+```
 
-Notice in the animate statement, there is a number after the fileList. That is the amount of 
-time that will pass between frame loads in the animation so it controls the speed and it is in milliseconds.
+The `.newAnimation()` method can also be used to replace an existing animation.
 
-Once tray icon is instantiated, you have these commands available to you:
+The number after `fileList` is the amount of time that each frame will be shown, specified in milliseconds. 
+
+These methods can be used to play and control the animation:
 
 ```Java
 trayIcon.play();
@@ -109,17 +123,17 @@ trayIcon.stopReset();
 trayIcon.resetIcon();
 ```
 
-And these test methods:
+Use these methods to get the state of the animation:
 ```Java
 trayIcon.isRunning();
 trayIcon.isPaused();
 trayIcon.isStopped();
 ```
 
-And if you need access the timeline of the animation for any reason, just use `getTimeline()`
+And if you need access to the timeline of the animation for any reason, just use `trayIcon.getTimeline()`
 
-There is a full working program in the test folder called Animation. It will show you everything you
-to know. Also, the javadocs have been updated for this new feature and they are very thorough.
+There is a full working program in the test folder called Animation. It will show you everything you need 
+to know. The JavaDocs are also available and are very thorough.
 
 
 ### FXTrayIcon on Windows 10's tray
