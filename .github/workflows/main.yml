@@ -1,0 +1,27 @@
+name: CI build
+
+on: [push]
+
+jobs:
+  builds:
+    name: '${{ matrix.os }} with Java ${{ matrix.jdk }}'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        jdk: [17,21]
+        os: [windows-latest, ubuntu-latest]
+      fail-fast: false
+      max-parallel: 6
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Java ${{ matrix.jdk }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.jdk }}
+      - name: Compile
+        run: |
+          mvn clean package
