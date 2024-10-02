@@ -224,5 +224,6 @@ the end so that you have an opportunity to change those values if desired.
 - [GlucoStatusFX](https://github.com/HanSolo/glucostatusfx) - Glucose status monitor for Nightscout implemented in JavaFX.
 - [GistFX](https://github.com/RedmondSims/GistFX) - A utility that makes managing and organizing your GitHub Gists easy and convenient.
 - [NFC4PC](https://github.com/martinpaljak/NFC4PC) - Makes your desktop PC react to NFC tags by opening them just like a mobile phone.
+- [JFXCentral](https://www.jfx-central.com/) - Home to everything JavaFX related. Website is written in JavaFX with [JPro](https://www.jpro.one/) -  Desktop Version uses FXTrayIcon.
 
 If your project uses FXTrayIcon, let us know via Pull Request, and we'll feature your project on this README.
