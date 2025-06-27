@@ -218,6 +218,18 @@ and also the animation feature will use those values.
 You can use that method in the build statement or after instantiation. The Builder will not build anything until
 the end so that you have an opportunity to change those values if desired.
 
+## Icon Size Changes
+FXTrayIcon will automatically set the optimal size of your icon based on the operating system you are running in.
+However, if you wish to set the icon size yourself, you can use the instance or Builder `setIconSize()` method. For
+optimal performance, especially when using animated icons, best practice is to provide icon images that are already
+in the optimal dimension for your operating system:
+- Linux: 22 x 22
+- MacOS: 22 x 22
+- Windows: 16x16
+
+You only need to use the `setIconSize()` method one time for each instance of FXTrayIcon, and any time you change 
+the image after that it will be sized accordingly.
+
 ## Projects using `FXTrayIcon`
 
 - [JDKMon](https://github.com/HanSolo/JDKMon) - A tool that monitors your installed JDK's and informs you about updates.
