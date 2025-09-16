@@ -220,10 +220,11 @@ the end so that you have an opportunity to change those values if desired.
 
 ## Projects using `FXTrayIcon`
 
-- [JDKMon](https://github.com/HanSolo/JDKMon) - A tool that monitors your installed JDK's and informs you about updates.
-- [GlucoStatusFX](https://github.com/HanSolo/glucostatusfx) - Glucose status monitor for Nightscout implemented in JavaFX.
+- [Cisco C2C Reporting](https://www.cisco.com/c/dam/en_us/about/doing_business/open_source/docs/C2CReportingApp-100-1730341249.pdf) - Cisco DoD Comply-to-Connect reporting application
 - [GistFX](https://github.com/RedmondSims/GistFX) - A utility that makes managing and organizing your GitHub Gists easy and convenient.
-- [NFC4PC](https://github.com/martinpaljak/NFC4PC) - Makes your desktop PC react to NFC tags by opening them just like a mobile phone.
+- [GlucoStatusFX](https://github.com/HanSolo/glucostatusfx) - Glucose status monitor for Nightscout implemented in JavaFX.
+- [JDKMon](https://github.com/HanSolo/JDKMon) - A tool that monitors your installed JDK's and informs you about updates.
 - [JFXCentral](https://www.jfx-central.com/) - Home to everything JavaFX related. Website is written in JavaFX with [JPro](https://www.jpro.one/) -  Desktop Version uses FXTrayIcon.
+- [NFC4PC](https://github.com/martinpaljak/NFC4PC) - Makes your desktop PC react to NFC tags by opening them just like a mobile phone.
 
 If your project uses FXTrayIcon, let us know via Pull Request, and we'll feature your project on this README.
