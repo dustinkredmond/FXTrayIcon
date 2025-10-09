@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 /**
  * Class for creating a JavaFX System Tray Icon.
  * Allows for a developer to create a tray icon
@@ -58,8 +57,6 @@ public class FXTrayIcon {
     private Animation animation;
     private Image icon;
     private static IconScale iconScale = isWin() ? new IconScale(winScale) : new IconScale(macLinScale);
-    private static final IconScale coreSize = isWin() ? new IconScale(winScale) : new IconScale(macLinScale);
-
 
     /**
      * The default AWT SystemTray
@@ -159,6 +156,7 @@ public class FXTrayIcon {
     }
 
     /**
+     * @deprecated Use the setIconSize() method or the equivalent Builder method. See README for more information.
      * Creates an instance of FXTrayIcon with the provided
      * icon and a provided{@code javafx.stage.Stage} as its parent.
      *
@@ -185,6 +183,7 @@ public class FXTrayIcon {
     }
 
     /**
+     * @deprecated Use the setIconSize() method or the equivalent Builder method. See README for more information.
      * Creates an instance of FXTrayIcon with the provided
      * icon File with dimensions and a provided{@code javafx.stage.Stage}
      * as its parent.
@@ -212,6 +211,7 @@ public class FXTrayIcon {
     }
 
     /**
+     * @deprecated Use the setIconSize() method or the equivalent Builder method. See README for more information.
      * Creates an instance of FXTrayIcon with the provided
      * icon Image with dimensions and a provided{@code javafx.stage.Stage}
      * as its parent.
@@ -239,6 +239,7 @@ public class FXTrayIcon {
     }
 
     /**
+     * @deprecated Use the setIconSize() method or the equivalent Builder method. See README for more information.
      * Creates an instance of FXTrayIcon with the provided
      * icon and specified dimensions and a provided{@code javafx.stage.Stage} as its parent.
      *
@@ -367,6 +368,7 @@ public class FXTrayIcon {
         }
 
         /**
+         * @deprecated Use the setIconSize() method or the equivalent Builder method. See README for more information.
          * @param parentStage   The parent Stage of the tray icon.
          * @param iconImagePath A path to an icon image
          * @param iconWidth     optional to set a different icon width
@@ -397,6 +399,7 @@ public class FXTrayIcon {
         }
 
         /**
+         * @deprecated Use the setIconSize() method or the equivalent Builder method. See README for more information.
          * @param parentStage The parent Stage of the tray icon.
          * @param iconFile    A java.io.File object
          * @param iconWidth   an int, icon width
@@ -428,6 +431,7 @@ public class FXTrayIcon {
         }
 
         /**
+         * @deprecated Use the setIconSize() method or the equivalent Builder method. See README for more information.
          * @param parentStage The parent Stage of the tray icon.
          * @param javaFXImage A javafx.scene.image.Image object
          * @param iconWidth   an int, icon width
@@ -459,6 +463,7 @@ public class FXTrayIcon {
         }
 
         /**
+         * @deprecated Use the setIconSize() method or the equivalent Builder method. See README for more information.
          * @param parentStage The parent Stage of the tray icon. Must not be null.
          * @param image       a java.awt.Image object. Must not be null
          * @param iconWidth   an int, icon Width
@@ -932,7 +937,7 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromURL(URL iconImagePath) {
-        return loadImageFromURL(iconImagePath, coreSize.width(), coreSize.height());
+        return loadImageFromURL(iconImagePath, iconScale.width(), iconScale.height());
     }
 
     private static Image loadImageFromURL(URL iconImagePath, int iconWidth, int iconHeight) {
@@ -946,7 +951,7 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromFile(File file) {
-        return loadImageFromFile(file, coreSize.width(), coreSize.height());
+        return loadImageFromFile(file, iconScale.width(), iconScale.height());
     }
 
     private static Image loadImageFromFile(File file, int iconWidth, int iconHeight) {
@@ -963,7 +968,7 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromFX(javafx.scene.image.Image javaFXImage) {
-        return loadImageFromFX(javaFXImage, coreSize.width(), coreSize.height());
+        return loadImageFromFX(javaFXImage, iconScale.width(), iconScale.height());
     }
 
     private static Image loadImageFromFX(javafx.scene.image.Image javaFXImage, int iconWidth, int iconHeight) {
@@ -971,7 +976,7 @@ public class FXTrayIcon {
     }
 
     private static Image loadImageFromAWT(Image image) {
-        return image.getScaledInstance(coreSize.width(), coreSize.height(), Image.SCALE_SMOOTH);
+        return image.getScaledInstance(iconScale.width(), iconScale.height(), Image.SCALE_SMOOTH);
     }
 
     private static Image loadImageFromAWT(Image image, int iconWidth, int iconHeight) {
@@ -1087,8 +1092,7 @@ public class FXTrayIcon {
         else
             trayIcon.removeActionListener(stageShowListener);
     }
-
-
+    
     /**
      * Adds an EventHandler that is called when the FXTrayIcon's
      * action is called. On Microsoft's Windows 10, this is invoked
@@ -1227,8 +1231,7 @@ public class FXTrayIcon {
     public void addMenuItem(javafx.scene.control.MenuItem menuItem) {
         EventQueue.invokeLater(() -> addMenuItemPrivately(menuItem));
     }
-
-
+    
     /**
      * Adds the ability to add a MenuItem after instantiation without needing to
      * pass in a MenuItem object.
@@ -1586,6 +1589,7 @@ public class FXTrayIcon {
     }
 
     /**
+     * @deprecated use setIconSize() to use a size different from default. You only need to run that method one time for each instance of FXTrayIcon, and all images used will be set to that size.
      * Provides a way to change the TrayIcon image at runtime.
      * by passing in a JavaFX Image object with the option to
      * set the image width and height. If the image is not
@@ -1614,6 +1618,7 @@ public class FXTrayIcon {
     }
 
     /**
+     * @deprecated use setIconSize() to use a size different from default. You only need to run that method one time for each instance of FXTrayIcon, and all images used will be set to that size.
      * Provides a way to change the TrayIcon image at runtime
      * with optional dimensions provided. Dimensions must
      * be correct for the required OS, or it might display as
@@ -1629,6 +1634,7 @@ public class FXTrayIcon {
     }
 
     /**
+     * @deprecated use setIconSize() to use a size different from default. You only need to run that method one time for each instance of FXTrayIcon, and all images used will be set to that size.
      * Provides a way to change the TrayIcon image at runtime
      * with optional dimensions provided. Dimensions must
      * be correct for the required OS, or it might display as
@@ -1655,6 +1661,7 @@ public class FXTrayIcon {
     }
 
     /**
+     * @deprecated use setIconSize() to use a size different from default. You only need to run that method one time for each instance of FXTrayIcon, and all images used will be set to that size.
      * Provides a way to change the TrayIcon image at runtime
      * by specifying the image file via a URL object with the
      * option specifying the dimension of the image. If the image
@@ -1684,6 +1691,7 @@ public class FXTrayIcon {
     }
 
     /**
+     * @deprecated use setIconSize() to use a size different from default. You only need to run that method one time for each instance of FXTrayIcon, and all images used will be set to that size.
      * Sets the TrayIcon's graphic
      *
      * @param image      Image to set
@@ -1784,8 +1792,7 @@ public class FXTrayIcon {
             Platform.runLater(this.parentStage::show);
         }
     };
-
-
+    
     /**
      * Use this method to add an animation to FXTrayIcon post instantiation, or use it to replace
      * any current animation with a different one. You create animations by either passing into the
@@ -1913,8 +1920,7 @@ public class FXTrayIcon {
             animation.pause();
         }
     }
-
-
+    
     /**
      * Use this method to both pause and resume the animation as
      * it will pause if the animation is running, and it will
@@ -1980,8 +1986,7 @@ public class FXTrayIcon {
     public Timeline getAnimationTimeline() {
         return animation == null ? null : animation.timeline();
     }
-
-
+    
     /**
      * Starting with the implementation of animations, FXTrayIcon will use default icons sizes based on
      * which operating system you're running and this method lets you override those values.
