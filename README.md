@@ -9,6 +9,8 @@ work solely with its public API and JavaFX classes that they are already familia
 
 Check out the [runnable test application](./src/test/java/com/dustinredmond/fxtrayicon/RunnableTest.java) in the test directory for an example of how this works.
 
+A mirror of this repository is kept on Codeberg [here](https://codeberg.org/dustinkredmond/FXTrayIcon). Rest assured that FXTrayIcon's creators will continue to support the project no matter where it is hosted in the future.
+
 ## Usage
 
 From within your JavaFX application, adding a tray icon is as simple as two lines of code.
